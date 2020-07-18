@@ -8,11 +8,12 @@
 		_detalhes.alpha_build_counter = 7348 --if this is higher than the regular counter, use it instead
 		_detalhes.game_version = "v8.3.0"
 		_detalhes.userversion = "v8.3.0." .. _detalhes.build_counter
-		_detalhes.realversion = 141 --core version, this is used to check API version for scripts and plugins (see alias below)
+		_detalhes.realversion = 142 --core version, this is used to check API version for scripts and plugins (see alias below)
 		_detalhes.APIVersion = _detalhes.realversion --core version
 		_detalhes.version = _detalhes.userversion .. " (core " .. _detalhes.realversion .. ")" --simple stirng to show to players
 		
 		_detalhes.BFACORE = 131 --core version on BFA launch
+		_detalhes.SHADOWLANDSCORE = 142 --core version on BFA launch
 		
 		Details = _detalhes
 		
