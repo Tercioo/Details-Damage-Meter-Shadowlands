@@ -6,8 +6,8 @@
 		
 		_detalhes.build_counter = 7348
 		_detalhes.alpha_build_counter = 7348 --if this is higher than the regular counter, use it instead
-		_detalhes.game_version = "v9.0.0"
-		_detalhes.userversion = "v9.0.0." .. _detalhes.build_counter
+		_detalhes.game_version = "v9.0.1"
+		_detalhes.userversion = "v9.0.1." .. _detalhes.build_counter
 		_detalhes.realversion = 142 --core version, this is used to check API version for scripts and plugins (see alias below)
 		_detalhes.APIVersion = _detalhes.realversion --core version
 		_detalhes.version = _detalhes.userversion .. " (core " .. _detalhes.realversion .. ")" --simple stirng to show to players
