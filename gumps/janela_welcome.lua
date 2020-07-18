@@ -19,7 +19,7 @@ function _detalhes:OpenWelcomeWindow()
 		
 		local instance = _detalhes.tabela_instancias [1]
 		
-		window = _detalhes:CreateWelcomePanel ("DetailsWelcomeWindow", UIParent,"BackdropTemplate")
+		window = _detalhes:CreateWelcomePanel ("DetailsWelcomeWindow", UIParent)
 		window:SetPoint ("center", UIParent, "center", -200, 0)
 		window:SetBackdropColor (0, 0, 0, 0.75)
 		window:SetWidth (612)

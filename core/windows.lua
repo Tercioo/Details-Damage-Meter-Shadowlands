@@ -2794,13 +2794,13 @@
 		end)	
 	
 	function _detalhes:CreateWelcomePanel (name, parent, width, height, make_movable)
-	
-		local f = CreateFrame ("frame", name, parent or UIParent,"BackdropTemplate")
+		local f = CreateFrame ("frame", name, parent or UIParent, "BackdropTemplate")
 		
 		--f:SetBackdrop ({bgFile = [[Interface\AddOns\Details\images\background]], tile = true, tileSize = 128, insets = {left=3, right=3, top=3, bottom=3}, edgeFile = [[Interface\AddOns\Details\images\border_welcome]], edgeSize = 16})
 		f:SetBackdrop ({bgFile = [[Interface\AddOns\Details\images\background]], tile = true, tileSize = 128, insets = {left=0, right=0, top=0, bottom=0}, edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1})
 		f:SetBackdropColor (1, 1, 1, 0.75)
 		f:SetBackdropBorderColor (0, 0, 0, 1)
+
 		f:SetSize(width or 1, height or 1)
 		
 		if (make_movable) then
