@@ -100,7 +100,10 @@ function _G._detalhes:Start()
 			self.custom = self.custom or {}
 			
 		--> micro button alert
-			self.MicroButtonAlert = CreateFrame ("frame", "DetailsMicroButtonAlert", UIParent , "MainMenuBarMicroButton")
+			--"MainMenuBarMicroButton" has been removed on 9.0
+			self.MicroButtonAlert = CreateFrame ("frame", "DetailsMicroButtonAlert", UIParent)
+			self.MicroButtonAlert.Text = self.MicroButtonAlert:CreateFontString(nil, "overlay", "GameFontNormal")
+			self.MicroButtonAlert.Text:SetPoint("center")
 			self.MicroButtonAlert:Hide()
 			
 		--> actor details window
