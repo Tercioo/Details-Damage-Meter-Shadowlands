@@ -6,8 +6,8 @@
 		
 		_detalhes.build_counter = 7348
 		_detalhes.alpha_build_counter = 7348 --if this is higher than the regular counter, use it instead
-		_detalhes.game_version = "v8.3.0"
-		_detalhes.userversion = "v8.3.0." .. _detalhes.build_counter
+		_detalhes.game_version = "v9.0.0"
+		_detalhes.userversion = "v9.0.0." .. _detalhes.build_counter
 		_detalhes.realversion = 142 --core version, this is used to check API version for scripts and plugins (see alias below)
 		_detalhes.APIVersion = _detalhes.realversion --core version
 		_detalhes.version = _detalhes.userversion .. " (core " .. _detalhes.realversion .. ")" --simple stirng to show to players
@@ -21,19 +21,11 @@
 --> initialization stuff
 
 do
-
-	--local f = CreateFrame("frame")
-	--f:SetSize(300, 300)
-	--f:SetPoint("center", UIParent, 0, 0)
-	--f.texture = f:CreateTexture(nil, "overlay")
-	--f.texture:SetAllPoints()
-	--f.texture:SetTexture(131817)
-
 	local _detalhes = _G._detalhes
 
 	_detalhes.resize_debug = {}
 
-	local Loc = LibStub ("AceLocale-3.0"):GetLocale ( "Details" )
+	local Loc = _G.LibStub("AceLocale-3.0"):GetLocale( "Details" )
 
 --[[
 |cFFFFFF00v8.3.0.7343.140 (|cFFFFCC00Jun 27th, 2020|r|cFFFFFF00)|r:\n\n

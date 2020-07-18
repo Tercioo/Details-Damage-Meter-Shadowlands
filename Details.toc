@@ -45,6 +45,10 @@ functions\rowanimation.lua
 functions\raidinfo.lua
 functions\dungeon.lua
 functions\pack.lua
+functions\mythicdungeon.lua
+functions\immersion.lua
+functions\schedules.lua
+functions\autorun.lua
 
 core\timemachine.lua
 

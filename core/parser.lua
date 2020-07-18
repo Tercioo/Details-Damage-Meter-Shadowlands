@@ -4398,8 +4398,6 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		
 		_detalhes.time_type = _detalhes.time_type_original
 		
-		_detalhes:CheckChatOnZoneChange (zoneType)
-		
 		if (_detalhes.debug) then
 			_detalhes:Msg ("(debug) zone change:", _detalhes.zone_name, "is a", _detalhes.zone_type, "zone.")
 		end
@@ -5165,7 +5163,9 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		_detalhes:LoadConfig()
 		
 		_detalhes:UpdateParserGears()
-		--_detalhes:Start()
+
+		--load auto run code
+		Details:StartAutoRun()
 	end
 	
 	function _detalhes.parser_functions:ADDON_LOADED (...)
@@ -5176,9 +5176,9 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 	end
 	
 	local playerLogin = CreateFrame ("frame")
-	playerLogin:RegisterEvent ("PLAYER_LOGIN")
-	playerLogin:SetScript ("OnEvent", function()
-		Details:Start()
+	playerLogin:RegisterEvent("PLAYER_LOGIN")
+	playerLogin:SetScript("OnEvent", function()
+		Details:StartMeUp()
 	end)
 	
 	function _detalhes.parser_functions:PET_BATTLE_OPENING_START (...)

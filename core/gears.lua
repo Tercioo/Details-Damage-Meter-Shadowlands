@@ -485,7 +485,7 @@ function _detalhes:ResetSpecCache (forced)
 	
 end
 
-function _detalhes:RefreshUpdater (suggested_interval)
+function _detalhes:RefreshUpdater(suggested_interval)
 	local updateInterval = suggested_interval or _detalhes.update_speed
 	
 	if (_detalhes.streamer_config.faster_updates) then
@@ -494,17 +494,19 @@ function _detalhes:RefreshUpdater (suggested_interval)
 	end
 	
 	if (_detalhes.atualizador) then
-		_detalhes:CancelTimer (_detalhes.atualizador)
+		--_detalhes:CancelTimer(_detalhes.atualizador)
+		Details.Schedules:CancelTicker(_detalhes.atualizador)
 	end
-	_detalhes.atualizador = _detalhes:ScheduleRepeatingTimer ("AtualizaGumpPrincipal", updateInterval, -1)
+	--_detalhes.atualizador = _detalhes:ScheduleRepeatingTimer("AtualizaGumpPrincipal", updateInterval, -1)
+	_detalhes.atualizador = Details.Schedules:NewTicker(updateInterval, Details.AtualizaGumpPrincipal, Details)
 end
 
-function _detalhes:SetWindowUpdateSpeed (interval, nosave)
+function _detalhes:SetWindowUpdateSpeed(interval, nosave)
 	if (not interval) then
 		interval = _detalhes.update_speed
 	end
 
-	if (type (interval) ~= "number") then
+	if (type(interval) ~= "number") then
 		interval = _detalhes.update_speed or 0.3
 	end
 	
@@ -512,10 +514,10 @@ function _detalhes:SetWindowUpdateSpeed (interval, nosave)
 		_detalhes.update_speed = interval
 	end
 	
-	_detalhes:RefreshUpdater (interval)
+	_detalhes:RefreshUpdater(interval)
 end
 
-function _detalhes:SetUseAnimations (enabled, nosave)
+function _detalhes:SetUseAnimations(enabled, nosave)
 	if (enabled == nil) then
 		enabled = _detalhes.use_row_animations
 	end
@@ -549,13 +551,13 @@ function _detalhes:CheckForPerformanceProfile()
 	local profile = _detalhes.performance_profiles [type]
 	
 	if (profile and profile.enabled) then
-		_detalhes:SetWindowUpdateSpeed (profile.update_speed, true)
-		_detalhes:SetUseAnimations (profile.use_row_animations, true)
-		_detalhes:CaptureSet (profile.damage, "damage")
-		_detalhes:CaptureSet (profile.heal, "heal")
-		_detalhes:CaptureSet (profile.energy, "energy")
-		_detalhes:CaptureSet (profile.miscdata, "miscdata")
-		_detalhes:CaptureSet (profile.aura, "aura")
+		_detalhes:SetWindowUpdateSpeed(profile.update_speed, true)
+		_detalhes:SetUseAnimations(profile.use_row_animations, true)
+		_detalhes:CaptureSet(profile.damage, "damage")
+		_detalhes:CaptureSet(profile.heal, "heal")
+		_detalhes:CaptureSet(profile.energy, "energy")
+		_detalhes:CaptureSet(profile.miscdata, "miscdata")
+		_detalhes:CaptureSet(profile.aura, "aura")
 		
 		if (not _detalhes.performance_profile_lastenabled or _detalhes.performance_profile_lastenabled ~= type) then
 			_detalhes:InstanceAlert (Loc ["STRING_OPTIONS_PERFORMANCE_PROFILE_LOAD"] .. type, {_detalhes.PerformanceIcons [type].icon, 14, 14, false, 0, 1, 0, 1, unpack (_detalhes.PerformanceIcons [type].color)} , 5, {_detalhes.empty_function})
@@ -564,13 +566,13 @@ function _detalhes:CheckForPerformanceProfile()
 		_detalhes.performance_profile_enabled = type
 		_detalhes.performance_profile_lastenabled = type
 	else
-		_detalhes:SetWindowUpdateSpeed (_detalhes.update_speed)
-		_detalhes:SetUseAnimations (_detalhes.use_row_animations)
-		_detalhes:CaptureSet (_detalhes.capture_real ["damage"], "damage")
-		_detalhes:CaptureSet (_detalhes.capture_real ["heal"], "heal")
-		_detalhes:CaptureSet (_detalhes.capture_real ["energy"], "energy")
-		_detalhes:CaptureSet (_detalhes.capture_real ["miscdata"], "miscdata")
-		_detalhes:CaptureSet (_detalhes.capture_real ["aura"], "aura")
+		_detalhes:SetWindowUpdateSpeed(_detalhes.update_speed)
+		_detalhes:SetUseAnimations(_detalhes.use_row_animations)
+		_detalhes:CaptureSet(_detalhes.capture_real ["damage"], "damage")
+		_detalhes:CaptureSet(_detalhes.capture_real ["heal"], "heal")
+		_detalhes:CaptureSet(_detalhes.capture_real ["energy"], "energy")
+		_detalhes:CaptureSet(_detalhes.capture_real ["miscdata"], "miscdata")
+		_detalhes:CaptureSet(_detalhes.capture_real ["aura"], "aura")
 		_detalhes.performance_profile_enabled = nil
 	end
 	

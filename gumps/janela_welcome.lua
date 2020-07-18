@@ -1004,18 +1004,14 @@ local window_openned_at = time()
 				slider.amt:SetTextColor (1, 1, 0)
 			end
 		end
-		window.updatespeedSlider:SetHook ("OnValueChange", function (self, _, amount) 
-			_detalhes:CancelTimer (_detalhes.atualizador)
-			_detalhes.update_speed = amount
-			_detalhes.atualizador = _detalhes:ScheduleRepeatingTimer ("AtualizaGumpPrincipal", _detalhes.update_speed, -1)
-			updateColor (self, amount)
+
+		window.updatespeedSlider:SetHook("OnValueChange", function (self, _, amount)
+			Details:SetWindowUpdateSpeed(amount)
+			updateColor(self, amount)
 		end)
-		updateColor (window.updatespeedSlider, _detalhes.update_speed)
+		updateColor(window.updatespeedSlider, _detalhes.update_speed)
 		
 		window.updatespeedSlider:SetHook ("OnEnter", function()
-		--	_detalhes:CooltipPreset (1)
-		--	GameCooltip:AddLine (Loc ["STRING_WELCOME_15"]) --removed
-		--	GameCooltip:ShowCooltip (window.updatespeedSlider, "tooltip")
 			return true
 		end)
 		

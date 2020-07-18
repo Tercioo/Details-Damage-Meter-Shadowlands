@@ -10155,15 +10155,10 @@ function window:CreateFrame10()
 				editing.update_speed = amount
 				_detalhes:CheckForPerformanceProfile()
 			end
-			--_detalhes:CancelTimer (_detalhes.atualizador)
-			--_detalhes.update_speed = amount
-			--_detalhes.atualizador = _detalhes:ScheduleRepeatingTimer ("AtualizaGumpPrincipal", _detalhes.update_speed, -1)
 			updateColor (self, amount)
 		end)
 		updateColor (frame10.updatespeedSlider, _detalhes.update_speed)
-		
-		--window:CreateLineBackground2 (frame10, "updatespeedSlider", "updatespeedLabel", Loc ["STRING_OPTIONS_WINDOWSPEED_DESC"])
-		
+
 		-- captures
 		g:NewLabel (frame10, _, "$parentCaptureDamageLabel", "damageCaptureLabel", Loc ["STRING_OPTIONS_CDAMAGE"], "GameFontHighlightLeft")
 		g:NewLabel (frame10, _, "$parentCaptureHealLabel", "healCaptureLabel", Loc ["STRING_OPTIONS_CHEAL"], "GameFontHighlightLeft")
