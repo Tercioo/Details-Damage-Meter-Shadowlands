@@ -379,7 +379,7 @@ function SlashCmdList.DETAILS (msg, editbox)
 		_detalhes:InstanciaCallFunction (_detalhes.AtualizaSegmentos) -- atualiza o instancia.showing para as novas tabelas criadas
 		_detalhes:InstanciaCallFunction (_detalhes.AtualizaSoloMode_AfertReset) -- verifica se precisa zerar as tabela da janela solo mode
 		_detalhes:InstanciaCallFunction (_detalhes.ResetaGump) --_detalhes:ResetaGump ("de todas as instancias")
-		_detalhes:AtualizaGumpPrincipal (-1, true) --atualiza todas as instancias
+		_detalhes:RefreshMainWindow (-1, true) --atualiza todas as instancias
 		
 		
 
@@ -1455,7 +1455,7 @@ Damage Update Status: @INSTANCEDAMAGESTATUS
 		_detalhes:InstanciaCallFunction (_detalhes.AtualizaSegmentos)
 		_detalhes:InstanciaCallFunction (_detalhes.AtualizaSoloMode_AfertReset)
 		_detalhes:InstanciaCallFunction (_detalhes.ResetaGump)
-		_detalhes:AtualizaGumpPrincipal (-1, true)
+		_detalhes:RefreshMainWindow (-1, true)
 	
 	elseif (msg == "ej") then	
 	

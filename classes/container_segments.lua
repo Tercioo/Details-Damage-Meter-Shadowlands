@@ -138,7 +138,7 @@ function historico:adicionar_overall (tabela)
 		if (instance:IsEnabled()) then
 			if (instance:GetSegment() == -1) then
 				instance:ForceRefresh()
-				--instance:AtualizaGumpPrincipal (true)
+				--instance:RefreshMainWindow (true)
 				--print ("isntance", id, "overall updated.")
 			end
 		end
@@ -544,7 +544,7 @@ function historico:resetar()
 	_detalhes:InstanciaCallFunction (_detalhes.ResetaGump) --_detalhes:ResetaGump ("de todas as instancias")
 	_detalhes:InstanciaCallFunction (gump.Fade, "in", nil, "barras")
 	
-	_detalhes:AtualizaGumpPrincipal (-1) --atualiza todas as instancias
+	_detalhes:RefreshMainWindow (-1) --atualiza todas as instancias
 	
 	_detalhes:SendEvent ("DETAILS_DATA_RESET", nil, nil)
 	

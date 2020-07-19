@@ -76,7 +76,7 @@
 	
 	local headerColor = {1, 0.9, 0.0, 1}
 
-	local info = _detalhes.janela_info
+	local info = _detalhes.playerDetailWindow
 	local keyName
 
 	local OBJECT_TYPE_PLAYER =	0x00000400
@@ -2797,24 +2797,24 @@ end
 		texture:SetVertexColor (1, 1, 1)
 	
 	elseif (classe == "PET") then
-		texture:SetTexture (instance and instance.row_info.icon_file or [[Interface\AddOns\Details\images\classes_small]])
-		texture:SetTexCoord (0.25, 0.49609375, 0.75, 1)
-		texture:SetVertexColor (actor_class_color_r, actor_class_color_g, actor_class_color_b)
+		texture:SetTexture(instance and instance.row_info.icon_file or [[Interface\AddOns\Details\images\classes_small]])
+		texture:SetTexCoord(0.25, 0.49609375, 0.75, 1)
+		texture:SetVertexColor(actor_class_color_r, actor_class_color_g, actor_class_color_b)
 	else
 		if (instance and instance.row_info.use_spec_icons) then
 			if (self.spec) then
-				texture:SetTexture (instance.row_info.spec_file)
-				texture:SetTexCoord (_unpack (_detalhes.class_specs_coords [self.spec]))
-				texture:SetVertexColor (1, 1, 1)
+				texture:SetTexture(instance.row_info.spec_file)
+				texture:SetTexCoord(_unpack (_detalhes.class_specs_coords[self.spec]))
+				texture:SetVertexColor(1, 1, 1)
 			else
-				texture:SetTexture (instance.row_info.icon_file or [[Interface\AddOns\Details\images\classes_small]])
-				texture:SetTexCoord (_unpack (_detalhes.class_coords [classe]))
-				texture:SetVertexColor (1, 1, 1)
+				texture:SetTexture(instance.row_info.icon_file or [[Interface\AddOns\Details\images\classes_small]])
+				texture:SetTexCoord(_unpack (_detalhes.class_coords[classe]))
+				texture:SetVertexColor(1, 1, 1)
 			end
 		else
-			texture:SetTexture (instance and instance.row_info.icon_file or [[Interface\AddOns\Details\images\classes_small]])
-			texture:SetTexCoord (_unpack (_detalhes.class_coords [classe]))
-			texture:SetVertexColor (1, 1, 1)
+			texture:SetTexture(instance and instance.row_info.icon_file or [[Interface\AddOns\Details\images\classes_small]])
+			texture:SetTexCoord(_unpack (_detalhes.class_coords[classe]))
+			texture:SetVertexColor(1, 1, 1)
 		end
 	end
 end
@@ -4603,7 +4603,7 @@ function atributo_damage:MontaDetalhesDamageDone (spellid, barra, instancia)
 	--> icone direito superior
 	local _, _, icone = _GetSpellInfo (spellid)
 
-	_detalhes.janela_info.spell_icone:SetTexture (icone)
+	_detalhes.playerDetailWindow.spell_icone:SetTexture (icone)
 
 	local total = self.total
 	
@@ -4788,7 +4788,7 @@ function atributo_damage:MontaDetalhesDamageDone (spellid, barra, instancia)
 		--]=]
 
 	--_detalhes:BuildPlayerDetailsSpellChart()
-	--DetailsPlayerDetailSmallChart.ShowChart (_detalhes.janela_info.grupos_detalhes [5].bg, info.instancia.showing, info.instancia.showing.cleu_events, self.nome, false, spellid, 1, 2, 3, 4, 5, 6, 7, 8, 15)
+	--DetailsPlayerDetailSmallChart.ShowChart (_detalhes.playerDetailWindow.grupos_detalhes [5].bg, info.instancia.showing, info.instancia.showing.cleu_events, self.nome, false, spellid, 1, 2, 3, 4, 5, 6, 7, 8, 15)
 	
 	--> spell damage chart
 	--events: 1 2 3 4 5 6 7 8 15
@@ -4821,7 +4821,7 @@ function _detalhes:BuildPlayerDetailsSpellChart()
 			tinsert (playerDetailSmallChart.Lines, texture)
 		end
 		
-		--_detalhes.janela_info.grupos_detalhes [index]
+		--_detalhes.playerDetailWindow.grupos_detalhes [index]
 		function playerDetailSmallChart.ShowChart (parent, combatObject, cleuData, playerName, targetName, spellId, ...)
 			local tokenIdList = {}
 			local eventList = {}

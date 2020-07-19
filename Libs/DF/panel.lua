@@ -1391,7 +1391,7 @@ function DF:NewFillPanel (parent, rows, name, member, w, h, total_lines, fill_ro
 		panel.scrollframe:Show()
 	end
 	
-	local scrollframe = CreateFrame ("scrollframe", name .. "Scroll", panel.widget, "FauxScrollFrameTemplate")
+	local scrollframe = CreateFrame ("scrollframe", name .. "Scroll", panel.widget, "FauxScrollFrameTemplate", "BackdropTemplate")
 	scrollframe:SetScript ("OnVerticalScroll", function (self, offset) FauxScrollFrame_OnVerticalScroll (self, offset, 20, panel.Refresh) end)
 	scrollframe:SetPoint ("topleft", panel.widget, "topleft", 0, -21)
 	scrollframe:SetPoint ("topright", panel.widget, "topright", -23, -21)
@@ -1501,7 +1501,7 @@ function DF:IconPick (callback, close_when_select, param1, param2)
 	
 		local string_lower = string.lower
 	
-		DF.IconPickFrame = CreateFrame ("frame", "DetailsFrameworkIconPickFrame", UIParent)
+		DF.IconPickFrame = CreateFrame ("frame", "DetailsFrameworkIconPickFrame", UIParent, "BackdropTemplate")
 		tinsert (UISpecialFrames, "DetailsFrameworkIconPickFrame")
 		DF.IconPickFrame:SetFrameStrata ("TOOLTIP")
 		
@@ -1536,7 +1536,7 @@ function DF:IconPick (callback, close_when_select, param1, param2)
 		DF.IconPickFrame.emptyFunction = function() end
 		DF.IconPickFrame.callback = DF.IconPickFrame.emptyFunction
 		
-		DF.IconPickFrame.preview =  CreateFrame ("frame", nil, UIParent)
+		DF.IconPickFrame.preview =  CreateFrame ("frame", nil, UIParent, "BackdropTemplate")
 		DF.IconPickFrame.preview:SetFrameStrata ("tooltip")
 		DF.IconPickFrame.preview:SetFrameLevel (6001)
 		DF.IconPickFrame.preview:SetSize (76, 76)
@@ -1595,7 +1595,7 @@ function DF:IconPick (callback, close_when_select, param1, param2)
 		end)
 		
 		--> close button
-		local close_button = CreateFrame ("button", nil, DF.IconPickFrame, "UIPanelCloseButton")
+		local close_button = CreateFrame ("button", nil, DF.IconPickFrame, "UIPanelCloseButton", "BackdropTemplate")
 		close_button:SetWidth (32)
 		close_button:SetHeight (32)
 		close_button:SetPoint ("TOPRIGHT", DF.IconPickFrame, "TOPRIGHT", -8, -7)
@@ -1697,7 +1697,7 @@ function DF:IconPick (callback, close_when_select, param1, param2)
 		insets = {left = 0, right = 0, top = 0, bottom = 0}, edgeFile = [[Interface\DialogFrame\UI-DialogBox-Border]], edgeSize = 10}
 		
 		for i = 0, 9 do 
-			local newcheck = CreateFrame ("Button", "DetailsFrameworkIconPickFrameButton"..(i+1), DF.IconPickFrame)
+			local newcheck = CreateFrame ("Button", "DetailsFrameworkIconPickFrameButton"..(i+1), DF.IconPickFrame, "BackdropTemplate")
 			local image = newcheck:CreateTexture ("DetailsFrameworkIconPickFrameButton"..(i+1).."Icon", "overlay")
 			newcheck.icon = image
 			image:SetPoint ("topleft", newcheck, "topleft", 2, -2) image:SetPoint ("bottomright", newcheck, "bottomright", -2, 2)
@@ -1714,7 +1714,7 @@ function DF:IconPick (callback, close_when_select, param1, param2)
 			newcheck:SetScript ("OnLeave", onleave)
 		end
 		for i = 11, 20 do
-			local newcheck = CreateFrame ("Button", "DetailsFrameworkIconPickFrameButton"..i, DF.IconPickFrame)
+			local newcheck = CreateFrame ("Button", "DetailsFrameworkIconPickFrameButton"..i, DF.IconPickFrame, "BackdropTemplate")
 			local image = newcheck:CreateTexture ("DetailsFrameworkIconPickFrameButton"..i.."Icon", "overlay")
 			newcheck.icon = image
 			image:SetPoint ("topleft", newcheck, "topleft", 2, -2) image:SetPoint ("bottomright", newcheck, "bottomright", -2, 2)
@@ -1731,7 +1731,7 @@ function DF:IconPick (callback, close_when_select, param1, param2)
 			newcheck:SetScript ("OnLeave", onleave)
 		end
 		for i = 21, 30 do 
-			local newcheck = CreateFrame ("Button", "DetailsFrameworkIconPickFrameButton"..i, DF.IconPickFrame)
+			local newcheck = CreateFrame ("Button", "DetailsFrameworkIconPickFrameButton"..i, DF.IconPickFrame, "BackdropTemplate")
 			local image = newcheck:CreateTexture ("DetailsFrameworkIconPickFrameButton"..i.."Icon", "overlay")
 			newcheck.icon = image
 			image:SetPoint ("topleft", newcheck, "topleft", 2, -2) image:SetPoint ("bottomright", newcheck, "bottomright", -2, 2)
@@ -1748,7 +1748,7 @@ function DF:IconPick (callback, close_when_select, param1, param2)
 			newcheck:SetScript ("OnLeave", onleave)
 		end
 		for i = 31, 40 do 
-			local newcheck = CreateFrame ("Button", "DetailsFrameworkIconPickFrameButton"..i, DF.IconPickFrame)
+			local newcheck = CreateFrame ("Button", "DetailsFrameworkIconPickFrameButton"..i, DF.IconPickFrame, "BackdropTemplate")
 			local image = newcheck:CreateTexture ("DetailsFrameworkIconPickFrameButton"..i.."Icon", "overlay")
 			newcheck.icon = image
 			image:SetPoint ("topleft", newcheck, "topleft", 2, -2) image:SetPoint ("bottomright", newcheck, "bottomright", -2, 2)
@@ -1765,7 +1765,7 @@ function DF:IconPick (callback, close_when_select, param1, param2)
 			newcheck:SetScript ("OnLeave", onleave)
 		end
 		for i = 41, 50 do 
-			local newcheck = CreateFrame ("Button", "DetailsFrameworkIconPickFrameButton"..i, DF.IconPickFrame)
+			local newcheck = CreateFrame ("Button", "DetailsFrameworkIconPickFrameButton"..i, DF.IconPickFrame, "BackdropTemplate")
 			local image = newcheck:CreateTexture ("DetailsFrameworkIconPickFrameButton"..i.."Icon", "overlay")
 			newcheck.icon = image
 			image:SetPoint ("topleft", newcheck, "topleft", 2, -2) image:SetPoint ("bottomright", newcheck, "bottomright", -2, 2)
@@ -1782,7 +1782,7 @@ function DF:IconPick (callback, close_when_select, param1, param2)
 			newcheck:SetScript ("OnLeave", onleave)
 		end
 		for i = 51, 60 do 
-			local newcheck = CreateFrame ("Button", "DetailsFrameworkIconPickFrameButton"..i, DF.IconPickFrame)
+			local newcheck = CreateFrame ("Button", "DetailsFrameworkIconPickFrameButton"..i, DF.IconPickFrame, "BackdropTemplate")
 			local image = newcheck:CreateTexture ("DetailsFrameworkIconPickFrameButton"..i.."Icon", "overlay")
 			newcheck.icon = image
 			image:SetPoint ("topleft", newcheck, "topleft", 2, -2) image:SetPoint ("bottomright", newcheck, "bottomright", -2, 2)
@@ -1799,7 +1799,7 @@ function DF:IconPick (callback, close_when_select, param1, param2)
 			newcheck:SetScript ("OnLeave", onleave)
 		end
 		
-		local scroll = CreateFrame ("ScrollFrame", "DetailsFrameworkIconPickFrameScroll", DF.IconPickFrame, "ListScrollFrameTemplate")
+		local scroll = CreateFrame ("ScrollFrame", "DetailsFrameworkIconPickFrameScroll", DF.IconPickFrame, "ListScrollFrameTemplate", "BackdropTemplate")
 		DF:ReskinSlider (scroll)
 
 		local ChecksFrame_Update = function (self)
@@ -1900,7 +1900,7 @@ end
 
 function DF:ShowPanicWarning (text)
 	if (not DF.PanicWarningWindow) then
-		DF.PanicWarningWindow = CreateFrame ("frame", "DetailsFrameworkPanicWarningWindow", UIParent)
+		DF.PanicWarningWindow = CreateFrame ("frame", "DetailsFrameworkPanicWarningWindow", UIParent, "BackdropTemplate")
 		DF.PanicWarningWindow:SetHeight (80)
 		DF.PanicWarningWindow:SetBackdrop ({bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], tileSize = 64, tile = true})
 		DF.PanicWarningWindow:SetBackdropColor (1, 0, 0, 0.2)
@@ -2173,7 +2173,7 @@ local Panel1PxHasPosition = function (self)
 end
 
 function DF:Create1PxPanel (parent, w, h, title, name, config, title_anchor, no_special_frame)
-	local f = CreateFrame ("frame", name, parent or UIParent)
+	local f = CreateFrame ("frame", name, parent or UIParent, "BackdropTemplate")
 	f:SetSize (w or 100, h or 75)
 	f:SetPoint ("center", UIParent, "center")
 	
@@ -2196,7 +2196,7 @@ function DF:Create1PxPanel (parent, w, h, title, name, config, title_anchor, no_
 	--print (config.position.x, config.position.x)
 	Panel1PxReadConfig (f)
 	
-	local close = CreateFrame ("button", name and name .. "CloseButton", f)
+	local close = CreateFrame ("button", name and name .. "CloseButton", f, "BackdropTemplate")
 	close:SetSize (16, 16)
 	close:SetNormalTexture (DF.folder .. "icons")
 	close:SetHighlightTexture (DF.folder .. "icons")
@@ -2206,7 +2206,7 @@ function DF:Create1PxPanel (parent, w, h, title, name, config, title_anchor, no_
 	close:GetPushedTexture():SetTexCoord (0, 16/128, 0, 1)
 	close:SetAlpha (0.7)
 	
-	local lock = CreateFrame ("button", name and name .. "LockButton", f)
+	local lock = CreateFrame ("button", name and name .. "LockButton", f, "BackdropTemplate")
 	lock:SetSize (16, 16)
 	lock:SetNormalTexture (DF.folder .. "icons")
 	lock:SetHighlightTexture (DF.folder .. "icons")
@@ -2255,7 +2255,7 @@ end
 function DF:ShowPromptPanel (message, func_true, func_false, no_repeated, width)
 	
 	if (not DetailsFrameworkPromptSimple) then
-		local f = CreateFrame ("frame", "DetailsFrameworkPromptSimple", UIParent) 
+		local f = CreateFrame ("frame", "DetailsFrameworkPromptSimple", UIParent, "BackdropTemplate") 
 		f:SetSize (400, 80)
 		f:SetFrameStrata ("DIALOG")
 		f:SetPoint ("center", UIParent, "center", 0, 300)
@@ -2356,7 +2356,7 @@ function DF:ShowTextPromptPanel (message, callback)
 	
 	if (not DF.text_prompt_panel) then
 		
-		local f = CreateFrame ("frame", "DetailsFrameworkPrompt", UIParent) 
+		local f = CreateFrame ("frame", "DetailsFrameworkPrompt", UIParent, "BackdropTemplate") 
 		f:SetSize (400, 120)
 		f:SetFrameStrata ("FULLSCREEN")
 		f:SetPoint ("center", UIParent, "center", 0, 100)
@@ -2429,7 +2429,7 @@ end
 --> options button -- ~options
 function DF:CreateOptionsButton (parent, callback, name)
 	
-	local b = CreateFrame ("button", name, parent)
+	local b = CreateFrame ("button", name, parent, "BackdropTemplate")
 	b:SetSize (14, 14)
 	b:SetNormalTexture (DF.folder .. "icons")
 	b:SetHighlightTexture (DF.folder .. "icons")
@@ -2457,7 +2457,7 @@ end
 --> feedback panel -- ~feedback
 
 function DF:CreateFeedbackButton (parent, callback, name)
-	local b = CreateFrame ("button", name, parent)
+	local b = CreateFrame ("button", name, parent, "BackdropTemplate")
 	b:SetSize (12, 13)
 	b:SetNormalTexture (DF.folder .. "mail")
 	b:SetPushedTexture (DF.folder .. "mail")
@@ -2526,7 +2526,7 @@ local feedback_get_fb_line = function (self)
 
 	local line = self.feedback_lines [self.next_feedback]
 	if (not line) then
-		line = CreateFrame ("frame", "AddonFeedbackPanelFB" .. self.next_feedback, self)
+		line = CreateFrame ("frame", "AddonFeedbackPanelFB" .. self.next_feedback, self, "BackdropTemplate")
 		line:SetBackdrop (backdrop_fb_line)
 		line:SetBackdropColor (0, 0, 0, 0.3)
 		line:SetSize (390, 42)
@@ -2647,7 +2647,7 @@ local feedback_get_addons_line = function (self)
 	local line = self.addons_lines [self.next_addons]
 	if (not line) then
 	
-		line = CreateFrame ("frame", "AddonFeedbackPanelSA" .. self.next_addons, self)
+		line = CreateFrame ("frame", "AddonFeedbackPanelSA" .. self.next_addons, self, "BackdropTemplate")
 		line:SetSize (128, 64)
 
 		if (self.next_addons == 1) then
@@ -2960,7 +2960,7 @@ local create_box = function (self, next_box)
 	thisbox.check = checktexture
 	thisbox.enabled = true
 
-	local button = CreateFrame ("button", nil, self.Graphic)
+	local button = CreateFrame ("button", nil, self.Graphic, "BackdropTemplate")
 	button:SetSize (20, 20)
 	button:SetScript ("OnClick", function()
 		chart_panel_enable_line (self, thisbox)
@@ -3458,7 +3458,7 @@ function DF:CreateChartPanel (parent, w, h, name)
 	w = w or 800
 	h = h or 500
 
-	local f = CreateFrame ("frame", name, parent)
+	local f = CreateFrame ("frame", name, parent, "BackdropTemplate")
 	f:SetSize (w or 500, h or 400)
 	f:EnableMouse (true)
 	f:SetMovable (true)
@@ -3469,7 +3469,7 @@ function DF:CreateChartPanel (parent, w, h, name)
 	f:SetBackdrop (chart_panel_backdrop)
 	f:SetBackdropColor (.3, .3, .3, .3)
 
-	local c = CreateFrame ("Button", nil, f, "UIPanelCloseButton")
+	local c = CreateFrame ("Button", nil, f, "UIPanelCloseButton", "BackdropTemplate")
 	c:SetWidth (32)
 	c:SetHeight (32)
 	c:SetPoint ("TOPRIGHT",  f, "TOPRIGHT", -3, -7)
@@ -3608,7 +3608,7 @@ end
 local gframe_create_line = function (self)
 	local index = #self._lines+1
 	
-	local f = CreateFrame ("frame", nil, self)
+	local f = CreateFrame ("frame", nil, self, "BackdropTemplate")
 	self._lines [index] = f
 	f.id = index
 	f:SetScript ("OnEnter", gframe_on_enter_line)
@@ -3636,7 +3636,7 @@ local gframe_create_line = function (self)
 	b:SetTexture ([[Interface\COMMON\Indicator-Yellow]])
 	b:SetSize (16, 16)
 	f.ball = b
-	local anchor = CreateFrame ("frame", nil, f)
+	local anchor = CreateFrame ("frame", nil, f, "BackdropTemplate")
 	anchor:SetAllPoints (b)
 	b.tooltip_anchor = anchor
 	
@@ -3743,7 +3743,7 @@ local gframe_update = function (self, lines)
 end
 
 function DF:CreateGFrame (parent, w, h, linewidth, onenter, onleave, member, name)
-	local f = CreateFrame ("frame", name, parent)
+	local f = CreateFrame ("frame", name, parent, "BackdropTemplate")
 	f:SetSize (w or 450, h or 150)
 	--f.CustomLine = [[Interface\AddOns\Details\Libs\LibGraph-2.0\line]]
 	
@@ -3774,7 +3774,7 @@ end
 -- ~buttoncontainer
 
 function DF:CreateButtonContainer (parent, name)
-	local f = CreateFrame ("frame", name, parent)
+	local f = CreateFrame ("frame", name, parent, "BackdropTemplate")
 --	f.
 end
 
@@ -3906,7 +3906,7 @@ function DF:CreateTabContainer (parent, title, frame_name, frame_list, options_t
 	local button_anchor_y = options_table.button_y or -32
 	local button_text_size = options_table.button_text_size or 10
 	
-	local mainFrame = CreateFrame ("frame", frame_name, parent.widget or parent)
+	local mainFrame = CreateFrame ("frame", frame_name, parent.widget or parent, "BackdropTemplate")
 	mainFrame:SetAllPoints()
 	DF:Mixin (mainFrame, DF.TabContainerFunctions)
 	
@@ -3929,7 +3929,7 @@ function DF:CreateTabContainer (parent, title, frame_name, frame_list, options_t
 	end
 	
 	for i, frame in ipairs (frame_list) do
-		local f = CreateFrame ("frame", "$parent" .. frame.name, mainFrame)
+		local f = CreateFrame ("frame", "$parent" .. frame.name, mainFrame, "BackdropTemplate")
 		f:SetAllPoints()
 		f:SetFrameLevel (210)
 		f:Hide()
@@ -4146,7 +4146,7 @@ local simple_list_box_SetData = function (self, t)
 end
 
 function DF:CreateSimpleListBox (parent, name, title, empty_text, list_table, onclick, options)
-	local f = CreateFrame ("frame", name, parent)
+	local f = CreateFrame ("frame", name, parent, "BackdropTemplate")
 	
 	f.ResetWidgets = simple_list_box_ResetWidgets
 	f.GetOrCreateWidget = simple_list_box_GetOrCreateWidget
@@ -4396,8 +4396,8 @@ function DF:CreateResizeGrips (parent)
 	if (parent) then
 		local parentName = parent:GetName()
 		
-		local leftResizer = CreateFrame ("button", parentName and parentName .. "LeftResizer" or nil, parent)
-		local rightResizer = CreateFrame ("button", parentName and parentName .. "RightResizer" or nil, parent)
+		local leftResizer = CreateFrame ("button", parentName and parentName .. "LeftResizer" or nil, parent, "BackdropTemplate")
+		local rightResizer = CreateFrame ("button", parentName and parentName .. "RightResizer" or nil, parent, "BackdropTemplate")
 		
 		leftResizer:SetPoint ("bottomleft", parent, "bottomleft")
 		rightResizer:SetPoint ("bottomright", parent, "bottomright")
@@ -4492,11 +4492,11 @@ function DF:CreateKeybindBox (parent, name, data, callback, width, height, line_
 	local SCROLL_ROLL_AMOUNT = line_amount
 	
 	--keybind set frame
-	local new_keybind_frame = CreateFrame ("frame", name, parent)
+	local new_keybind_frame = CreateFrame ("frame", name, parent, "BackdropTemplate")
 	new_keybind_frame:SetSize (width, height)
 	
 	-- keybind scrollframe
-	local keybindScroll = CreateFrame ("scrollframe", "$parentScrollFrame", new_keybind_frame, "FauxScrollFrameTemplate")
+	local keybindScroll = CreateFrame ("scrollframe", "$parentScrollFrame", new_keybind_frame, "FauxScrollFrameTemplate, BackdropTemplate")
 	keybindScroll:SetSize (1019, 348)
 	keybindScroll.Frames = {}
 	new_keybind_frame.keybindScroll = keybindScroll
@@ -4590,7 +4590,7 @@ function DF:CreateKeybindBox (parent, name, data, callback, width, height, line_
 		spec4:SetPoint ("topleft", specsTitle, "bottomleft", 0, -70)
 	end
 	
-	local enter_the_key = CreateFrame ("frame", nil, new_keybind_frame)
+	local enter_the_key = CreateFrame ("frame", nil, new_keybind_frame, "BackdropTemplate")
 	enter_the_key:SetFrameStrata ("tooltip")
 	enter_the_key:SetSize (200, 60)
 	enter_the_key:SetBackdrop ({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", tile = true, tileSize = 16, edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1})
@@ -4800,7 +4800,7 @@ function DF:CreateKeybindBox (parent, name, data, callback, width, height, line_
 	local font = "GameFontHighlightSmall"
 	
 	for i = 1, SCROLL_ROLL_AMOUNT do
-		local f = CreateFrame ("frame", "$KeyBindFrame" .. i, keybindScroll)
+		local f = CreateFrame ("frame", "$KeyBindFrame" .. i, keybindScroll, "BackdropTemplate")
 		f:SetSize (1009, 20)
 		f:SetPoint ("topleft", keybindScroll, "topleft", 0, -(i-1)*29)
 		f:SetBackdrop ({bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], tileSize = 64, tile = true})
@@ -4849,7 +4849,7 @@ function DF:CreateKeybindBox (parent, name, data, callback, width, height, line_
 		f.ActionText:SetAsAutoComplete ("WordList")
 	end
 	
-	local header = CreateFrame ("frame", "$parentOptionsPanelFrameHeader", keybindScroll)
+	local header = CreateFrame ("frame", "$parentOptionsPanelFrameHeader", keybindScroll, "BackdropTemplate")
 	header:SetPoint ("bottomleft", keybindScroll, "topleft", 0, 2)
 	header:SetPoint ("bottomright", keybindScroll, "topright", 0, 2)
 	header:SetHeight (16)
@@ -5053,7 +5053,7 @@ function DF:CreateTitleBar (f, titleText)
 	titleBar:SetBackdropColor (.2, .2, .2, 1)
 	titleBar:SetBackdropBorderColor (0, 0, 0, 1)
 	
-	local closeButton = CreateFrame ("button", titleBar:GetName() and titleBar:GetName() .. "CloseButton" or nil, titleBar)
+	local closeButton = CreateFrame ("button", titleBar:GetName() and titleBar:GetName() .. "CloseButton" or nil, titleBar, "BackdropTemplate")
 	closeButton:SetSize (16, 16)
 	closeButton:SetNormalTexture (DF.folder .. "icons")
 	closeButton:SetHighlightTexture (DF.folder .. "icons")
@@ -5092,7 +5092,7 @@ DF.IconRowFunctions = {
 		local iconFrame = self.IconPool [self.NextIcon]
 		
 		if (not iconFrame) then
-			local newIconFrame = CreateFrame ("frame", "$parentIcon" .. self.NextIcon, self)
+			local newIconFrame = CreateFrame ("frame", "$parentIcon" .. self.NextIcon, self, "BackdropTemplate")
 			
 			newIconFrame.Texture = newIconFrame:CreateTexture (nil, "artwork")
 			PixelUtil.SetPoint (newIconFrame.Texture, "topleft", newIconFrame, "topleft", 1, -1)
@@ -5106,7 +5106,7 @@ DF.IconRowFunctions = {
 			newIconFrame:SetBackdropBorderColor (0, 0, 0, 0)
 			newIconFrame:EnableMouse (false)
 			
-			local cooldownFrame = CreateFrame ("cooldown", "$parentIconCooldown" .. self.NextIcon, newIconFrame, "CooldownFrameTemplate")
+			local cooldownFrame = CreateFrame ("cooldown", "$parentIconCooldown" .. self.NextIcon, newIconFrame, "CooldownFrameTemplate, BackdropTemplate")
 			cooldownFrame:SetAllPoints()
 			cooldownFrame:EnableMouse (false)
 			cooldownFrame:SetFrameLevel (newIconFrame:GetFrameLevel()+1)
@@ -5337,7 +5337,7 @@ local default_icon_row_options = {
 }
 
 function DF:CreateIconRow (parent, name, options)
-	local f = CreateFrame ("frame", name, parent)
+	local f = CreateFrame("frame", name, parent, "BackdropTemplate")
 	f.IconPool = {}
 	f.NextIcon = 1
 	
@@ -5914,7 +5914,7 @@ DF.RadioGroupCoreFunctions = {
 	anchorOptions: override options for default_framelayout_options table
 --]=]
 function DF:CreateRadionGroup (parent, radioOptions, name, options, anchorOptions)
-	local f = CreateFrame ("frame", name, parent)
+	local f = CreateFrame ("frame", name, parent, "BackdropTemplate")
 	
 	DF:Mixin (f, DF.OptionsFunctions)
 	DF:Mixin (f, DF.RadioGroupCoreFunctions)
@@ -6321,7 +6321,7 @@ function DF:OpenLoadConditionsPanel (optionsTable, callback, frameOptions)
 			
 			do
 				--create a frame to show talents selected in other specs or characters
-				local otherTalents = CreateFrame ("frame", nil, f)
+				local otherTalents = CreateFrame ("frame", nil, f, "BackdropTemplate")
 				otherTalents:SetSize (26, 26)
 				otherTalents:SetPoint ("left", talentGroup.Title.widget, "right", 10, -2)
 				otherTalents.Texture = DF:CreateImage (otherTalents, [[Interface\BUTTONS\AdventureGuideMicrobuttonAlert]], 24, 24)
@@ -6419,7 +6419,7 @@ function DF:OpenLoadConditionsPanel (optionsTable, callback, frameOptions)
 			
 			do
 				--create a frame to show talents selected in other specs or characters
-				local otherTalents = CreateFrame ("frame", nil, f)
+				local otherTalents = CreateFrame ("frame", nil, f, "BackdropTemplate")
 				otherTalents:SetSize (26, 26)
 				otherTalents:SetPoint ("left", pvpTalentGroup.Title.widget, "right", 10, -2)
 				otherTalents.Texture = DF:CreateImage (otherTalents, [[Interface\BUTTONS\AdventureGuideMicrobuttonAlert]], 24, 24)
@@ -6698,7 +6698,7 @@ DF.DataScrollFunctions = {
 	
 	CreateLine = function (self, index)
 		--create a new line
-		local line = CreateFrame ("button", "$parentLine" .. index, self)
+		local line = CreateFrame ("button", "$parentLine" .. index, self, "BackdropTemplate")
 		line.Update = self.options.update_line_func
 		
 		--set its parameters
@@ -6961,7 +6961,7 @@ local statusbar_default_options = {
 }
 
 function DF:CreateStatusBar(f, options)
-	local statusBar = CreateFrame ("frame", nil, f)
+	local statusBar = CreateFrame ("frame", nil, f, "BackdropTemplate")
 	
 	DF:Mixin (statusBar, DF.OptionsFunctions)
 	DF:Mixin (statusBar, DF.LayoutFrame)
@@ -7131,9 +7131,9 @@ DF.StatusBarFunctions = {
 	
 	healthBarMetaFunctions.HealthBarEvents = {
 		{"PLAYER_ENTERING_WORLD"},
-		--{"UNIT_HEALTH", true},
+		{"UNIT_HEALTH", true},
 		{"UNIT_MAXHEALTH", true},
-		{"UNIT_HEALTH_FREQUENT", true},
+		--{"UNIT_HEALTH_FREQUENT", true},
 		{"UNIT_HEAL_PREDICTION", true},
 		{"UNIT_ABSORB_AMOUNT_CHANGED", true},
 		{"UNIT_HEAL_ABSORB_AMOUNT_CHANGED", true},
@@ -7369,7 +7369,7 @@ function DF:CreateHealthBar (parent, name, settingsOverride)
 
 	assert (name or parent:GetName(), "DetailsFramework:CreateHealthBar parameter 'name' omitted and parent has no name.")
 
-	local healthBar = CreateFrame ("StatusBar", name or (parent:GetName() .. "HealthBar"), parent)
+	local healthBar = CreateFrame ("StatusBar", name or (parent:GetName() .. "HealthBar"), parent, "BackdropTemplate")
 		do --layers
 			--background
 			healthBar.background = healthBar:CreateTexture (nil, "background")
@@ -7640,7 +7640,7 @@ function DF:CreatePowerBar (parent, name, settingsOverride)
 
 	assert (name or parent:GetName(), "DetailsFramework:CreatePowerBar parameter 'name' omitted and parent has no name.")
 
-	local powerBar = CreateFrame ("StatusBar", name or (parent:GetName() .. "PowerBar"), parent)
+	local powerBar = CreateFrame ("StatusBar", name or (parent:GetName() .. "PowerBar"), parent, "BackdropTemplate")
 		do --layers
 			--background
 			powerBar.background = powerBar:CreateTexture (nil, "background")
@@ -8505,7 +8505,7 @@ function DF:CreateCastBar (parent, name, settingsOverride)
 	
 	assert (name or parent:GetName(), "DetailsFramework:CreateCastBar parameter 'name' omitted and parent has no name.")
 	
-	local castBar = CreateFrame ("StatusBar", name or (parent:GetName() .. "CastBar"), parent)
+	local castBar = CreateFrame ("StatusBar", name or (parent:GetName() .. "CastBar"), parent, "BackdropTemplate")
 	
 		do --layers
 		
@@ -8623,7 +8623,7 @@ function DF:CreateBorderFrame (parent, name)
 
 	local parentName = name or "DetailsFrameworkBorderFrame" .. tostring (math.random (1, 100000000))
 
-	local f = CreateFrame ("frame", parentName, parent)
+	local f = CreateFrame ("frame", parentName, parent, "BackdropTemplate")
 	f:SetFrameLevel (f:GetFrameLevel()+1)
 	f:SetAllPoints()
 	
@@ -9128,7 +9128,7 @@ function DF:CreateUnitFrame (parent, name, unitFrameSettingsOverride, healthBarS
 	local parentName = name or ("DetailsFrameworkUnitFrame" .. tostring (math.random (1, 100000000)))
 	
 	--> create the main unit frame
-	local f = CreateFrame ("button", parentName, parent)
+	local f = CreateFrame ("button", parentName, parent, "BackdropTemplate")
 	
 	--> base level
 	local baseFrameLevel = f:GetFrameLevel()
@@ -9154,7 +9154,7 @@ function DF:CreateUnitFrame (parent, name, unitFrameSettingsOverride, healthBarS
 	f.border = borderFrame
 	
 	--> overlay frame (widgets that need to stay above the unit frame)
-	local overlayFrame = CreateFrame ("frame", "$parentOverlayFrame", f)
+	local overlayFrame = CreateFrame ("frame", "$parentOverlayFrame", f, "BackdropTemplate")
 	borderFrame:SetFrameLevel (f:GetFrameLevel() + 6)
 	f.overlayFrame = overlayFrame
 	
@@ -9328,7 +9328,7 @@ DF.TimeLineElapsedTimeFunctions = {
 
 --creates a frame to show the elapsed time in a row
 function DF:CreateElapsedTimeFrame (parent, name, options)
-	local elapsedTimeFrame = CreateFrame ("frame", name, parent)
+	local elapsedTimeFrame = CreateFrame ("frame", name, parent, "BackdropTemplate")
 	
 	DF:Mixin (elapsedTimeFrame, DF.OptionsFunctions)
 	DF:Mixin (elapsedTimeFrame, DF.LayoutFrame)
@@ -9468,7 +9468,7 @@ DF.TimeLineBlockFunctions = {
 	GetBlock = function (self, index)
 		local block = self.blocks [index]
 		if (not block) then
-			block = CreateFrame ("frame", nil, self)
+			block = CreateFrame ("frame", nil, self, "BackdropTemplate")
 			self.blocks [index] = block
 			
 			local background = block:CreateTexture (nil, "background")
@@ -9515,7 +9515,7 @@ DF.TimeLineFunctions = {
 		local line = self.lines [index]
 		if (not line) then
 			--create a new line
-			line = CreateFrame ("frame", "$parentLine" .. index, self.body)
+			line = CreateFrame ("frame", "$parentLine" .. index, self.body, "BackdropTemplate")
 			DF:Mixin (line, DF.TimeLineBlockFunctions)
 			self.lines [index] = line
 			
@@ -9646,7 +9646,7 @@ function DF:CreateTimeLineFrame (parent, name, options, timelineOptions)
 	local scrollWidth = 800 --placeholder until the timeline receives data
 	local scrollHeight = 800 --placeholder until the timeline receives data
 
-	local frameCanvas = CreateFrame ("scrollframe", name, parent)
+	local frameCanvas = CreateFrame ("scrollframe", name, parent, "BackdropTemplate")
 	DF:Mixin (frameCanvas, DF.TimeLineFunctions)
 	
 	frameCanvas.data = {}
@@ -9659,7 +9659,7 @@ function DF:CreateTimeLineFrame (parent, name, options, timelineOptions)
 			insets = {left = 1, right = 1, top = 0, bottom = 1},})
 	frameCanvas:SetBackdropColor (.1, .1, .1, .3)
 
-	local frameBody = CreateFrame ("frame", nil, frameCanvas)
+	local frameBody = CreateFrame ("frame", nil, frameCanvas, "BackdropTemplate")
 	frameBody:SetSize (scrollWidth, scrollHeight)
 	
 	frameCanvas:SetScrollChild (frameBody)
@@ -9674,7 +9674,7 @@ function DF:CreateTimeLineFrame (parent, name, options, timelineOptions)
 	frameCanvas.elapsedTimeFrame = DF:CreateElapsedTimeFrame (frameBody, frameCanvas:GetName() and frameCanvas:GetName() .. "ElapsedTimeFrame", timelineOptions)
 	
 	--create horizontal slider
-		local horizontalSlider = CreateFrame ("slider", nil, parent)
+		local horizontalSlider = CreateFrame ("slider", nil, parent, "BackdropTemplate")
 		horizontalSlider.bg = horizontalSlider:CreateTexture (nil, "background")
 		horizontalSlider.bg:SetAllPoints (true)
 		horizontalSlider.bg:SetTexture (0, 0, 0, 0.5)
@@ -9707,7 +9707,7 @@ function DF:CreateTimeLineFrame (parent, name, options, timelineOptions)
 		frameCanvas.horizontalSlider = horizontalSlider
 	
 	--create scale slider
-		local scaleSlider = CreateFrame ("slider", nil, parent)
+		local scaleSlider = CreateFrame ("slider", nil, parent, "BackdropTemplate")
 		scaleSlider.bg = scaleSlider:CreateTexture (nil, "background")
 		scaleSlider.bg:SetAllPoints (true)
 		scaleSlider.bg:SetTexture (0, 0, 0, 0.5)
@@ -9741,7 +9741,7 @@ function DF:CreateTimeLineFrame (parent, name, options, timelineOptions)
 		end)
 
 	--create vertical slider
-		local verticalSlider = CreateFrame ("slider", nil, parent)
+		local verticalSlider = CreateFrame ("slider", nil, parent, "BackdropTemplate")
 		verticalSlider.bg = verticalSlider:CreateTexture (nil, "background")
 		verticalSlider.bg:SetAllPoints (true)
 		verticalSlider.bg:SetTexture (0, 0, 0, 0.5)
@@ -9856,7 +9856,7 @@ f:Hide()
 function DF:ShowErrorMessage (errorMessage, titleText)
 	
 	if (not DF.ErrorMessagePanel) then
-		local f = CreateFrame ("frame", "DetailsFrameworkErrorMessagePanel", UIParent) 
+		local f = CreateFrame ("frame", "DetailsFrameworkErrorMessagePanel", UIParent, "BackdropTemplate") 
 		f:SetSize (400, 120)
 		f:SetFrameStrata ("FULLSCREEN")
 		f:SetPoint ("center", UIParent, "center", 0, 100)

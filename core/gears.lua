@@ -495,10 +495,10 @@ function _detalhes:RefreshUpdater(suggested_interval)
 	
 	if (_detalhes.atualizador) then
 		--_detalhes:CancelTimer(_detalhes.atualizador)
-		Details.Schedules:CancelTicker(_detalhes.atualizador)
+		Details.Schedules.Cancel(_detalhes.atualizador)
 	end
-	--_detalhes.atualizador = _detalhes:ScheduleRepeatingTimer("AtualizaGumpPrincipal", updateInterval, -1)
-	_detalhes.atualizador = Details.Schedules:NewTicker(updateInterval, Details.AtualizaGumpPrincipal, Details)
+	--_detalhes.atualizador = _detalhes:ScheduleRepeatingTimer("RefreshMainWindow", updateInterval, -1)
+	_detalhes.atualizador = Details.Schedules.NewTicker(updateInterval, Details.RefreshMainWindow, Details, -1)
 end
 
 function _detalhes:SetWindowUpdateSpeed(interval, nosave)

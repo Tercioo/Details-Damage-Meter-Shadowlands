@@ -251,7 +251,7 @@ function _detalhes:SchedulePetUpdate (seconds)
 	have_schedule = true
 
 	--_detalhes:ScheduleTimer ("UpdatePets", seconds or 5)
-	Details.Schedules:NewTimer(seconds or 5, Details.UpdatePets, Details)
+	Details.Schedules.NewTimer(seconds or 5, Details.UpdatePets, Details)
 end
 
 function _detalhes.refresh:r_container_pets (container)

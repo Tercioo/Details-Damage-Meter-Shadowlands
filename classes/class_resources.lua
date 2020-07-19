@@ -58,7 +58,7 @@ local headerColor = "yellow"
 
 local actor_class_color_r, actor_class_color_g, actor_class_color_b
 
-local info = _detalhes.janela_info
+local info = _detalhes.playerDetailWindow
 local keyName
 
 

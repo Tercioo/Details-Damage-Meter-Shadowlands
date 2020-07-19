@@ -4638,7 +4638,7 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 			if ((_detalhes.tabela_vigente:GetEndTime() or 0) + 2 >= _detalhes.encounter_table ["end"]) then
 				_detalhes.tabela_vigente:SetStartTime (_detalhes.encounter_table ["start"])
 				_detalhes.tabela_vigente:SetEndTime (_detalhes.encounter_table ["end"])
-				_detalhes:AtualizaGumpPrincipal (-1, true)
+				_detalhes:RefreshMainWindow (-1, true)
 			end
 		end
 

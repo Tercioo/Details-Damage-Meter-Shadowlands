@@ -22,7 +22,7 @@ local _unpack = unpack
 local atributos = _detalhes.atributos
 local sub_atributos = _detalhes.sub_atributos
 
-local info = _detalhes.janela_info
+local info = _detalhes.playerDetailWindow
 local classe_icones = _G.CLASS_ICON_TCOORDS
 local container3_bars_pointFunc
 
@@ -394,7 +394,7 @@ end
 -- � chamado pelo click no X e pelo reset do historico
 function _detalhes:FechaJanelaInfo (fromEscape)
 	if (info.ativo) then --> se a janela tiver aberta
-		--janela_info:Hide()
+		--playerDetailWindow:Hide()
 		if (fromEscape) then
 			gump:Fade (info, "in")
 		else
@@ -418,7 +418,7 @@ end
 --> esconde todas as barras das skills na janela de info
 ------------------------------------------------------------------------------------------------------------------------------
 function gump:HidaAllBarrasInfo()
-	local barras = _detalhes.janela_info.barras1
+	local barras = _detalhes.playerDetailWindow.barras1
 	for index = 1, #barras, 1 do
 		barras [index]:Hide()
 		barras [index].textura:SetStatusBarColor (1, 1, 1, 1)
@@ -429,7 +429,7 @@ end
 --> esconde todas as barras dos alvos do jogador
 ------------------------------------------------------------------------------------------------------------------------------
 function gump:HidaAllBarrasAlvo()
-	local barras = _detalhes.janela_info.barras2
+	local barras = _detalhes.playerDetailWindow.barras2
 	for index = 1, #barras, 1 do
 		barras [index]:Hide()
 	end
@@ -444,7 +444,7 @@ function gump:HidaAllDetalheInfo()
 	for _, barra in _ipairs (info.barras3) do 
 		barra:Hide()
 	end
-	_detalhes.janela_info.spell_icone:SetTexture ("")
+	_detalhes.playerDetailWindow.spell_icone:SetTexture ("")
 end
 
 
@@ -491,7 +491,7 @@ end
 
 ------------------------------------------------------------------------------------------------------------------------------
 function gump:HidaDetalheInfo (index)
-	local info = _detalhes.janela_info.grupos_detalhes [index]
+	local info = _detalhes.playerDetailWindow.grupos_detalhes [index]
 	info.nome:SetText ("")
 	info.nome2:SetText ("")
 	info.dano:SetText ("")
@@ -526,7 +526,7 @@ end
 function gump:CriaDetalheInfo (index)
 	local info = {}
 	
-	info.bg = _CreateFrame ("StatusBar", "DetailsPlayerDetailsWindow_DetalheInfoBG" .. index, _detalhes.janela_info.container_detalhes)
+	info.bg = _CreateFrame ("StatusBar", "DetailsPlayerDetailsWindow_DetalheInfoBG" .. index, _detalhes.playerDetailWindow.container_detalhes)
 	info.bg:SetStatusBarTexture ("Interface\\AddOns\\Details\\images\\bar_detalhes2")
 	info.bg:SetStatusBarColor (1, 1, 1, .84)
 	info.bg:SetMinMaxValues (0, 100)
@@ -547,7 +547,7 @@ function gump:CriaDetalheInfo (index)
 	info.bg.overlay:SetPoint ("TOPLEFT", info.bg, "TOPLEFT", -7, 6)
 	gump:Fade (info.bg.overlay, 1)
 	
-	info.bg.reportar = gump:NewDetailsButton (info.bg, nil, nil, _detalhes.Reportar, _detalhes.janela_info, 10+index, 16, 16,
+	info.bg.reportar = gump:NewDetailsButton (info.bg, nil, nil, _detalhes.Reportar, _detalhes.playerDetailWindow, 10+index, 16, 16,
 	"Interface\\COMMON\\VOICECHAT-ON", "Interface\\COMMON\\VOICECHAT-ON", "Interface\\COMMON\\VOICECHAT-ON", "Interface\\COMMON\\VOICECHAT-ON", nil, "DetailsJanelaInfoReport1")
 	info.bg.reportar:SetPoint ("BOTTOMLEFT", info.bg.overlay, "BOTTOMRIGHT",  -33, 10)
 	gump:Fade (info.bg.reportar, 1)
@@ -562,7 +562,7 @@ function gump:CriaDetalheInfo (index)
 	info.bg_end:SetHeight (47)
 	info.bg_end:SetTexture ("Interface\\AddOns\\Details\\images\\bar_detalhes2_end")
 
-	_detalhes.janela_info.grupos_detalhes [index] = info
+	_detalhes.playerDetailWindow.grupos_detalhes [index] = info
 end
 
 function info:SetDetailInfoConfigs (texture, color, x, y)
@@ -585,8 +585,8 @@ end
 --> determina qual a pocis�o que a barra de detalhes vai ocupar
 ------------------------------------------------------------------------------------------------------------------------------
 function gump:SetaDetalheInfoAltura (index, xmod, ymod)
-	local info = _detalhes.janela_info.grupos_detalhes [index]
-	local janela =  _detalhes.janela_info.container_detalhes
+	local info = _detalhes.playerDetailWindow.grupos_detalhes [index]
+	local janela =  _detalhes.playerDetailWindow.container_detalhes
 	
 	local altura = {-10, -63, -118, -173, -228, -279}
 	
@@ -600,28 +600,28 @@ function gump:SetaDetalheInfoAltura (index, xmod, ymod)
 	local y = -74 - ((index-1) * 79.5)
 	
 	if (index == 1) then
-		_detalhes.janela_info.right_background1:SetPoint ("topleft", _detalhes.janela_info, "topleft", 357 + (xmod or 0), y)
-		background = _detalhes.janela_info.right_background1
+		_detalhes.playerDetailWindow.right_background1:SetPoint ("topleft", _detalhes.playerDetailWindow, "topleft", 357 + (xmod or 0), y)
+		background = _detalhes.playerDetailWindow.right_background1
 		
 	elseif (index == 2) then
-		_detalhes.janela_info.right_background2:SetPoint ("topleft", _detalhes.janela_info, "topleft", 357 + (xmod or 0), y)
-		background = _detalhes.janela_info.right_background2
+		_detalhes.playerDetailWindow.right_background2:SetPoint ("topleft", _detalhes.playerDetailWindow, "topleft", 357 + (xmod or 0), y)
+		background = _detalhes.playerDetailWindow.right_background2
 		
 	elseif (index == 3) then
-		_detalhes.janela_info.right_background3:SetPoint ("topleft", _detalhes.janela_info, "topleft", 357 + (xmod or 0), y)
-		background = _detalhes.janela_info.right_background3
+		_detalhes.playerDetailWindow.right_background3:SetPoint ("topleft", _detalhes.playerDetailWindow, "topleft", 357 + (xmod or 0), y)
+		background = _detalhes.playerDetailWindow.right_background3
 		
 	elseif (index == 4) then
-		_detalhes.janela_info.right_background4:SetPoint ("topleft", _detalhes.janela_info, "topleft", 357 + (xmod or 0), y)
-		background = _detalhes.janela_info.right_background4
+		_detalhes.playerDetailWindow.right_background4:SetPoint ("topleft", _detalhes.playerDetailWindow, "topleft", 357 + (xmod or 0), y)
+		background = _detalhes.playerDetailWindow.right_background4
 		
 	elseif (index == 5) then
-		_detalhes.janela_info.right_background5:SetPoint ("topleft", _detalhes.janela_info, "topleft", 357 + (xmod or 0), y)
-		background = _detalhes.janela_info.right_background5
+		_detalhes.playerDetailWindow.right_background5:SetPoint ("topleft", _detalhes.playerDetailWindow, "topleft", 357 + (xmod or 0), y)
+		background = _detalhes.playerDetailWindow.right_background5
 		
 	elseif (index == 6) then
-		_detalhes.janela_info.right_background6:SetPoint ("topleft", _detalhes.janela_info, "topleft", 357 + (xmod or 0), y)
-		background = _detalhes.janela_info.right_background6
+		_detalhes.playerDetailWindow.right_background6:SetPoint ("topleft", _detalhes.playerDetailWindow, "topleft", 357 + (xmod or 0), y)
+		background = _detalhes.playerDetailWindow.right_background6
 		
 	end
 	
@@ -658,7 +658,7 @@ end
 --> seta o conte�do da barra de detalhes
 ------------------------------------------------------------------------------------------------------------------------------
 function gump:SetaDetalheInfoTexto (index, p, arg1, arg2, arg3, arg4, arg5, arg6)
-	local info = _detalhes.janela_info.grupos_detalhes [index]
+	local info = _detalhes.playerDetailWindow.grupos_detalhes [index]
 	
 	if (p) then
 		if (_type (p) == "table") then
@@ -718,7 +718,7 @@ end
 --> cria as 5 caixas de detalhes infos que ser�o usados
 ------------------------------------------------------------------------------------------------------------------------------
 local function cria_barras_detalhes()
-	_detalhes.janela_info.grupos_detalhes = {}
+	_detalhes.playerDetailWindow.grupos_detalhes = {}
 	for i = 1, spellInfoSettings.amount do
 		gump:CriaDetalheInfo (i)
 		gump:SetaDetalheInfoAltura (i)
@@ -795,7 +795,7 @@ end
 
 function gump:JI_AtualizaContainerBarras (amt)
 
-	local container = _detalhes.janela_info.container_barras
+	local container = _detalhes.playerDetailWindow.container_barras
 	
 	if (amt >= 9 and container.ultimo ~= amt) then
 		local tamanho = (CONST_BAR_HEIGHT + 1) * amt
@@ -813,7 +813,7 @@ end
 
 function gump:JI_AtualizaContainerAlvos (amt)
 
-	local container = _detalhes.janela_info.container_alvos
+	local container = _detalhes.playerDetailWindow.container_alvos
 	
 	if (amt >= 6 and container.ultimo ~= amt) then
 		local tamanho = (CONST_TARGET_HEIGHT + 1) * amt
@@ -1074,7 +1074,7 @@ local default_skin = function()
 	window.bg3_sec_texture:SetTexture (0, 0, 0, 1)
 	
 	--the 5 spell details blocks
-	for i, infoblock in ipairs (_detalhes.janela_info.grupos_detalhes) do
+	for i, infoblock in ipairs (_detalhes.playerDetailWindow.grupos_detalhes) do
 		infoblock.bg:SetSize (219, 47) --219 original
 	end
 	local xLocation = {-85, -136, -191, -246, -301, -356}
@@ -1303,7 +1303,7 @@ local elvui_skin = function()
 	window.bg3_sec_texture:SetTexture (0, 0, 0, 0.3)	
 	
 	--the 5 spell details blocks - not working
-	for i, infoblock in ipairs (_detalhes.janela_info.grupos_detalhes) do
+	for i, infoblock in ipairs (_detalhes.playerDetailWindow.grupos_detalhes) do
 		infoblock.bg:SetSize (330, 47)
 	end
 	local xLocation = {-85, -136, -191, -246, -301}
@@ -1552,7 +1552,7 @@ function gump:CriaJanelaInfo()
 	--este_gump:SetHeight (354)
 	
 	--> joga a janela para a global
-	_detalhes.janela_info = este_gump
+	_detalhes.playerDetailWindow = este_gump
 
 	--> icone da classe no canto esquerdo superior
 	este_gump.classe_icone = este_gump:CreateTexture (nil, "BACKGROUND")
@@ -5078,7 +5078,7 @@ function _detalhes:CreatePlayerDetailsTab (tabname, localized_name, condition, f
 	
 end
 
-function _detalhes.janela_info:monta_relatorio (botao)
+function _detalhes.playerDetailWindow:monta_relatorio (botao)
 	
 	local atributo = info.atributo
 	local sub_atributo = info.sub_atributo
@@ -5306,7 +5306,7 @@ local row_on_enter = function (self)
 	
 	self.mouse_over = true
 
-	for index, block in pairs (_detalhes.janela_info.grupos_detalhes) do
+	for index, block in pairs (_detalhes.playerDetailWindow.grupos_detalhes) do
 		detalhe_infobg_onleave (block.bg)
 	end
 	
@@ -5704,7 +5704,7 @@ end
 
 function gump:CriaNovaBarraInfo1 (instancia, index)
 
-	if (_detalhes.janela_info.barras1 [index]) then
+	if (_detalhes.playerDetailWindow.barras1 [index]) then
 		print ("erro a barra "..index.." ja existe na janela de detalhes...")
 		return
 	end
@@ -5770,7 +5770,7 @@ end
 
 function gump:CriaNovaBarraInfo2 (instancia, index)
 
-	if (_detalhes.janela_info.barras2 [index]) then
+	if (_detalhes.playerDetailWindow.barras2 [index]) then
 		print ("erro a barra "..index.." ja existe na janela de detalhes...")
 		return
 	end
@@ -5816,7 +5816,7 @@ local y_start = -10
 
 function gump:CriaNovaBarraInfo3 (instancia, index)
 
-	if (_detalhes.janela_info.barras3 [index]) then
+	if (_detalhes.playerDetailWindow.barras3 [index]) then
 		print ("erro a barra "..index.." ja existe na janela de detalhes...")
 		return
 	end

@@ -457,7 +457,7 @@
 		_detalhes.atributo_energy:UpdateSelectedToKFunction()
 		_detalhes.atributo_misc:UpdateSelectedToKFunction()
 		_detalhes.atributo_custom:UpdateSelectedToKFunction()
-		_detalhes:AtualizaGumpPrincipal (-1, true)
+		Details:RefreshMainWindow(-1, true)
 	end
 	
 --------end of ToK functions----

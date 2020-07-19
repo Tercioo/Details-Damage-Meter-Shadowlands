@@ -64,7 +64,7 @@ local TooltipMaximizedMethod = 1
 
 local headerColor = "yellow"
 
-local info = _detalhes.janela_info
+local info = _detalhes.playerDetailWindow
 local keyName
 
 function atributo_heal:NovaTabela (serial, nome, link)

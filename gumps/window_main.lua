@@ -2964,7 +2964,7 @@ local function iterate_scroll_scripts (backgrounddisplay, backgroundframe, basef
 		if (minValue == meu_valor) then
 			instancia.barraS[1] = 1
 			instancia.barraS[2] = instancia.rows_fit_in_window
-			instancia:AtualizaGumpPrincipal (instancia, true)
+			instancia:RefreshMainWindow (instancia, true)
 			self.ultimo = meu_valor
 			baseframe.button_up:Disable()
 				return
@@ -2976,7 +2976,7 @@ local function iterate_scroll_scripts (backgrounddisplay, backgroundframe, basef
 			end
 			instancia.barraS[1] = min
 			instancia.barraS[2] = (instancia.rows_showing or 0)
-			instancia:AtualizaGumpPrincipal (instancia, true)
+			instancia:RefreshMainWindow (instancia, true)
 			self.ultimo = meu_valor
 			baseframe.button_down:Disable()
 			return
@@ -3006,7 +3006,7 @@ local function iterate_scroll_scripts (backgrounddisplay, backgroundframe, basef
 						instancia.barraS[2] = instancia.barraS[2]+diff
 						instancia.barraS[1] = instancia.barraS[1]+diff
 					end
-					instancia:AtualizaGumpPrincipal (instancia, true)
+					instancia:RefreshMainWindow (instancia, true)
 				end
 			end
 		else --> scroll up
@@ -3027,7 +3027,7 @@ local function iterate_scroll_scripts (backgrounddisplay, backgroundframe, basef
 						instancia.barraS[1] = instancia.barraS[1]-diff
 					end
 
-					instancia:AtualizaGumpPrincipal (instancia, true)
+					instancia:RefreshMainWindow (instancia, true)
 				end
 			end
 		end
@@ -4283,7 +4283,7 @@ function _detalhes:SetBarModel (upper_enabled, upper_model, upper_alpha, lower_e
 	self:InstanceReset()
 	self:InstanceRefreshRows()
 	self:ReajustaGump()
-	_detalhes:AtualizaGumpPrincipal (-1, true)
+	_detalhes:RefreshMainWindow (-1, true)
 end
 
 -- ~spec ~icons
@@ -4314,14 +4314,13 @@ function _detalhes:SetBarSpecIconSettings (enabled, iconfile, fulltrack)
 		end
 		if (not have_enabled) then
 			_detalhes.track_specs = false
-			_detalhes:ResetSpecCache (true) --> for�ar
+			_detalhes:ResetSpecCache(true) --force
 		end
 	end
 	
 	self:InstanceReset()
 	self:InstanceRefreshRows()
 	self:ReajustaGump()
-	
 end
 
 function _detalhes:SetBarSettings (height, texture, colorclass, fixedcolor, backgroundtexture, backgroundcolorclass, backgroundfixedcolor, alpha, iconfile, barstart, spacement, texture_custom)

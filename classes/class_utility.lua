@@ -70,7 +70,7 @@ local UsingCustomRightText = false
 local FormatTooltipNumber = ToKFunctions [8]
 local TooltipMaximizedMethod = 1
 
-local info = _detalhes.janela_info
+local info = _detalhes.playerDetailWindow
 local keyName
 
 local headerColor = "yellow"
@@ -2150,7 +2150,7 @@ function atributo_misc:MontaDetalhesInterrupt (spellid, barra)
 	local nome, _, icone = _GetSpellInfo (spellid)
 	local infospell = {nome, nil, icone}
 
-	_detalhes.janela_info.spell_icone:SetTexture (infospell[3])
+	_detalhes.playerDetailWindow.spell_icone:SetTexture (infospell[3])
 
 	local total = self.interrupt
 	local meu_total = esta_magia.counter

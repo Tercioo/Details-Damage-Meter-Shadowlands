@@ -1802,7 +1802,7 @@ function _detalhes:InstanceReset (instance)
 	self:ResetaGump()
 	
 	if (not _detalhes.initializing) then
-		_detalhes:AtualizaGumpPrincipal (self, true) --atualiza todas as instancias
+		_detalhes:RefreshMainWindow (self, true) --atualiza todas as instancias
 	end
 end
 
@@ -1903,7 +1903,7 @@ function _detalhes:PostponeSwitchToCurrent (instance)
 			(instance.ativa) and
 			(instance.last_interaction+3 < _detalhes._tempo) and 
 			(not DetailsReportWindow or not DetailsReportWindow:IsShown()) and 
-			(not _detalhes.janela_info:IsShown())
+			(not _detalhes.playerDetailWindow:IsShown())
 		)
 	) then
 		instance._postponing_switch = nil
@@ -1928,7 +1928,7 @@ function _detalhes:CheckSwitchToCurrent()
 				instance.last_interaction = _detalhes._tempo
 			end
 			
-			if ((instance.last_interaction and (instance.last_interaction+3 > _detalhes._tempo)) or (DetailsReportWindow and DetailsReportWindow:IsShown()) or (_detalhes.janela_info:IsShown())) then
+			if ((instance.last_interaction and (instance.last_interaction+3 > _detalhes._tempo)) or (DetailsReportWindow and DetailsReportWindow:IsShown()) or (_detalhes.playerDetailWindow:IsShown())) then
 				--> postpone
 				instance._postponing_switch = _detalhes:ScheduleTimer ("PostponeSwitchToCurrent", 1, instance)
 			else
@@ -2013,7 +2013,7 @@ function _detalhes:AtualizaSegmentos_AfterCombat (instancia, historico)
 		instancia.showing[instancia.atributo].need_refresh = true
 		instancia.v_barras = true
 		instancia:ResetaGump()
-		instancia:AtualizaGumpPrincipal (true)
+		instancia:RefreshMainWindow (true)
 		_detalhes:AtualizarJanela (instancia)
 		
 	elseif (segmento < _detalhes.segments_amount and segmento > 0) then
@@ -2024,7 +2024,7 @@ function _detalhes:AtualizaSegmentos_AfterCombat (instancia, historico)
 		instancia.showing[instancia.atributo].need_refresh = true
 		instancia.v_barras = true
 		instancia:ResetaGump()
-		instancia:AtualizaGumpPrincipal (true)
+		instancia:RefreshMainWindow (true)
 		_detalhes:AtualizarJanela (instancia)
 	end
 	
@@ -2236,7 +2236,7 @@ function _detalhes:TrocaTabela (instancia, segmento, atributo, sub_atributo, ini
 							
 							if (not _detalhes.initializing and not iniciando_instancia) then
 								instance:ResetaGump()
-								instance:AtualizaGumpPrincipal (true)
+								instance:RefreshMainWindow (true)
 							end
 							
 							_detalhes:SendEvent ("DETAILS_INSTANCE_CHANGESEGMENT", nil, instance, segmento)
@@ -2360,11 +2360,11 @@ function _detalhes:TrocaTabela (instancia, segmento, atributo, sub_atributo, ini
 		instancia:ChangeIcon()
 	end
 
-	if (_detalhes.janela_info:IsShown() and instancia == _detalhes.janela_info.instancia) then	
+	if (_detalhes.playerDetailWindow:IsShown() and instancia == _detalhes.playerDetailWindow.instancia) then	
 		if (not instancia.showing or instancia.atributo > 4) then
 			_detalhes:FechaJanelaInfo()
 		else
-			local actor = instancia.showing (instancia.atributo, _detalhes.janela_info.jogador.nome)
+			local actor = instancia.showing (instancia.atributo, _detalhes.playerDetailWindow.jogador.nome)
 			if (actor) then
 				instancia:AbreJanelaInfo (actor, true)
 			else
@@ -2389,7 +2389,7 @@ function _detalhes:TrocaTabela (instancia, segmento, atributo, sub_atributo, ini
 
 	if (not _detalhes.initializing and not iniciando_instancia) then
 		instancia:ResetaGump()
-		instancia:AtualizaGumpPrincipal (true)
+		instancia:RefreshMainWindow (true)
 	end
 
 end
@@ -2797,7 +2797,7 @@ function _detalhes:AlteraModo (instancia, qual, from_mode_menu)
 		instancia.modo = modo_grupo
 		instancia:ChangeIcon()
 		
-		instancia:AtualizaGumpPrincipal (true)
+		instancia:RefreshMainWindow (true)
 		instancia.last_modo = modo_grupo
 		_detalhes:SendEvent ("DETAILS_INSTANCE_CHANGEMODE", nil, instancia, modo_grupo)
 		_detalhes:SendEvent ("DETAILS_INSTANCE_CHANGEATTRIBUTE", nil, instancia, instancia.atributo, instancia.sub_atributo)
@@ -2817,7 +2817,7 @@ function _detalhes:AlteraModo (instancia, qual, from_mode_menu)
 		instancia.modo = modo_all
 		instancia:ChangeIcon()
 		
-		instancia:AtualizaGumpPrincipal (true)
+		instancia:RefreshMainWindow (true)
 		instancia.last_modo = modo_all
 		_detalhes:SendEvent ("DETAILS_INSTANCE_CHANGEMODE", nil, instancia, modo_all)
 		_detalhes:SendEvent ("DETAILS_INSTANCE_CHANGEATTRIBUTE", nil, instancia, instancia.atributo, instancia.sub_atributo)

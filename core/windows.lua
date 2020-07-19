@@ -2303,7 +2303,7 @@
 				_detalhes.class_colors [self.MyObject.my_class][1] = r
 				_detalhes.class_colors [self.MyObject.my_class][2] = g
 				_detalhes.class_colors [self.MyObject.my_class][3] = b
-				_detalhes:AtualizaGumpPrincipal (-1, true)
+				_detalhes:RefreshMainWindow (-1, true)
 			end
 			local set_color = function (self, button, class, index)
 				local current_class_color = _detalhes.class_colors [class]
@@ -2317,7 +2317,7 @@
 				_detalhes.class_colors [self.MyObject.my_class][1] = r
 				_detalhes.class_colors [self.MyObject.my_class][2] = g
 				_detalhes.class_colors [self.MyObject.my_class][3] = b
-				_detalhes:AtualizaGumpPrincipal (-1, true)
+				_detalhes:RefreshMainWindow (-1, true)
 			end
 			local on_enter = function (self, capsule)
 				--_detalhes:CooltipPreset (1)

@@ -1,5 +1,5 @@
 
-local dversion = 185
+local dversion = 187
 
 local major, minor = "DetailsFramework-1.0", dversion
 local DF, oldminor = LibStub:NewLibrary (major, minor)
@@ -1095,7 +1095,10 @@ end
 
 					label.text = widget_table.get() or widget_table.text or ""
 					label.color = widget_table.color
-					label.fontface = widget_table.font
+
+					if (widget_table.font) then
+						label.fontface = widget_table.font
+					end
 
 					if (widget_table.text_template or text_template) then
 						label:SetTemplate(widget_table.text_template or text_template)

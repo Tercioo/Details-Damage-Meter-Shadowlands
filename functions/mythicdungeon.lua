@@ -133,7 +133,7 @@ function DetailsMythicPlusFrame.MergeSegmentsOnEnd()
     Details:InstanciaCallFunction (Details.AtualizaSegmentos)
     Details:InstanciaCallFunction (Details.AtualizaSoloMode_AfertReset)
     Details:InstanciaCallFunction (Details.ResetaGump)
-    Details:AtualizaGumpPrincipal (-1, true)
+    Details:RefreshMainWindow (-1, true)
     
     if (DetailsMythicPlusFrame.DevelopmentDebug) then
         print ("Details!", "MergeSegmentsOnEnd() > finished merging segments.")
@@ -255,7 +255,7 @@ function DetailsMythicPlusFrame.MergeTrashCleanup (isFromSchedule)
         Details:InstanciaCallFunction (Details.AtualizaSegmentos)
         Details:InstanciaCallFunction (Details.AtualizaSoloMode_AfertReset)
         Details:InstanciaCallFunction (Details.ResetaGump)
-        Details:AtualizaGumpPrincipal (-1, true)
+        Details:RefreshMainWindow (-1, true)
     end
 end
 
@@ -353,7 +353,7 @@ function DetailsMythicPlusFrame.MergeRemainingTrashAfterAllBossesDone()
             Details:InstanciaCallFunction (Details.AtualizaSegmentos)
             Details:InstanciaCallFunction (Details.AtualizaSoloMode_AfertReset)
             Details:InstanciaCallFunction (Details.ResetaGump)
-            Details:AtualizaGumpPrincipal (-1, true)
+            Details:RefreshMainWindow (-1, true)
         end
         
         Details:SendEvent ("DETAILS_DATA_SEGMENTREMOVED")

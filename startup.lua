@@ -1,11 +1,15 @@
+
+
+
 local UnitGroupRolesAssigned = _G.DetailsFramework.UnitGroupRolesAssigned
 local wipe = _G.wipe
 local C_Timer = _G.C_Timer
+local CreateFrame = _G.CreateFrame
+local Loc = _G.LibStub("AceLocale-3.0"):GetLocale("Details")
 
---> start funtion
+
+--start funtion
 function Details:StartMeUp() --I'll never stop!
-
-	local Loc = LibStub("AceLocale-3.0"):GetLocale("Details")
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --> row single click, this determines what happen when the user click on a bar
@@ -20,10 +24,10 @@ function Details:StartMeUp() --I'll never stop!
 		--cc breaks, ress, interrupts, dispells, deaths
 			self.row_singleclick_overwrite [4] = {true, true, true, true, self.atributo_misc.ReportSingleDeadLine, self.atributo_misc.ReportSingleCooldownLine, self.atributo_misc.ReportSingleBuffUptimeLine, self.atributo_misc.ReportSingleDebuffUptimeLine} 
 		
-		function self:ReplaceRowSingleClickFunction (attribute, sub_attribute, func)
-			assert (type (attribute) == "number" and attribute >= 1 and attribute <= 4, "ReplaceRowSingleClickFunction expects a attribute index on #1 argument.")
-			assert (type (sub_attribute) == "number" and sub_attribute >= 1 and sub_attribute <= 10, "ReplaceRowSingleClickFunction expects a sub attribute index on #2 argument.")
-			assert (type (func) == "function", "ReplaceRowSingleClickFunction expects a function on #3 argument.")
+		function self:ReplaceRowSingleClickFunction(attribute, sub_attribute, func)
+			assert(type(attribute) == "number" and attribute >= 1 and attribute <= 4, "ReplaceRowSingleClickFunction expects a attribute index on #1 argument.")
+			assert(type(sub_attribute) == "number" and sub_attribute >= 1 and sub_attribute <= 10, "ReplaceRowSingleClickFunction expects a sub attribute index on #2 argument.")
+			assert(type(func) == "function", "ReplaceRowSingleClickFunction expects a function on #3 argument.")
 			
 			self.row_singleclick_overwrite [attribute] [sub_attribute] = func
 			return true
@@ -34,15 +38,14 @@ function Details:StartMeUp() --I'll never stop!
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --> initialize
 
-	--> build frames
-	
-		--> plugin container
+	--build frames
+		--plugin container
 			self:CreatePluginWindowContainer()
 			self:InitializeForge() --to install into the container plugin
 			self:InitializeRaidHistoryWindow()
 			self:InitializeOptionsWindow()
 			
-			C_Timer.After (2, function()
+			C_Timer.After(2, function()
 				self:InitializeAuraCreationWindow()
 			end)
 			
@@ -52,26 +55,21 @@ function Details:StartMeUp() --I'll never stop!
 			self:InitializePlaterIntegrationWindow()
 			self:InitializeMacrosWindow()
 			
-		--> bookmarks
-			if (self.switch.InitSwitch) then
-				--self.switch:InitSwitch()
-			end
-			
-		--> custom window
+		--custom window
 			self.custom = self.custom or {}
 			
-		--> micro button alert
+		--micro button alert
 			--"MainMenuBarMicroButton" has been removed on 9.0
-			self.MicroButtonAlert = CreateFrame ("frame", "DetailsMicroButtonAlert", UIParent)
+			self.MicroButtonAlert = CreateFrame("frame", "DetailsMicroButtonAlert", UIParent)
 			self.MicroButtonAlert.Text = self.MicroButtonAlert:CreateFontString(nil, "overlay", "GameFontNormal")
 			self.MicroButtonAlert.Text:SetPoint("center")
 			self.MicroButtonAlert:Hide()
 			
-		--> actor details window
-			self.janela_info = self.gump:CriaJanelaInfo()
-			self.gump:Fade (self.janela_info, 1)
+		--actor details window
+			self.playerDetailWindow = self.gump:CriaJanelaInfo()
+			self.gump:Fade(self.playerDetailWindow, 1)
 			
-		--> copy and paste window
+		--copy and paste window
 			self:CreateCopyPasteWindow()
 			self.CreateCopyPasteWindow = nil
 			
@@ -96,59 +94,59 @@ function Details:StartMeUp() --I'll never stop!
 	
 		self:CheckSwitchOnLogon()
 	
-		function _detalhes:ScheduledWindowUpdate (forced)
+		function _detalhes:ScheduledWindowUpdate(forced)
 			if (not forced and _detalhes.in_combat) then
 				return
 			end
 			_detalhes.scheduled_window_update = nil
-			_detalhes:AtualizaGumpPrincipal (-1, true)
+			_detalhes:RefreshMainWindow(-1, true)
 		end
-		function _detalhes:ScheduleWindowUpdate (time, forced)
+		function _detalhes:ScheduleWindowUpdate(time, forced)
 			if (_detalhes.scheduled_window_update) then
-				_detalhes:CancelTimer (_detalhes.scheduled_window_update)
+				Details.Schedules.Cancel(_detalhes.scheduled_window_update)
 				_detalhes.scheduled_window_update = nil
 			end
-			--_detalhes.scheduled_window_update = _detalhes:ScheduleTimer ("ScheduledWindowUpdate", time or 1, forced)
-			Details.Schedules:NewTimer(time or 1, Details.ScheduledWindowUpdate, Details, forced)
+			--_detalhes.scheduled_window_update = _detalhes:ScheduleTimer("ScheduledWindowUpdate", time or 1, forced)
+			_detalhes.scheduled_window_update = Details.Schedules.NewTimer(time or 1, Details.ScheduledWindowUpdate, Details, forced)
 		end
 	
-		self:AtualizaGumpPrincipal (-1, true)
-		_detalhes:RefreshUpdater()
+		self:RefreshMainWindow(-1, true)
+		Details:RefreshUpdater()
 		
 		for index = 1, #self.tabela_instancias do
-			local instance = self.tabela_instancias [index]
+			local instance = self.tabela_instancias[index]
 			if (instance:IsAtiva()) then
-				Details.Schedules:NewTimer(1, Details.RefreshBars, Details, instance)
-				Details.Schedules:NewTimer(1, Details.InstanceReset, Details, instance)
-				Details.Schedules:NewTimer(1, Details.InstanceRefreshRows, Details, instance)
+				Details.Schedules.NewTimer(1, Details.RefreshBars, Details, instance)
+				Details.Schedules.NewTimer(1, Details.InstanceReset, Details, instance)
+				Details.Schedules.NewTimer(1, Details.InstanceRefreshRows, Details, instance)
 
-				--self:ScheduleTimer ("RefreshBars", 1, instance)
-				--self:ScheduleTimer ("InstanceReset", 1, instance)
-				--self:  ("InstanceRefreshRows", 1, instance)
+				--self:ScheduleTimer("RefreshBars", 1, instance)
+				--self:ScheduleTimer("InstanceReset", 1, instance)
+				--self: ("InstanceRefreshRows", 1, instance)
 			end
 		end
 
 		function self:RefreshAfterStartup()
 		
-			self:AtualizaGumpPrincipal (-1, true)
+			self:RefreshMainWindow(-1, true)
 			
 			local lower_instance = _detalhes:GetLowerInstanceNumber()
 
 			for index = 1, #self.tabela_instancias do
 				local instance = self.tabela_instancias [index]
-				if (instance:IsAtiva()) then
+				if(instance:IsAtiva()) then
 					--> refresh wallpaper
-					if (instance.wallpaper.enabled) then
-						instance:InstanceWallpaper (true)
+					if(instance.wallpaper.enabled) then
+						instance:InstanceWallpaper(true)
 					else
-						instance:InstanceWallpaper (false)
+						instance:InstanceWallpaper(false)
 					end
 					
 					--> refresh desaturated icons if is lower instance
-					if (index == lower_instance) then
+					if(index == lower_instance) then
 						instance:DesaturateMenu()
 
-						instance:SetAutoHideMenu (nil, nil, true)
+						instance:SetAutoHideMenu(nil, nil, true)
 					end
 					
 				end
@@ -157,9 +155,9 @@ function Details:StartMeUp() --I'll never stop!
 			--> refresh lower instance plugin icons and skin
 			_detalhes.ToolBar:ReorganizeIcons()
 			--> refresh skin for other windows
-			if (lower_instance) then
+			if(lower_instance) then
 				for i = lower_instance+1, #self.tabela_instancias do
-					local instance = self:GetInstance (i)
+					local instance = self:GetInstance(i)
 					if (instance and instance.baseframe and instance.ativa) then
 						instance:ChangeSkin()
 					end
@@ -170,7 +168,7 @@ function Details:StartMeUp() --I'll never stop!
 			
 			function _detalhes:CheckWallpaperAfterStartup()
 				if (not _detalhes.profile_loaded) then
-					Details.Schedules:NewTimer(5, Details.CheckWallpaperAfterStartup, Details)
+					Details.Schedules.NewTimer(5, Details.CheckWallpaperAfterStartup, Details)
 					--return _detalhes:ScheduleTimer ("CheckWallpaperAfterStartup", 2)
 				end
 				
@@ -191,18 +189,18 @@ function Details:StartMeUp() --I'll never stop!
 				_detalhes.profile_loaded = nil
 			end
 			--_detalhes:ScheduleTimer ("CheckWallpaperAfterStartup", 5)
-			Details.Schedules:NewTimer(5, Details.CheckWallpaperAfterStartup, Details)
+			Details.Schedules.NewTimer(5, Details.CheckWallpaperAfterStartup, Details)
 		end
 
 		--self:ScheduleTimer ("RefreshAfterStartup", 5)
-		Details.Schedules:NewTimer(5, Details.RefreshAfterStartup, Details)
+		Details.Schedules.NewTimer(5, Details.RefreshAfterStartup, Details)
 
 	--start garbage collector
 	self.ultima_coleta = 0
 	self.intervalo_coleta = 720
 	self.intervalo_memoria = 180
 	--self.garbagecollect = self:ScheduleRepeatingTimer ("IniciarColetaDeLixo", self.intervalo_coleta) --deprecated
-	self.garbagecollect = Details.Schedules:NewTicker(self.intervalo_coleta, Details.IniciarColetaDeLixo, Details)
+	self.garbagecollect = Details.Schedules.NewTicker(self.intervalo_coleta, Details.IniciarColetaDeLixo, Details)
 	self.next_memory_check = _G.time()+self.intervalo_memoria
 
 	--player role
@@ -259,7 +257,7 @@ function Details:StartMeUp() --I'll never stop!
 	
 	--send messages gathered on initialization
 	--self:ScheduleTimer ("ShowDelayMsg", 10)
-	Details.Schedules:NewTimer(10, Details.ShowDelayMsg, Details)
+	Details.Schedules.NewTimer(10, Details.ShowDelayMsg, Details)
 	
 	--send instance open signal
 	for index, instancia in _detalhes:ListInstances() do
@@ -285,7 +283,7 @@ function Details:StartMeUp() --I'll never stop!
 	end
 
 	--self:ScheduleTimer ("AnnounceStartup", 5)
-	Details.Schedules:NewTimer(5, Details.AnnounceStartup, Details)
+	Details.Schedules.NewTimer(5, Details.AnnounceStartup, Details)
 	
 	if (_detalhes.failed_to_load) then
 		_detalhes:CancelTimer (_detalhes.failed_to_load)
@@ -369,7 +367,7 @@ function Details:StartMeUp() --I'll never stop!
 				_detalhes.gump:Fade (dev_text, "in", 2)
 				self.gump:Fade (instance._version, "in", 2)
 			end
-			Details.Schedules:NewTimer(12, Details.FadeStartVersion, Details)
+			Details.Schedules.NewTimer(12, Details.FadeStartVersion, Details)
 		end
 	end
 	
@@ -380,7 +378,7 @@ function Details:StartMeUp() --I'll never stop!
 		--_detalhes:OpenWelcomeWindow()
 	end
 	--_detalhes:ScheduleTimer ("OpenOptionsWindowAtStart", 2)
-	Details.Schedules:NewTimer(2, Details.OpenOptionsWindowAtStart, Details)
+	Details.Schedules.NewTimer(2, Details.OpenOptionsWindowAtStart, Details)
 	--_detalhes:OpenCustomDisplayWindow()
 	
 	--> minimap
@@ -391,7 +389,7 @@ function Details:StartMeUp() --I'll never stop!
 		_detalhes:DoRegisterHotCorner()
 	end
 	--_detalhes:ScheduleTimer ("RegisterHotCorner", 5)
-	Details.Schedules:NewTimer(5, Details.RegisterHotCorner, Details)
+	Details.Schedules.NewTimer(5, Details.RegisterHotCorner, Details)
 
 
 	--restore mythic dungeon state
@@ -418,7 +416,7 @@ function Details:StartMeUp() --I'll never stop!
 	_detalhes:BrokerTick()
 	
 	--boss mobs callbacks (DBM and BigWigs)
-	Details.Schedules:NewTimer(5, Details.BossModsLink, Details)
+	Details.Schedules.NewTimer(5, Details.BossModsLink, Details)
 
 	--limit item level life for 24Hs
 	local now = _G.time()

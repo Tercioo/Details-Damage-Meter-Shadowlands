@@ -1113,8 +1113,8 @@ function DF:NewSpecialLuaEditorEntry (parent, w, h, member, name, nointent, show
 		parent [member] = borderframe
 	end
 	
-	local scrollframe = CreateFrame ("ScrollFrame", name, borderframe, "UIPanelScrollFrameTemplate","BackdropTemplate")
-	local scrollframeNumberLines = CreateFrame ("ScrollFrame", name .. "NumberLines", borderframe, "UIPanelScrollFrameTemplate")
+	local scrollframe = CreateFrame ("ScrollFrame", name, borderframe, "UIPanelScrollFrameTemplate, BackdropTemplate")
+	local scrollframeNumberLines = CreateFrame ("ScrollFrame", name .. "NumberLines", borderframe, "UIPanelScrollFrameTemplate, BackdropTemplate")
 
 	scrollframe.editbox = CreateFrame ("editbox", "$parentEditBox", scrollframe,"BackdropTemplate")
 	scrollframe.editbox:SetMultiLine (true)
@@ -1126,7 +1126,7 @@ function DF:NewSpecialLuaEditorEntry (parent, w, h, member, name, nointent, show
 
 	--line number
 	if (showLineNumbers) then
-		scrollframeNumberLines.editbox = CreateFrame ("editbox", "$parentLineNumbers", scrollframeNumberLines)
+		scrollframeNumberLines.editbox = CreateFrame ("editbox", "$parentLineNumbers", scrollframeNumberLines, "BackdropTemplate")
 		scrollframeNumberLines.editbox:SetMultiLine (true)
 		scrollframeNumberLines.editbox:SetAutoFocus (false)
 		scrollframeNumberLines.editbox:SetEnabled (false)

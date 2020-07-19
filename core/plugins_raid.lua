@@ -72,7 +72,7 @@
 			instance:EsconderScrollBar (true) --> hida a scrollbar
 		end
 		_detalhes:ResetaGump (instance)
-		instance:AtualizaGumpPrincipal (true)
+		instance:RefreshMainWindow (true)
 		
 		--> get the plugin name
 		

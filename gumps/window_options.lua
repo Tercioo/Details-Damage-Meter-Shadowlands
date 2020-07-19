@@ -4515,7 +4515,7 @@ function window:CreateFrame1()
 		local onSelectTimeType = function (_, _, timetype)
 			_detalhes.time_type = timetype
 			_detalhes.time_type_original = timetype
-			_detalhes:AtualizaGumpPrincipal (-1, true)
+			_detalhes:RefreshMainWindow (-1, true)
 			_detalhes:SendOptionsModifiedEvent (DetailsOptionsWindow.instance)
 		end
 		local timetypeOptions = {
@@ -6030,7 +6030,7 @@ function window:CreateFrame4()
 				end
 			end
 			
-			_detalhes:AtualizaGumpPrincipal (-1, true)
+			_detalhes:RefreshMainWindow (-1, true)
 			_detalhes:SendOptionsModifiedEvent (DetailsOptionsWindow.instance)			
 		end
 
@@ -8151,7 +8151,7 @@ function window:CreateFrame6()
 			_detalhes:InstanciaCallFunction (_detalhes.AtualizaSegmentos) -- atualiza o instancia.showing para as novas tabelas criadas
 			_detalhes:InstanciaCallFunction (_detalhes.AtualizaSoloMode_AfertReset) -- verifica se precisa zerar as tabela da janela solo mode
 			_detalhes:InstanciaCallFunction (_detalhes.ResetaGump) --_detalhes:ResetaGump ("de todas as instancias")
-			_detalhes:AtualizaGumpPrincipal (-1, true) --atualiza todas as instancias
+			_detalhes:RefreshMainWindow (-1, true) --atualiza todas as instancias
 			
 			_detalhes:SendOptionsModifiedEvent (DetailsOptionsWindow.instance)
 		end
