@@ -1495,17 +1495,35 @@
 				if (target == 1) then --Debuff on Player
 					local add = _detalhes.table.copy ({}, debuff_prototype)
 					add.trigger.spellId = tostring (spellid)
-					add.trigger.spellIds[1] = spellid
-					add.trigger.names [1] = spellname
+					add.trigger.spellIds[1] = "" --spellid
+					add.trigger.names  = nil --spellname
+					add.trigger.auranames = {tostring(spellid)}
 					add.trigger.unit = "player"
+					add.trigger.useName = true
+					add.trigger.type = "aura2"
+					add.trigger.matchesShowOn = "showOnActive"
+					add.trigger.unitExists = false
+					add.trigger.name_operator = nil
+					add.trigger.genericShowOn = "showOnActive"
+					add.trigger.debuffClass = nil
+
+
 					_detalhes.table.overwrite (new_aura, add)
 					
 				elseif (target == 2) then --Debuff on Target
 					local add = _detalhes.table.copy ({}, debuff_prototype)
 					add.trigger.spellId = tostring (spellid)
-					add.trigger.spellIds[1] = spellid
-					add.trigger.names[1] = spellname
+					add.trigger.spellIds[1] = "" --spellid
+					add.trigger.names = nil --spellname
+					add.trigger.auranames = {tostring(spellid)}
 					add.trigger.unit = "target"
+					add.trigger.useName = true
+					add.trigger.type = "aura2"
+					add.trigger.matchesShowOn = "showOnActive"
+					add.trigger.unitExists = false
+					add.trigger.name_operator = nil
+					add.trigger.genericShowOn = "showOnActive"
+					add.trigger.debuffClass = nil
 					
 					--set as own only to avoid being active by other players
 					add.trigger.ownOnly = true
@@ -1515,33 +1533,69 @@
 				elseif (target == 3) then --Debuff on Focus
 					local add = _detalhes.table.copy ({}, debuff_prototype)
 					add.trigger.spellId = tostring (spellid)
-					add.trigger.spellIds[1] = spellid
-					add.trigger.names[1] = spellname
+					add.trigger.spellIds[1] = "" --spellid
+					add.trigger.names = nil --spellname
+					add.trigger.auranames = {tostring(spellid)}
 					add.trigger.unit = "focus"
+					add.trigger.useName = true
+					add.trigger.type = "aura2"
+					add.trigger.matchesShowOn = "showOnActive"
+					add.trigger.unitExists = false
+					add.trigger.name_operator = nil
+					add.trigger.genericShowOn = "showOnActive"
+					add.trigger.debuffClass = nil
+
 					_detalhes.table.overwrite (new_aura, add)
 					
 				elseif (target == 11) then --Buff on Player
 					local add = _detalhes.table.copy ({}, buff_prototype)
 					add.trigger.spellId = tostring (spellid)
-					add.trigger.spellIds[1] = spellid
-					add.trigger.names[1] = spellname
+					add.trigger.spellIds[1] = "" --spellid
+					add.trigger.names = nil --spellname
+					add.trigger.auranames = {tostring(spellid)}
 					add.trigger.unit = "player"
+					add.trigger.useName = true
+					add.trigger.type = "aura2"
+					add.trigger.matchesShowOn = "showOnActive"
+					add.trigger.unitExists = false
+					add.trigger.name_operator = nil
+					add.trigger.genericShowOn = "showOnActive"
+					add.trigger.debuffClass = nil
+
 					_detalhes.table.overwrite (new_aura, add)
 					
 				elseif (target == 12) then --Buff on Target
 					local add = _detalhes.table.copy ({}, buff_prototype)
 					add.trigger.spellId = tostring (spellid)
-					add.trigger.spellIds[1] = spellid
-					add.trigger.names[1] = spellname
+					add.trigger.spellIds[1] = "" --spellid
+					add.trigger.names = nil --spellname
 					add.trigger.unit = "target"
+					add.trigger.auranames = {tostring(spellid)}
+					add.trigger.useName = true
+					add.trigger.type = "aura2"
+					add.trigger.matchesShowOn = "showOnActive"
+					add.trigger.unitExists = false
+					add.trigger.name_operator = nil
+					add.trigger.genericShowOn = "showOnActive"
+					add.trigger.debuffClass = nil
+
 					_detalhes.table.overwrite (new_aura, add)
 					
 				elseif (target == 13) then --Buff on Focus
 					local add = _detalhes.table.copy ({}, buff_prototype)
 					add.trigger.spellId = tostring (spellid)
-					add.trigger.spellIds[1] = spellid
-					add.trigger.names[1] = spellname
+					add.trigger.spellIds[1] = "" --spellid
+					add.trigger.names = nil --spellname
+					add.trigger.auranames = {tostring(spellid)}
 					add.trigger.unit = "focus"
+					add.trigger.useName = true
+					add.trigger.type = "aura2"
+					add.trigger.matchesShowOn = "showOnActive"
+					add.trigger.unitExists = false
+					add.trigger.name_operator = nil
+					add.trigger.genericShowOn = "showOnActive"
+					add.trigger.debuffClass = nil
+
 					_detalhes.table.overwrite (new_aura, add)
 					
 				elseif (target == 21) then --Spell Cast Started
@@ -1817,7 +1871,7 @@
 			f.TitleBar:SetBackdropBorderColor (0, 0, 0, 1)
 			
 			--close button
-			f.Close = CreateFrame ("button", "$parentCloseButton", f)
+			f.Close = CreateFrame ("button", "$parentCloseButton", f, "BackdropTemplate")
 			f.Close:SetPoint ("right", f.TitleBar, "right", -2, 0)
 			f.Close:SetSize (16, 16)
 			f.Close:SetNormalTexture (_detalhes.gump.folder .. "icons")
@@ -2700,7 +2754,7 @@
 		local current_table_dbm = {}
 		local current_table_bigwigs = {}
 	
-		local event_frame = CreateFrame ("frame", nil, UIParent)
+		local event_frame = CreateFrame ("frame", nil, UIParent, "BackdropTemplate")
 		event_frame:SetScript ("OnEvent", function (self, event, ...)
 			if (event == "ENCOUNTER_START") then
 				local encounterID, encounterName, difficultyID, raidSize = select (1, ...)
@@ -3098,7 +3152,7 @@
 				desc = L["STRING_FORGE_BUTTON_PLAYERS_DESC"],
 				filters_widgets = function()
 					if (not DetailsForgeAllPlayersFilterPanel) then
-						local w = CreateFrame ("frame", "DetailsForgeAllPlayersFilterPanel", f)
+						local w = CreateFrame ("frame", "DetailsForgeAllPlayersFilterPanel", f, "BackdropTemplate")
 						w:SetSize (600, 20)
 						w:SetPoint ("topleft", f, "topleft", 164, -40)
 						--
@@ -3162,7 +3216,7 @@
 				desc = L["STRING_FORGE_BUTTON_PETS_DESC"],
 				filters_widgets = function()
 					if (not DetailsForgeAllPetsFilterPanel) then
-						local w = CreateFrame ("frame", "DetailsForgeAllPetsFilterPanel", f)
+						local w = CreateFrame ("frame", "DetailsForgeAllPetsFilterPanel", f, "BackdropTemplate")
 						w:SetSize (600, 20)
 						w:SetPoint ("topleft", f, "topleft", 164, -40)
 						--
@@ -3249,7 +3303,7 @@
 				desc = L["STRING_FORGE_BUTTON_ENEMIES_DESC"],
 				filters_widgets = function()
 					if (not DetailsForgeAllEnemiesFilterPanel) then
-						local w = CreateFrame ("frame", "DetailsForgeAllEnemiesFilterPanel", f)
+						local w = CreateFrame ("frame", "DetailsForgeAllEnemiesFilterPanel", f, "BackdropTemplate")
 						w:SetSize (600, 20)
 						w:SetPoint ("topleft", f, "topleft", 164, -40)
 						--
@@ -3346,7 +3400,7 @@
 				desc = L["STRING_FORGE_BUTTON_ALLSPELLS_DESC"],
 				filters_widgets = function()
 					if (not DetailsForgeAllSpellsFilterPanel) then
-						local w = CreateFrame ("frame", "DetailsForgeAllSpellsFilterPanel", f)
+						local w = CreateFrame ("frame", "DetailsForgeAllSpellsFilterPanel", f, "BackdropTemplate")
 						w:SetSize (600, 20)
 						w:SetPoint ("topleft", f, "topleft", 164, -40)
 						--
@@ -3476,7 +3530,7 @@
 				filters_widgets = function()
 					if (not DetailsForgeEncounterBossSpellsFilterPanel) then
 					
-						local w = CreateFrame ("frame", "DetailsForgeEncounterBossSpellsFilterPanel", f)
+						local w = CreateFrame ("frame", "DetailsForgeEncounterBossSpellsFilterPanel", f, "BackdropTemplate")
 						w:SetSize (600, 20)
 						w:SetPoint ("topleft", f, "topleft", 164, -40)
 						--
@@ -3623,7 +3677,7 @@
 				filters_widgets = function()
 					if (not DetailsForgeEncounterNpcIDsFilterPanel) then
 					
-						local w = CreateFrame ("frame", "DetailsForgeEncounterNpcIDsFilterPanel", f)
+						local w = CreateFrame ("frame", "DetailsForgeEncounterNpcIDsFilterPanel", f, "BackdropTemplate")
 						w:SetSize (600, 20)
 						w:SetPoint ("topleft", f, "topleft", 164, -40)
 						--npc name filter
@@ -3723,7 +3777,7 @@
 				desc = L["STRING_FORGE_BUTTON_DBMTIMERS_DESC"],
 				filters_widgets = function()
 					if (not DetailsForgeDBMBarsFilterPanel) then
-						local w = CreateFrame ("frame", "DetailsForgeDBMBarsFilterPanel", f)
+						local w = CreateFrame ("frame", "DetailsForgeDBMBarsFilterPanel", f, "BackdropTemplate")
 						w:SetSize (600, 20)
 						w:SetPoint ("topleft", f, "topleft", 164, -40)
 						--
@@ -3854,7 +3908,7 @@
 				desc = L["STRING_FORGE_BUTTON_BWTIMERS_DESC"],
 				filters_widgets = function()
 					if (not DetailsForgeBigWigsBarsFilterPanel) then
-						local w = CreateFrame ("frame", "DetailsForgeBigWigsBarsFilterPanel", f)
+						local w = CreateFrame ("frame", "DetailsForgeBigWigsBarsFilterPanel", f, "BackdropTemplate")
 						w:SetSize (600, 20)
 						w:SetPoint ("topleft", f, "topleft", 164, -40)
 						--
@@ -4111,7 +4165,7 @@ local on_deathrecap_line_leave = function (self)
 end
 
 local create_deathrecap_line = function (parent, n)
-	local line = CreateFrame ("frame", "DetailsDeathRecapLine" .. n, parent)
+	local line = CreateFrame ("frame", "DetailsDeathRecapLine" .. n, parent, "BackdropTemplate")
 	line:SetPoint ("topleft", parent, "topleft", 10, (-24 * n) - 17)
 	line:SetPoint ("topright", parent, "topright", -10, (-24 * n) - 17)
 	--line:SetBackdrop ({bgFile = [[Interface\AddOns\Details\images\background]], tile = true, tileSize = 16,
@@ -4137,6 +4191,8 @@ local create_deathrecap_line = function (parent, n)
 	local sourceName = line:CreateFontString (nil, "overlay", "GameFontNormal")
 	local amount = line:CreateFontString (nil, "overlay", "GameFontNormal")
 	local lifePercent = line:CreateFontString (nil, "overlay", "GameFontNormal")
+	local lifeStatusBar = line:CreateTexture(nil, "border", nil, -3)
+
 	
 	--grave icon
 	local graveIcon = line:CreateTexture (nil, "overlay")
@@ -4178,6 +4234,11 @@ local create_deathrecap_line = function (parent, n)
 	lifePercent:SetWidth (42)
 	lifePercent:SetJustifyH ("right")
 	
+	--life statusbar
+	lifeStatusBar:SetPoint("topleft", line, "topleft")
+	lifeStatusBar:SetPoint("bottomleft", line, "bottomleft")
+	lifeStatusBar:SetColorTexture(0.5, 0.5, 0.5, 0.4)
+
 	--background
 	--backgroundTexture:SetTexture ([[Interface\AdventureMap\AdventureMap]])
 	--backgroundTexture:SetTexCoord (460/1024, 659/1024, 330/1024, 350/1024)
@@ -4234,6 +4295,7 @@ local create_deathrecap_line = function (parent, n)
 	line.backgroundTexture = backgroundTexture
 	line.backgroundTextureOverlay = backgroundTextureOverlay
 	line.graveIcon = graveIcon
+	line.lifeStatusBar = lifeStatusBar
 	
 	if (n == 10) then
 		graveIcon:Show()
@@ -4346,7 +4408,7 @@ function _detalhes.OpenDetailsDeathRecap (segment, RecapID, fromChat)
 		DeathRecapFrame.Recap5:Hide()
 		
 		if (not Details.DeathRecap) then
-			Details.DeathRecap = CreateFrame ("frame", "DetailsDeathRecap", DeathRecapFrame)
+			Details.DeathRecap = CreateFrame ("frame", "DetailsDeathRecap", DeathRecapFrame, "BackdropTemplate")
 			Details.DeathRecap:SetAllPoints()
 			
 			DeathRecapFrame.Title:SetText (DeathRecapFrame.Title:GetText() .. " (by Details!)")
@@ -4360,7 +4422,7 @@ function _detalhes.OpenDetailsDeathRecap (segment, RecapID, fromChat)
 			--segments
 			Details.DeathRecap.Segments = {}
 			for i = 5, 1, -1 do
-				local segmentButton = CreateFrame ("button", "DetailsDeathRecapSegmentButton" .. i, Details.DeathRecap)
+				local segmentButton = CreateFrame ("button", "DetailsDeathRecapSegmentButton" .. i, Details.DeathRecap, "BackdropTemplate")
 				
 				segmentButton:SetSize (16, 20)
 				segmentButton:SetPoint ("topright", DeathRecapFrame, "topright", (-abs (i-6) * 22) - 10, -5)
@@ -4659,6 +4721,8 @@ function _detalhes.OpenDetailsDeathRecap (segment, RecapID, fromChat)
 						end
 						
 						line.lifePercent:SetText (hp .. "%")
+						line.lifeStatusBar:SetWidth(line:GetWidth() * (hp/100))
+
 						line.spellid = event [2]
 						
 						line:Show()
@@ -4705,7 +4769,7 @@ end)
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --> plater integration
 
-local plater_integration_frame = CreateFrame ("frame", "DetailsPlaterFrame", UIParent)
+local plater_integration_frame = CreateFrame ("frame", "DetailsPlaterFrame", UIParent, "BackdropTemplate")
 plater_integration_frame.DamageTaken = {}
 
 --> aprox. 6 updates per second
@@ -4716,7 +4780,7 @@ local CONST_BUFFER_SIZE = 30
 PLATER_DPS_SAMPLE_SIZE = CONST_BUFFER_SIZE * CONST_REALTIME_UPDATE_TIME
 
 --> separate CLEU events from the Tick event for performance
-plater_integration_frame.OnTickFrame = CreateFrame ("frame", "DetailsPlaterFrameOnTicker", UIParent)
+plater_integration_frame.OnTickFrame = CreateFrame ("frame", "DetailsPlaterFrameOnTicker", UIParent, "BackdropTemplate")
 
 --> on tick function
 plater_integration_frame.OnTickFrameFunc = function (self, deltaTime)
