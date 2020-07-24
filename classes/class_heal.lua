@@ -415,8 +415,8 @@ function atributo_heal:RefreshWindow (instancia, tabela_do_combate, forcar, expo
 			
 			local row1 = barras_container [1]
 			row1.minha_tabela = nil
-			row1.texto_esquerdo:SetText (Loc ["STRING_TOTAL"])
-			row1.texto_direita:SetText (_detalhes:ToK2 (total) .. " (" .. _detalhes:ToK (total / combat_time) .. ")")
+			row1.lineText1:SetText (Loc ["STRING_TOTAL"])
+			row1.lineText4:SetText (_detalhes:ToK2 (total) .. " (" .. _detalhes:ToK (total / combat_time) .. ")")
 			
 			row1:SetValue (100)
 			local r, g, b = unpack (instancia.total_bar.color)
@@ -480,8 +480,8 @@ function atributo_heal:RefreshWindow (instancia, tabela_do_combate, forcar, expo
 			
 			local row1 = barras_container [1]
 			row1.minha_tabela = nil
-			row1.texto_esquerdo:SetText (Loc ["STRING_TOTAL"])
-			row1.texto_direita:SetText (_detalhes:ToK2 (total) .. " (" .. _detalhes:ToK (total / combat_time) .. ")")
+			row1.lineText1:SetText (Loc ["STRING_TOTAL"])
+			row1.lineText4:SetText (_detalhes:ToK2 (total) .. " (" .. _detalhes:ToK (total / combat_time) .. ")")
 			
 			row1:SetValue (100)
 			local r, g, b = unpack (instancia.total_bar.color)
@@ -626,7 +626,7 @@ function atributo_heal:AtualizaBarra (instancia, barras_container, qual_barra, l
 	
 	-- >>>>>>>>>>>>>>> texto da direita
 	if (instancia.atributo == 5) then --> custom
-		esta_barra.texto_direita:SetText (_detalhes:ToK (self.custom) .. " (" .. porcentagem .. "%)")
+		esta_barra.lineText4:SetText (_detalhes:ToK (self.custom) .. " (" .. porcentagem .. "%)")
 		esta_porcentagem = _math_floor ((self.custom/instancia.top) * 100)
 		
 	else	
@@ -651,9 +651,9 @@ function atributo_heal:AtualizaBarra (instancia, barras_container, qual_barra, l
 			
 			local rightText = formated_heal .. bars_brackets[1] .. formated_hps .. bars_separator .. porcentagem .. bars_brackets[2]
 			if (UsingCustomRightText) then
-				esta_barra.texto_direita:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_heal, formated_hps, porcentagem, self, instancia.showing, instancia, rightText))
+				esta_barra.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_heal, formated_hps, porcentagem, self, instancia.showing, instancia, rightText))
 			else
-				esta_barra.texto_direita:SetText (rightText)
+				esta_barra.lineText4:SetText (rightText)
 			end
 			esta_porcentagem = _math_floor ((healing_total/instancia.top) * 100)
 			
@@ -678,9 +678,9 @@ function atributo_heal:AtualizaBarra (instancia, barras_container, qual_barra, l
 			
 			local rightText = formated_hps .. bars_brackets[1] .. formated_heal .. bars_separator .. porcentagem .. bars_brackets[2]
 			if (UsingCustomRightText) then
-				esta_barra.texto_direita:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_hps, formated_heal, porcentagem, self, instancia.showing, instancia, rightText))
+				esta_barra.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_hps, formated_heal, porcentagem, self, instancia.showing, instancia, rightText))
 			else
-				esta_barra.texto_direita:SetText (rightText)
+				esta_barra.lineText4:SetText (rightText)
 			end
 			
 			esta_porcentagem = _math_floor ((hps/instancia.top) * 100)
@@ -707,9 +707,9 @@ function atributo_heal:AtualizaBarra (instancia, barras_container, qual_barra, l
 			
 			local rightText = formated_overheal .. bars_brackets[1] .. overheal_percent .. bars_brackets[2]
 			if (UsingCustomRightText) then
-				esta_barra.texto_direita:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_overheal, "", overheal_percent, self, instancia.showing, instancia, rightText))
+				esta_barra.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_overheal, "", overheal_percent, self, instancia.showing, instancia, rightText))
 			else
-				esta_barra.texto_direita:SetText (rightText)
+				esta_barra.lineText4:SetText (rightText)
 			end
 			
 			esta_porcentagem = _math_floor ((self.totalover/instancia.top) * 100)
@@ -729,9 +729,9 @@ function atributo_heal:AtualizaBarra (instancia, barras_container, qual_barra, l
 			
 			local rightText = formated_healtaken .. bars_brackets[1] .. porcentagem .. bars_brackets[2]
 			if (UsingCustomRightText) then
-				esta_barra.texto_direita:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_healtaken, "", porcentagem, self, instancia.showing, instancia, rightText))
+				esta_barra.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_healtaken, "", porcentagem, self, instancia.showing, instancia, rightText))
 			else
-				esta_barra.texto_direita:SetText (rightText)
+				esta_barra.lineText4:SetText (rightText)
 			end
 			
 			esta_porcentagem = _math_floor ((self.healing_taken/instancia.top) * 100)
@@ -751,9 +751,9 @@ function atributo_heal:AtualizaBarra (instancia, barras_container, qual_barra, l
 		
 			local rightText = formated_enemyheal .. bars_brackets[1] .. porcentagem .. bars_brackets[2]
 			if (UsingCustomRightText) then
-				esta_barra.texto_direita:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_enemyheal, "", porcentagem, self, instancia.showing, instancia, rightText))
+				esta_barra.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_enemyheal, "", porcentagem, self, instancia.showing, instancia, rightText))
 			else
-				esta_barra.texto_direita:SetText (rightText)
+				esta_barra.lineText4:SetText (rightText)
 			end
 			esta_porcentagem = _math_floor ((self.heal_enemy_amt/instancia.top) * 100)
 			
@@ -772,9 +772,9 @@ function atributo_heal:AtualizaBarra (instancia, barras_container, qual_barra, l
 			
 			local rightText = formated_absorbs .. bars_brackets[1] .. porcentagem .. bars_brackets[2]
 			if (UsingCustomRightText) then
-				esta_barra.texto_direita:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_absorbs, "", porcentagem, self, instancia.showing, instancia, rightText))
+				esta_barra.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_absorbs, "", porcentagem, self, instancia.showing, instancia, rightText))
 			else
-				esta_barra.texto_direita:SetText (rightText)
+				esta_barra.lineText4:SetText (rightText)
 			end
 			esta_porcentagem = _math_floor ((self.totalabsorb/instancia.top) * 100)
 			
@@ -793,9 +793,9 @@ function atributo_heal:AtualizaBarra (instancia, barras_container, qual_barra, l
 			
 			local rightText = formated_absorbs .. bars_brackets[1] .. porcentagem .. bars_brackets[2]
 			if (UsingCustomRightText) then
-				esta_barra.texto_direita:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_absorbs, "", porcentagem, self, instancia.showing, instancia, rightText))
+				esta_barra.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_absorbs, "", porcentagem, self, instancia.showing, instancia, rightText))
 			else
-				esta_barra.texto_direita:SetText (rightText)
+				esta_barra.lineText4:SetText (rightText)
 			end
 			esta_porcentagem = _math_floor ((self.totaldenied/instancia.top) * 100)
 			
@@ -895,7 +895,7 @@ function atributo_heal:RefreshBarra (esta_barra, instancia, from_resize)
 	--> left text
 	self:SetBarLeftText (esta_barra, instancia, enemy, arena_enemy, arena_ally, UsingCustomLeftText)
 	
-	esta_barra.texto_esquerdo:SetSize (esta_barra:GetWidth() - esta_barra.texto_direita:GetStringWidth() - 20, 15)
+	esta_barra.lineText1:SetSize (esta_barra:GetWidth() - esta_barra.lineText4:GetStringWidth() - 20, 15)
 	
 end
 
@@ -1764,10 +1764,10 @@ function atributo_heal:MontaInfoOverHealing()
 			barra.textura:SetValue (tabela[2]/max_*100) --> muito mais rapido...
 		end
 
-		barra.texto_esquerdo:SetText (index..instancia.divisores.colocacao..tabela[4]) --seta o texto da esqueda
+		barra.lineText1:SetText (index..instancia.divisores.colocacao..tabela[4]) --seta o texto da esqueda
 		
 		local formated_value = SelectedToKFunction (_, _math_floor (tabela[2]))
-		barra.texto_direita:SetText (formated_value .." (".. _cstr ("%.1f", tabela[3]) .."%)")
+		barra.lineText4:SetText (formated_value .." (".. _cstr ("%.1f", tabela[3]) .."%)")
 
 		barra.icone:SetTexture (tabela[5])
 
@@ -1815,9 +1815,9 @@ function atributo_heal:MontaInfoOverHealing()
 			barra.textura:SetValue (tabela[2]/max_*100)
 		end
 		
-		barra.texto_esquerdo:SetText (index..instancia.divisores.colocacao..tabela[1]) --seta o texto da esqueda
-		barra.texto_direita:SetText (_detalhes:comma_value (tabela[2]) .." ".. instancia.divisores.abre .. _cstr ("%.1f", tabela[3]) .. instancia.divisores.fecha)
-		barra.texto_esquerdo:SetWidth (barra:GetWidth() - barra.texto_direita:GetStringWidth() - 30)
+		barra.lineText1:SetText (index..instancia.divisores.colocacao..tabela[1]) --seta o texto da esqueda
+		barra.lineText4:SetText (_detalhes:comma_value (tabela[2]) .." ".. instancia.divisores.abre .. _cstr ("%.1f", tabela[3]) .. instancia.divisores.fecha)
+		barra.lineText1:SetWidth (barra:GetWidth() - barra.lineText4:GetStringWidth() - 30)
 		
 		-- icon
 		barra.icone:SetTexture ([[Interface\AddOns\Details\images\classes_small]])
@@ -1971,13 +1971,13 @@ function atributo_heal:MontaInfoHealingDone()
 			barra.icone:SetTexCoord (_unpack (texCoords))
 		end
 		
-		barra.texto_esquerdo:SetText (index .. ". " .. _detalhes:GetOnlyName (tabela[1]))
+		barra.lineText1:SetText (index .. ". " .. _detalhes:GetOnlyName (tabela[1]))
 		barra.textura:SetStatusBarColor (1, 1, 1, 1)
 		
 		if (info.sub_atributo == 2) then
-			barra.texto_direita:SetText (_detalhes:comma_value (_math_floor (tabela[2]/meu_tempo)) .." (" .. _cstr ("%.1f", tabela[3]) .. "%)")
+			barra.lineText4:SetText (_detalhes:comma_value (_math_floor (tabela[2]/meu_tempo)) .." (" .. _cstr ("%.1f", tabela[3]) .. "%)")
 		else
-			barra.texto_direita:SetText (SelectedToKFunction (_, tabela[2]) .. " (" .. _cstr ("%.1f", tabela[3]) .. "%)")
+			barra.lineText4:SetText (SelectedToKFunction (_, tabela[2]) .. " (" .. _cstr ("%.1f", tabela[3]) .. "%)")
 		end
 		
 		barra.minha_tabela = self
@@ -2151,8 +2151,8 @@ function atributo_heal:MontaDetalhesHealingTaken (nome, barra)
 			barra.textura:SetValue (tabela[2]/max_*100) --> muito mais rapido...
 		end
 
-		barra.texto_esquerdo:SetText (index..instancia.divisores.colocacao..tabela[4]) --seta o texto da esqueda
-		barra.texto_direita:SetText (_detalhes:comma_value (tabela[2]) .." ".. instancia.divisores.abre .._cstr("%.1f", tabela[3]) .."%".. instancia.divisores.fecha)
+		barra.lineText1:SetText (index..instancia.divisores.colocacao..tabela[4]) --seta o texto da esqueda
+		barra.lineText4:SetText (_detalhes:comma_value (tabela[2]) .." ".. instancia.divisores.abre .._cstr("%.1f", tabela[3]) .."%".. instancia.divisores.fecha)
 		
 		barra.icone:SetTexture (tabela[5])
 

@@ -420,7 +420,7 @@ local DFSliderMetaFunctions = _G [DF.GlobalWidgetControlNames ["slider"]]
 	end
 	
 
-	local f = CreateFrame ("frame", "DetailsFrameworkSliderButtons1", UIParent)
+	local f = CreateFrame ("frame", "DetailsFrameworkSliderButtons1", UIParent, "BackdropTemplate")
 	f:Hide()
 	f:SetHeight (18)
 	
@@ -456,8 +456,8 @@ local DFSliderMetaFunctions = _G [DF.GlobalWidgetControlNames ["slider"]]
 		f:SetScript ("OnUpdate", going_hide)
 	end
 	
-	local button_plus = CreateFrame ("button", "DetailsFrameworkSliderButtonsPlusButton", f)
-	local button_minor = CreateFrame ("button", "DetailsFrameworkSliderButtonsMinorButton", f)
+	local button_plus = CreateFrame ("button", "DetailsFrameworkSliderButtonsPlusButton", f, "BackdropTemplate")
+	local button_minor = CreateFrame ("button", "DetailsFrameworkSliderButtonsMinorButton", f, "BackdropTemplate")
 	button_plus:SetFrameStrata (f:GetFrameStrata())
 	button_minor:SetFrameStrata (f:GetFrameStrata())
 	
@@ -633,7 +633,7 @@ local DFSliderMetaFunctions = _G [DF.GlobalWidgetControlNames ["slider"]]
 		
 			if (not DFSliderMetaFunctions.editbox_typevalue) then
 			
-				local editbox = CreateFrame ("EditBox", "DetailsFrameworkSliderEditBox", UIParent)
+				local editbox = CreateFrame ("EditBox", "DetailsFrameworkSliderEditBox", UIParent, "BackdropTemplate")
 				
 				editbox:SetSize (40, 20)
 				editbox:SetJustifyH ("center")

@@ -245,13 +245,13 @@ function atributo_energy:AtualizarResources (qual_barra, colocacao, instancia)
 	
 	local rightText = formated_resource .. bars_brackets[1] .. formated_rps .. " r/s" .. bars_separator .. porcentagem .. bars_brackets[2]
 	if (UsingCustomRightText) then
-		esta_barra.texto_direita:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_resource, formated_rps, porcentagem, self, instancia.showing, instancia, rightText))
+		esta_barra.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_resource, formated_rps, porcentagem, self, instancia.showing, instancia, rightText))
 	else
-		esta_barra.texto_direita:SetText (rightText)
+		esta_barra.lineText4:SetText (rightText)
 	end
 	
-	esta_barra.texto_esquerdo:SetText (colocacao .. ". " .. self.nome)
-	esta_barra.texto_esquerdo:SetSize (esta_barra:GetWidth() - esta_barra.texto_direita:GetStringWidth() - 20, 15)
+	esta_barra.lineText1:SetText (colocacao .. ". " .. self.nome)
+	esta_barra.lineText1:SetSize (esta_barra:GetWidth() - esta_barra.lineText4:GetStringWidth() - 20, 15)
 	
 	esta_barra:SetValue (100)
 	
@@ -520,8 +520,8 @@ function atributo_energy:RefreshWindow (instancia, tabela_do_combate, forcar, ex
 			
 			local row1 = barras_container [1]
 			row1.minha_tabela = nil
-			row1.texto_esquerdo:SetText (Loc ["STRING_TOTAL"])
-			row1.texto_direita:SetText (_detalhes:ToK2 (total) .. " (" .. _detalhes:ToK (total / combat_time) .. ")")
+			row1.lineText1:SetText (Loc ["STRING_TOTAL"])
+			row1.lineText4:SetText (_detalhes:ToK2 (total) .. " (" .. _detalhes:ToK (total / combat_time) .. ")")
 			
 			row1:SetValue (100)
 			local r, g, b = unpack (instancia.total_bar.color)
@@ -576,8 +576,8 @@ function atributo_energy:RefreshWindow (instancia, tabela_do_combate, forcar, ex
 			
 			local row1 = barras_container [1]
 			row1.minha_tabela = nil
-			row1.texto_esquerdo:SetText (Loc ["STRING_TOTAL"])
-			row1.texto_direita:SetText (_detalhes:ToK2 (total) .. " (" .. _detalhes:ToK (total / combat_time) .. ")")
+			row1.lineText1:SetText (Loc ["STRING_TOTAL"])
+			row1.lineText4:SetText (_detalhes:ToK2 (total) .. " (" .. _detalhes:ToK (total / combat_time) .. ")")
 			
 			row1:SetValue (100)
 			local r, g, b = unpack (instancia.total_bar.color)
@@ -679,9 +679,9 @@ function atributo_energy:AtualizaBarra (instancia, barras_container, qual_barra,
 	
 	local rightText = formated_energy .. bars_brackets[1] .. porcentagem .. bars_brackets[2]
 	if (UsingCustomRightText) then
-		esta_barra.texto_direita:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_energy, "", porcentagem, self, instancia.showing, instancia, rightText))
+		esta_barra.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_energy, "", porcentagem, self, instancia.showing, instancia, rightText))
 	else
-		esta_barra.texto_direita:SetText (rightText)
+		esta_barra.lineText4:SetText (rightText)
 	end
 	
 	if (esta_barra.mouse_over and not instancia.baseframe.isMoving) then --> precisa atualizar o tooltip
@@ -777,7 +777,7 @@ function atributo_energy:RefreshBarra (esta_barra, instancia, from_resize)
 	--> left text
 	self:SetBarLeftText (esta_barra, instancia, enemy, arena_enemy, arena_ally, UsingCustomLeftText)
 	
-	esta_barra.texto_esquerdo:SetSize (esta_barra:GetWidth() - esta_barra.texto_direita:GetStringWidth() - 20, 15)
+	esta_barra.lineText1:SetSize (esta_barra:GetWidth() - esta_barra.lineText4:GetStringWidth() - 20, 15)
 	
 end
 
@@ -1172,8 +1172,8 @@ function atributo_energy:MontaInfoRegenRecebido()
 			barra.textura:SetValue (tabela[2]/max_fontes*100)
 		end
 		
-		barra.texto_esquerdo:SetText (index..instancia.divisores.colocacao..tabela[1])
-		barra.texto_direita:SetText (_detalhes:comma_value (tabela[2]) .. " (" .. _cstr("%.1f", tabela[2]/total_regenerado * 100) .. ")")
+		barra.lineText1:SetText (index..instancia.divisores.colocacao..tabela[1])
+		barra.lineText4:SetText (_detalhes:comma_value (tabela[2]) .. " (" .. _cstr("%.1f", tabela[2]/total_regenerado * 100) .. ")")
 		
 		if (barra.mouse_over) then --> atualizar o tooltip
 			if (barra.isAlvo) then
@@ -1268,8 +1268,8 @@ function atributo_energy:MontaDetalhesRegenRecebido (nome, barra)
 			barra.textura:SetValue (tabela[2] / max_ * 100)
 		end
 
-		barra.texto_esquerdo:SetText (index .. "." .. tabela [1])
-		barra.texto_direita:SetText (_detalhes:comma_value (tabela[2]) .." (" .. _cstr("%.1f", tabela[2] / total_regenerado * 100) .."%)")
+		barra.lineText1:SetText (index .. "." .. tabela [1])
+		barra.lineText4:SetText (_detalhes:comma_value (tabela[2]) .." (" .. _cstr("%.1f", tabela[2] / total_regenerado * 100) .."%)")
 		
 		barra.textura:SetStatusBarColor (_unpack (_detalhes.class_colors [tabela[3]]))
 		barra.icone:SetTexture ("Interface\\AddOns\\Details\\images\\classes_small")

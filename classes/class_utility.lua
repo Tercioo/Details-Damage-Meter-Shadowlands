@@ -573,8 +573,8 @@ function atributo_misc:DeadAtualizarBarra (morte, qual_barra, colocacao, instanc
 		morte._custom = true
 	end
 	
-	esta_barra.texto_esquerdo:SetText (colocacao .. ". " .. morte [3]:gsub (("%-.*"), ""))
-	esta_barra.texto_direita:SetText (morte [6])
+	esta_barra.lineText1:SetText (colocacao .. ". " .. morte [3]:gsub (("%-.*"), ""))
+	esta_barra.lineText4:SetText (morte [6])
 	
 	esta_barra:SetValue (100)
 	if (esta_barra.hidden or esta_barra.fading_in or esta_barra.faded) then
@@ -605,7 +605,7 @@ function atributo_misc:DeadAtualizarBarra (morte, qual_barra, colocacao, instanc
 		gump:UpdateTooltip (qual_barra, esta_barra, instancia)
 	end
 	
-	esta_barra.texto_esquerdo:SetSize (esta_barra:GetWidth() - esta_barra.texto_direita:GetStringWidth() - 20, 15)
+	esta_barra.lineText1:SetSize (esta_barra:GetWidth() - esta_barra.lineText4:GetStringWidth() - 20, 15)
 
 end
 
@@ -892,9 +892,9 @@ function atributo_misc:AtualizaBarra (instancia, barras_container, qual_barra, l
 	
 	local rightText = meu_total .. bars_brackets[1] .. porcentagem .. bars_brackets[2]
 	if (UsingCustomRightText) then
-		esta_barra.texto_direita:SetText (_string_replace (instancia.row_info.textR_custom_text, meu_total, "", porcentagem, self, instancia.showing, instancia, rightText))
+		esta_barra.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, meu_total, "", porcentagem, self, instancia.showing, instancia, rightText))
 	else
-		esta_barra.texto_direita:SetText (rightText)
+		esta_barra.lineText4:SetText (rightText)
 	end
 	
 	if (esta_barra.mouse_over and not instancia.baseframe.isMoving) then --> precisa atualizar o tooltip
@@ -989,7 +989,7 @@ function atributo_misc:RefreshBarra (esta_barra, instancia, from_resize)
 	--> left text
 	self:SetBarLeftText (esta_barra, instancia, enemy, arena_enemy, arena_ally, UsingCustomLeftText)
 
-	esta_barra.texto_esquerdo:SetSize (esta_barra:GetWidth() - esta_barra.texto_direita:GetStringWidth() - 20, 15)
+	esta_barra.lineText1:SetSize (esta_barra:GetWidth() - esta_barra.lineText4:GetStringWidth() - 20, 15)
 end
 
 --------------------------------------------- // TOOLTIPS // ---------------------------------------------
@@ -2066,8 +2066,8 @@ function atributo_misc:MontaInfoInterrupt()
 			barra.textura:SetValue (tabela[2]/max_*100) --> muito mais rapido...
 		end
 
-		barra.texto_esquerdo:SetText (index..instancia.divisores.colocacao..tabela[4]) --seta o texto da esqueda
-		barra.texto_direita:SetText (tabela[2] .." ".. instancia.divisores.abre .._cstr("%.1f", tabela[3]) .."%".. instancia.divisores.fecha) --seta o texto da direita
+		barra.lineText1:SetText (index..instancia.divisores.colocacao..tabela[4]) --seta o texto da esqueda
+		barra.lineText4:SetText (tabela[2] .." ".. instancia.divisores.abre .._cstr("%.1f", tabela[3]) .."%".. instancia.divisores.fecha) --seta o texto da direita
 		
 		barra.icone:SetTexture (tabela[5])
 
@@ -2111,8 +2111,8 @@ function atributo_misc:MontaInfoInterrupt()
 			barra.textura:SetValue (tabela[2]/max_alvos*100)
 		end
 
-		barra.texto_esquerdo:SetText (index..instancia.divisores.colocacao..tabela[1]) --seta o texto da esqueda
-		barra.texto_direita:SetText (tabela[2] .." ".. instancia.divisores.abre .._cstr("%.1f", tabela[2]/meu_total*100) .. instancia.divisores.fecha) --seta o texto da direita
+		barra.lineText1:SetText (index..instancia.divisores.colocacao..tabela[1]) --seta o texto da esqueda
+		barra.lineText4:SetText (tabela[2] .." ".. instancia.divisores.abre .._cstr("%.1f", tabela[2]/meu_total*100) .. instancia.divisores.fecha) --seta o texto da direita
 		
 		if (barra.mouse_over) then --> atualizar o tooltip
 			if (barra.isAlvo) then
@@ -2186,8 +2186,8 @@ function atributo_misc:MontaDetalhesInterrupt (spellid, barra)
 		
 		local nome, _, icone = _GetSpellInfo (tabela[1])
 
-		barra.texto_esquerdo:SetText (index..instancia.divisores.colocacao..nome) --seta o texto da esqueda
-		barra.texto_direita:SetText (tabela[2] .." ".. instancia.divisores.abre .._cstr("%.1f", tabela[2]/total*100) .."%".. instancia.divisores.fecha) --seta o texto da direita
+		barra.lineText1:SetText (index..instancia.divisores.colocacao..nome) --seta o texto da esqueda
+		barra.lineText4:SetText (tabela[2] .." ".. instancia.divisores.abre .._cstr("%.1f", tabela[2]/total*100) .."%".. instancia.divisores.fecha) --seta o texto da direita
 		
 		barra.icone:SetTexture (icone)
 

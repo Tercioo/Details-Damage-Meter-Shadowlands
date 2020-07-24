@@ -401,9 +401,6 @@ function Details:StartMeUp() --I'll never stop!
 	--start announcers
 	_detalhes:StartAnnouncers()
 	
-	--start aura
-	_detalhes:CreateAuraListener()
-	
 	--open welcome
 	if (self.is_first_run) then
 		_G.C_Timer.After (1, function() --wait details full load the rest of the systems before executing the welcome window

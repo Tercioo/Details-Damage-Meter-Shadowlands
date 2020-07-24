@@ -464,8 +464,8 @@
 				
 				local row1 = barras_container [1]
 				row1.minha_tabela = nil
-				row1.texto_esquerdo:SetText (Loc ["STRING_TOTAL"])
-				row1.texto_direita:SetText (_detalhes:ToK2 (total) .. " (" .. _detalhes:ToK (total / combat_time) .. ")")
+				row1.lineText1:SetText (Loc ["STRING_TOTAL"])
+				row1.lineText4:SetText (_detalhes:ToK2 (total) .. " (" .. _detalhes:ToK (total / combat_time) .. ")")
 				
 				row1:SetValue (100)
 				local r, g, b = unpack (instance.total_bar.color)
@@ -500,8 +500,8 @@
 				
 				local row1 = barras_container [1]
 				row1.minha_tabela = nil
-				row1.texto_esquerdo:SetText (Loc ["STRING_TOTAL"])
-				row1.texto_direita:SetText (_detalhes:ToK2 (total) .. " (" .. _detalhes:ToK (total / combat_time) .. ")")
+				row1.lineText1:SetText (Loc ["STRING_TOTAL"])
+				row1.lineText4:SetText (_detalhes:ToK2 (total) .. " (" .. _detalhes:ToK (total / combat_time) .. ")")
 				
 				row1:SetValue (100)
 				local r, g, b = unpack (instance.total_bar.color)
@@ -584,18 +584,18 @@
 				return _detalhes:EndRefresh (instance, 0, combat, combat [1])
 			end
 			if (type (value) == "number") then
-				row.texto_direita:SetText (SelectedToKFunction (_, value) .. bars_brackets[1] .. percent .. bars_brackets[2])
+				row.lineText4:SetText (SelectedToKFunction (_, value) .. bars_brackets[1] .. percent .. bars_brackets[2])
 				
 			else
-				row.texto_direita:SetText (value .. bars_brackets[1] .. percent .. bars_brackets[2])
+				row.lineText4:SetText (value .. bars_brackets[1] .. percent .. bars_brackets[2])
 			end
 		else
 			local formated_value = SelectedToKFunction (_, self.value)
 			local rightText = formated_value .. bars_brackets[1] .. percent .. bars_brackets[2]
 			if (UsingCustomRightText) then
-				row.texto_direita:SetText (_string_replace (instance.row_info.textR_custom_text, formated_value, "", percent, self, combat, instance, rightText))
+				row.lineText4:SetText (_string_replace (instance.row_info.textR_custom_text, formated_value, "", percent, self, combat, instance, rightText))
 			else
-				row.texto_direita:SetText (rightText)
+				row.lineText4:SetText (rightText)
 			end
 		end
 		
@@ -773,7 +773,7 @@
 		--> left text
 		self:SetBarLeftText (esta_barra, instancia, enemy, arena_enemy, arena_ally, UsingCustomLeftText)
 
-		esta_barra.texto_esquerdo:SetSize (esta_barra:GetWidth() - esta_barra.texto_direita:GetStringWidth() - 20, 15)
+		esta_barra.lineText1:SetSize (esta_barra:GetWidth() - esta_barra.lineText4:GetStringWidth() - 20, 15)
 		
 	end	
 

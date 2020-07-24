@@ -3191,7 +3191,7 @@ function _detalhes:monta_relatorio (este_relatorio, custom)
 			local window_bar = self.barras [i]
 			if (window_bar) then
 				if (not window_bar.hidden or window_bar.fading_out) then
-					raw_data_to_report [#raw_data_to_report+1] = {window_bar.texto_esquerdo:GetText(), window_bar.texto_direita:GetText()}
+					raw_data_to_report [#raw_data_to_report+1] = {window_bar.lineText1:GetText(), window_bar.lineText4:GetText()}
 				else
 					break
 				end

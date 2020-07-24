@@ -526,7 +526,7 @@ end
 function gump:CriaDetalheInfo (index)
 	local info = {}
 	
-	info.bg = _CreateFrame ("StatusBar", "DetailsPlayerDetailsWindow_DetalheInfoBG" .. index, _detalhes.playerDetailWindow.container_detalhes)
+	info.bg = _CreateFrame ("StatusBar", "DetailsPlayerDetailsWindow_DetalheInfoBG" .. index, _detalhes.playerDetailWindow.container_detalhes, "BackdropTemplate")
 	info.bg:SetStatusBarTexture ("Interface\\AddOns\\Details\\images\\bar_detalhes2")
 	info.bg:SetStatusBarColor (1, 1, 1, .84)
 	info.bg:SetMinMaxValues (0, 100)
@@ -762,8 +762,8 @@ end
 --> esquerdo superior
 local function cria_container_barras (este_gump, SWW)
 
-	local container_barras_window = _CreateFrame ("ScrollFrame", "Details_Info_ContainerBarrasScroll", SWW) 
-	local container_barras = _CreateFrame ("Frame", "Details_Info_ContainerBarras", container_barras_window)
+	local container_barras_window = _CreateFrame ("ScrollFrame", "Details_Info_ContainerBarrasScroll", SWW, "BackdropTemplate")
+	local container_barras = _CreateFrame ("Frame", "Details_Info_ContainerBarras", container_barras_window, "BackdropTemplate")
 
 	container_barras:SetAllPoints (container_barras_window)
 	container_barras:SetWidth (300)
@@ -831,7 +831,7 @@ end
 
 --> container direita
 local function cria_container_detalhes (este_gump, SWW)
-	local container_detalhes = _CreateFrame ("Frame", "Details_Info_ContainerDetalhes", SWW)
+	local container_detalhes = _CreateFrame ("Frame", "Details_Info_ContainerDetalhes", SWW, "BackdropTemplate")
 	
 	container_detalhes:SetPoint ("TOPRIGHT", este_gump, "TOPRIGHT", -74, -76)
 	container_detalhes:SetWidth (220)
@@ -845,8 +845,8 @@ end
 
 --> esquerdo inferior
 local function cria_container_alvos (este_gump, SWW)
-	local container_alvos_window = _CreateFrame ("ScrollFrame", "Details_Info_ContainerAlvosScroll", SWW)
-	local container_alvos = _CreateFrame ("Frame", "Details_Info_ContainerAlvos", container_alvos_window)
+	local container_alvos_window = _CreateFrame ("ScrollFrame", "Details_Info_ContainerAlvosScroll", SWW, "BackdropTemplate")
+	local container_alvos = _CreateFrame ("Frame", "Details_Info_ContainerAlvos", container_alvos_window, "BackdropTemplate")
 
 	container_alvos:SetAllPoints (container_alvos_window)
 	container_alvos:SetWidth (300)
@@ -1221,7 +1221,7 @@ local elvui_skin = function()
 	
 	local titlebar = window.extra_frames ["ElvUITitleBar"]
 	if (not titlebar) then
-		titlebar = CreateFrame ("frame", nil, window,"BackdropTemplate")
+		titlebar = CreateFrame ("frame", nil, window, "BackdropTemplate")
 		titlebar:SetPoint ("topleft", window, "topleft", 2, -3)
 		titlebar:SetPoint ("topright", window, "topright", -2, -3)
 		titlebar:SetHeight (20)
@@ -1539,7 +1539,7 @@ function gump:CriaJanelaInfo()
 	este_gump:SetResizable (false)
 	este_gump:SetMovable (true)
 
-	este_gump.SummaryWindowWidgets = CreateFrame ("frame", "DetailsPlayerDetailsWindowSummaryWidgets", este_gump)
+	este_gump.SummaryWindowWidgets = CreateFrame ("frame", "DetailsPlayerDetailsWindowSummaryWidgets", este_gump, "BackdropTemplate")
 	local SWW = este_gump.SummaryWindowWidgets
 	SWW:SetAllPoints()
 	tinsert (SummaryWidgets, SWW)
@@ -1684,7 +1684,7 @@ function gump:CriaJanelaInfo()
 		local right_background_Y = {-85, -136, -191, -246, -301}
 		
 		for i = 1, spellInfoSettings.amount do
-			local right_background1 = CreateFrame ("frame", "DetailsPlayerDetailsWindow_right_background" .. i, SWW,"BackdropTemplate")
+			local right_background1 = CreateFrame ("frame", "DetailsPlayerDetailsWindow_right_background" .. i, SWW, "BackdropTemplate")
 			right_background1:EnableMouse (false)
 			right_background1:SetPoint ("topleft", este_gump, "topleft", right_background_X, right_background_Y [i])
 			right_background1:SetSize (220, 43)
@@ -1746,7 +1746,7 @@ function gump:CriaJanelaInfo()
 --	leftbars1_backgound:SetAlpha (alpha_bgs)
 --	este_gump.leftbars1_backgound = leftbars1_backgound
 	
-	local leftbars1_backgound = CreateFrame ("frame", "DetailsPlayerDetailsWindow_Left_SpellsBackground", SWW,"BackdropTemplate")
+	local leftbars1_backgound = CreateFrame ("frame", "DetailsPlayerDetailsWindow_Left_SpellsBackground", SWW, "BackdropTemplate")
 	leftbars1_backgound:EnableMouse (false)
 	leftbars1_backgound:SetSize (303, 149)
 	leftbars1_backgound:SetAlpha (alpha_bgs)
@@ -1754,7 +1754,7 @@ function gump:CriaJanelaInfo()
 	Details.gump:ApplyStandardBackdrop (leftbars1_backgound)
 	este_gump.leftbars1_backgound = leftbars1_backgound
 	
-	local leftbars2_backgound = CreateFrame ("frame", "DetailsPlayerDetailsWindow_Left_TargetBackground", SWW,"BackdropTemplate")
+	local leftbars2_backgound = CreateFrame ("frame", "DetailsPlayerDetailsWindow_Left_TargetBackground", SWW, "BackdropTemplate")
 	leftbars2_backgound:EnableMouse (false)
 	leftbars2_backgound:SetSize (303, 122)
 	leftbars2_backgound:SetAlpha (alpha_bgs)
@@ -1805,7 +1805,7 @@ function gump:CriaJanelaInfo()
 	este_gump.report_direita:Show()
 	
 	--> statusbar
-	local statusBar = CreateFrame ("frame", nil, este_gump,"BackdropTemplate")
+	local statusBar = CreateFrame ("frame", nil, este_gump, "BackdropTemplate")
 	statusBar:SetPoint ("bottomleft", este_gump, "bottomleft")
 	statusBar:SetPoint ("bottomright", este_gump, "bottomright")
 	statusBar:SetHeight (PLAYER_DETAILS_STATUSBAR_HEIGHT)
@@ -1877,7 +1877,7 @@ function gump:CriaJanelaInfo()
 		
 		--> SUMMARY
 		
-			local summaryBox = CreateFrame ("frame", nil, frame,"BackdropTemplate")
+			local summaryBox = CreateFrame ("frame", nil, frame, "BackdropTemplate")
 			_detalhes.gump:ApplyStandardBackdrop (summaryBox)
 			summaryBox:SetPoint ("topleft", frame, "topleft", 10, -15)
 			summaryBox:SetSize (200, 160)
@@ -1944,7 +1944,7 @@ function gump:CriaJanelaInfo()
 		
 			y = -5
 		
-			local meleeBox = CreateFrame ("frame", nil, frame,"BackdropTemplate")
+			local meleeBox = CreateFrame ("frame", nil, frame, "BackdropTemplate")
 			_detalhes.gump:ApplyStandardBackdrop (meleeBox)
 			meleeBox:SetPoint ("topleft", summaryBox, "bottomleft", 0, -5)
 			meleeBox:SetSize (200, 160)
@@ -2035,7 +2035,7 @@ function gump:CriaJanelaInfo()
 		
 			y = -5
 			
-			local absorbsBox = CreateFrame ("frame", nil, frame,"BackdropTemplate")
+			local absorbsBox = CreateFrame ("frame", nil, frame, "BackdropTemplate")
 			_detalhes.gump:ApplyStandardBackdrop (absorbsBox)
 			absorbsBox:SetPoint ("topleft", summaryBox, "topright", 10, 0)
 			absorbsBox:SetSize (200, 160)
@@ -4513,7 +4513,7 @@ function gump:CriaJanelaInfo()
 					spellicon:SetPoint ("topleft", parent, "topleft", 1, y)
 					spellicon:SetTexture ([[Interface\InventoryItems\WoWUnknownItem01]])
 				
-					local bar = CreateFrame ("StatusBar", name .. "Bar" .. index, parent)
+					local bar = CreateFrame ("StatusBar", name .. "Bar" .. index, parent, "BackdropTemplate")
 					bar.index = index
 					bar:SetPoint ("topleft", spellicon, "topright", 0, 0)
 					bar:SetPoint ("topright", parent, "topright", -1, y)
@@ -5113,16 +5113,16 @@ function _detalhes.playerDetailWindow:monta_relatorio (botao)
 			if (barra:IsShown()) then
 				local spellid = barra.show
 				if (atributo == 1 and sub_atributo == 4) then --> friendly fire
-					report_lines [#report_lines+1] = barra.texto_esquerdo:GetText() .. ": " .. barra.texto_direita:GetText()
+					report_lines [#report_lines+1] = barra.lineText1:GetText() .. ": " .. barra.lineText4:GetText()
 					
 				elseif (type (spellid) == "number" and spellid > 10) then
 					local link = GetSpellLink (spellid)
-					report_lines [#report_lines+1] = index .. ". " .. link .. ": " .. barra.texto_direita:GetText()
+					report_lines [#report_lines+1] = index .. ". " .. link .. ": " .. barra.lineText4:GetText()
 				else
-					local spellname = barra.texto_esquerdo:GetText():gsub ((".*%."), "")
+					local spellname = barra.lineText1:GetText():gsub ((".*%."), "")
 					spellname = spellname:gsub ("|c%x%x%x%x%x%x%x%x", "")
 					spellname = spellname:gsub ("|r", "")
-					report_lines [#report_lines+1] = index .. ". " .. spellname .. ": " .. barra.texto_direita:GetText()
+					report_lines [#report_lines+1] = index .. ". " .. spellname .. ": " .. barra.lineText4:GetText()
 				end
 			end
 			if (index == amt) then
@@ -5141,7 +5141,7 @@ function _detalhes.playerDetailWindow:monta_relatorio (botao)
 
 		for index, barra in _ipairs (info.barras2) do
 			if (barra:IsShown()) then
-				report_lines [#report_lines+1] = barra.texto_esquerdo:GetText().." -> ".. barra.texto_direita:GetText()
+				report_lines [#report_lines+1] = barra.lineText1:GetText().." -> ".. barra.lineText4:GetText()
 			end
 			if (index == amt) then
 				break
@@ -5214,7 +5214,7 @@ function _detalhes.playerDetailWindow:monta_relatorio (botao)
 				report_lines = {"Details! " .. Loc ["STRING_ACTORFRAME_REPORTTO"] .. " " .. _detalhes.sub_atributos [1].lista [1] .. " " .. Loc ["STRING_ACTORFRAME_REPORTOF"] .. " " .. player.detalhes.. " " .. Loc ["STRING_ACTORFRAME_REPORTAT"] .. " " .. player.nome}
 				for index, barra in _ipairs (info.barras3) do 
 					if (barra:IsShown()) then
-						report_lines [#report_lines+1] = barra.texto_esquerdo:GetText().." ....... ".. barra.texto_direita:GetText()
+						report_lines [#report_lines+1] = barra.lineText1:GetText().." ....... ".. barra.lineText4:GetText()
 					end
 					if (index == amt) then
 						break
@@ -5502,7 +5502,7 @@ end
 
 local function CriaTexturaBarra (instancia, barra)
 
-	barra.textura = _CreateFrame ("StatusBar", nil, barra)
+	barra.textura = _CreateFrame ("StatusBar", nil, barra, "BackdropTemplate")
 	
 	barra.textura:SetFrameLevel (barra:GetFrameLevel()-1)
 	
@@ -5525,22 +5525,22 @@ local function CriaTexturaBarra (instancia, barra)
 		barra.targets:SetFrameLevel (barra.textura:GetFrameLevel()+2)
 	end
 	
-	barra.texto_esquerdo = barra:CreateFontString (nil, "OVERLAY", "GameFontHighlightSmall")
-	barra.texto_esquerdo:SetPoint ("LEFT", barra.textura, "LEFT", CONST_BAR_HEIGHT + 6, 0)
-	barra.texto_esquerdo:SetJustifyH ("LEFT")
-	barra.texto_esquerdo:SetTextColor (1,1,1,1)
+	barra.lineText1 = barra:CreateFontString (nil, "OVERLAY", "GameFontHighlightSmall")
+	barra.lineText1:SetPoint ("LEFT", barra.textura, "LEFT", CONST_BAR_HEIGHT + 6, 0)
+	barra.lineText1:SetJustifyH ("LEFT")
+	barra.lineText1:SetTextColor (1,1,1,1)
 	
-	barra.texto_esquerdo:SetNonSpaceWrap (true)
-	barra.texto_esquerdo:SetWordWrap (false)
+	barra.lineText1:SetNonSpaceWrap (true)
+	barra.lineText1:SetWordWrap (false)
 	
-	barra.texto_direita = barra:CreateFontString (nil, "OVERLAY", "GameFontHighlightSmall")
+	barra.lineText4 = barra:CreateFontString (nil, "OVERLAY", "GameFontHighlightSmall")
 	if (barra.targets) then
-		barra.texto_direita:SetPoint ("RIGHT", barra.targets, "LEFT", -2, 0)
+		barra.lineText4:SetPoint ("RIGHT", barra.targets, "LEFT", -2, 0)
 	else
-		barra.texto_direita:SetPoint ("RIGHT", barra, "RIGHT", -2, 0)
+		barra.lineText4:SetPoint ("RIGHT", barra, "RIGHT", -2, 0)
 	end
-	barra.texto_direita:SetJustifyH ("RIGHT")
-	barra.texto_direita:SetTextColor (1,1,1,1)
+	barra.lineText4:SetJustifyH ("RIGHT")
+	barra.lineText4:SetTextColor (1,1,1,1)
 	
 	barra.textura:Show()
 end
@@ -5726,7 +5726,7 @@ function gump:CriaNovaBarraInfo1 (instancia, index)
 	esta_barra:EnableMouse (true)
 	esta_barra:RegisterForClicks ("LeftButtonDown","RightButtonUp")	
 	
-	esta_barra.targets = CreateFrame ("frame", "Details_infobox1_bar_"..index.."Targets", esta_barra)
+	esta_barra.targets = CreateFrame ("frame", "Details_infobox1_bar_"..index.."Targets", esta_barra, "BackdropTemplate")
 	esta_barra.targets:SetPoint ("right", esta_barra, "right")
 	esta_barra.targets:SetSize (CONST_BAR_HEIGHT-1, CONST_BAR_HEIGHT-1)
 	esta_barra.targets.texture = esta_barra.targets:CreateTexture (nil, overlay)
@@ -5741,7 +5741,7 @@ function gump:CriaNovaBarraInfo1 (instancia, index)
 	CriaTexturaBarra (instancia, esta_barra)
 	
 	--> icone
-	esta_barra.miniframe = CreateFrame ("frame", nil, esta_barra)
+	esta_barra.miniframe = CreateFrame ("frame", nil, esta_barra, "BackdropTemplate")
 	esta_barra.miniframe:SetSize (CONST_BAR_HEIGHT-2, CONST_BAR_HEIGHT-2)
 	esta_barra.miniframe:SetPoint ("RIGHT", esta_barra.textura, "LEFT", CONST_BAR_HEIGHT + 2, 0)
 	
@@ -5777,7 +5777,7 @@ function gump:CriaNovaBarraInfo2 (instancia, index)
 	
 	local janela = info.container_alvos.gump
 
-	local esta_barra = _CreateFrame ("Button", "Details_infobox2_bar_"..index, info.container_alvos.gump)
+	local esta_barra = _CreateFrame ("Button", "Details_infobox2_bar_"..index, info.container_alvos.gump, "BackdropTemplate")
 	esta_barra:SetHeight (CONST_TARGET_HEIGHT)
 
 	local y = (index-1) * (CONST_TARGET_HEIGHT + 1)
@@ -5823,7 +5823,7 @@ function gump:CriaNovaBarraInfo3 (instancia, index)
 
 	local janela = info.container_detalhes
 
-	local esta_barra = CreateFrame ("Button", "Details_infobox3_bar_"..index, janela)
+	local esta_barra = CreateFrame ("Button", "Details_infobox3_bar_"..index, janela, "BackdropTemplate")
 	esta_barra:SetHeight (16)
 	
 	local y = (index-1) * 17

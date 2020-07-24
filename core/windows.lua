@@ -969,7 +969,7 @@
 --> cria o frame de wait for plugin
 	function _detalhes:CreateWaitForPlugin()
 	
-		local WaitForPluginFrame = CreateFrame ("frame", "DetailsWaitForPluginFrame" .. self.meu_id, UIParent)
+		local WaitForPluginFrame = CreateFrame ("frame", "DetailsWaitForPluginFrame" .. self.meu_id, UIParent,"BackdropTemplate")
 		local WaitTexture = WaitForPluginFrame:CreateTexture (nil, "overlay")
 		WaitTexture:SetTexture ("Interface\\UNITPOWERBARALT\\Mechanical_Circular_Frame")
 		WaitTexture:SetPoint ("center", WaitForPluginFrame)
@@ -1047,7 +1047,7 @@
 	end
 	
 	do
-		local WaitForPluginFrame = CreateFrame ("frame", "DetailsWaitForPluginFrame", UIParent)
+		local WaitForPluginFrame = CreateFrame ("frame", "DetailsWaitForPluginFrame", UIParent,"BackdropTemplate")
 		local WaitTexture = WaitForPluginFrame:CreateTexture (nil, "overlay")
 		WaitTexture:SetTexture ("Interface\\UNITPOWERBARALT\\Mechanical_Circular_Frame")
 		WaitTexture:SetPoint ("center", WaitForPluginFrame)
@@ -1323,7 +1323,7 @@
 				f.GuildSyncButton:Disable()
 				
 				if (not f.SyncTexture) then
-					local workingFrame = CreateFrame ("frame", nil, f)
+					local workingFrame = CreateFrame ("frame", nil, f,"BackdropTemplate")
 					f.WorkingFrame = workingFrame
 					workingFrame:SetSize (1, 1)
 					f.SyncTextureBackground = workingFrame:CreateTexture (nil, "border")
@@ -2292,7 +2292,7 @@
 			
 			_detalhes.gump:ApplyStandardBackdrop (panel)
 			
-			local upper_panel = CreateFrame ("frame", nil, panel)
+			local upper_panel = CreateFrame ("frame", nil, panel,"BackdropTemplate")
 			upper_panel:SetAllPoints (panel)
 			upper_panel:SetFrameLevel (panel:GetFrameLevel()+3)
 			
@@ -2514,7 +2514,7 @@
 	
 --> create bubble
 	do 
-		local f = CreateFrame ("frame", "DetailsBubble", UIParent)
+		local f = CreateFrame ("frame", "DetailsBubble", UIParent,"BackdropTemplate")
 		f:SetPoint ("center", UIParent, "center")
 		f:SetSize (100, 100)
 		f:SetFrameStrata ("TOOLTIP")
@@ -2663,7 +2663,7 @@
 	end
 	
 --> interface menu
-	local f = CreateFrame ("frame", "DetailsInterfaceOptionsPanel", UIParent)
+	local f = CreateFrame ("frame", "DetailsInterfaceOptionsPanel", UIParent,"BackdropTemplate")
 	f.name = "Details"
 	f.logo = f:CreateTexture (nil, "overlay")
 	f.logo:SetPoint ("center", f, "center", 0, 0)
@@ -4461,7 +4461,7 @@
 				code_editor.__background:SetAllPoints()
 				
 				--> code compile error warning
-				local errortext_frame = CreateFrame ("frame", nil, code_editor)
+				local errortext_frame = CreateFrame ("frame", nil, code_editor,"BackdropTemplate")
 				errortext_frame:SetPoint ("bottomleft", code_editor, "bottomleft", 1, 1)
 				errortext_frame:SetPoint ("bottomright", code_editor, "bottomright", -1, 1)
 				errortext_frame:SetHeight (20)
@@ -4898,7 +4898,7 @@
 			--create lines
 			for i = 1, lineAmount do 
 				api2ScrollMenu:CreateLine (function (self, index)
-					local line = CreateFrame ("button", "$parentLine" .. index, self)
+					local line = CreateFrame ("button", "$parentLine" .. index, self,"BackdropTemplate")
 					line:SetPoint ("topleft", self, "topleft", 1, -((index-1)*(lineHeight+1)) - 1)
 					line:SetSize (scrollWidth - 2, lineHeight)
 					line.index = index
@@ -4945,7 +4945,7 @@
 				parametersYStart = parametersYStart - 20
 				
 				local space1, space2, space3 = 150, 300, 450
-				local parametersHeader = CreateFrame ("frame", nil, Api2Frame)
+				local parametersHeader = CreateFrame ("frame", nil, Api2Frame,"BackdropTemplate")
 				parametersHeader:SetSize (infoWidth, 20)
 				parametersHeader:SetPoint ("topleft", Api2Frame, "topleft", xAnchorPoint, parametersYStart)
 				parametersHeader:SetBackdrop ({bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], tileSize = 64, tile = true})
@@ -4980,7 +4980,7 @@
 				
 				for i = 1, parametersAmount do
 					local parameterLine = {}
-					local f = CreateFrame ("frame", nil, Api2Frame)
+					local f = CreateFrame ("frame", nil, Api2Frame,"BackdropTemplate")
 					f:SetSize (infoWidth, 20)
 					f:SetScript ("OnEnter", parameterOnEnter)
 					f:SetScript ("OnLeave", parameterOnLeave)
@@ -5011,7 +5011,7 @@
 				returnYStart = returnYStart - 20
 				
 				local space1 = 200
-				local returnHeader = CreateFrame ("frame", nil, Api2Frame)
+				local returnHeader = CreateFrame ("frame", nil, Api2Frame,"BackdropTemplate")
 				returnHeader:SetSize (infoWidth, 20)
 				returnHeader:SetPoint ("topleft", Api2Frame, "topleft", xAnchorPoint, returnYStart)
 				returnHeader:SetBackdrop ({bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], tileSize = 64, tile = true})
@@ -5030,7 +5030,7 @@
 				
 				for i = 1, returnAmount do
 					local parameterLine = {}
-					local f = CreateFrame ("frame", nil, Api2Frame)
+					local f = CreateFrame ("frame", nil, Api2Frame,"BackdropTemplate")
 					f:SetSize (infoWidth, 20)
 					f:SetScript ("OnEnter", returnOnEnter)
 					f:SetScript ("OnLeave", returnOnLeave)
@@ -5080,7 +5080,7 @@ function Details.OpenDpsBenchmark()
 		local _ = nil
 		
 		--declaration
-		local f = CreateFrame ("frame", "DetailsBenchmark", UIParent)
+		local f = CreateFrame ("frame", "DetailsBenchmark", UIParent,"BackdropTemplate")
 		f:SetSize (800, 600)
 		f:SetPoint ("left", UIParent, "left")
 		f:SetFrameStrata ("LOW")
@@ -5098,7 +5098,7 @@ function Details.OpenDpsBenchmark()
 		LibWindow.SavePosition (f)
 		
 		--titlebar
-		f.TitleBar = CreateFrame ("frame", "$parentTitleBar", f)
+		f.TitleBar = CreateFrame ("frame", "$parentTitleBar", f,"BackdropTemplate")
 		f.TitleBar:SetPoint ("topleft", f, "topleft", 2, -3)
 		f.TitleBar:SetPoint ("topright", f, "topright", -2, -3)
 		f.TitleBar:SetHeight (20)
@@ -5107,7 +5107,7 @@ function Details.OpenDpsBenchmark()
 		f.TitleBar:SetBackdropBorderColor (0, 0, 0, 1)
 		
 		--close button
-		f.Close = CreateFrame ("button", "$parentCloseButton", f)
+		f.Close = CreateFrame ("button", "$parentCloseButton", f,"BackdropTemplate")
 		f.Close:SetPoint ("right", f.TitleBar, "right", -2, 0)
 		f.Close:SetSize (16, 16)
 		f.Close:SetNormalTexture (_detalhes.gump.folder .. "icons")
@@ -5190,7 +5190,7 @@ function Details.OpenDpsBenchmark()
 	--summary block
 	
 		--declaration
-			local summaryFrame = CreateFrame ("frame", "$parentSummaryFrame", f)
+			local summaryFrame = CreateFrame ("frame", "$parentSummaryFrame", f,"BackdropTemplate")
 			summaryFrame:SetPoint ("topleft", f, "topleft", unpack (f.FrameLocations.summary))
 			summaryFrame:SetSize (unpack (f.FrameSizes.default))
 			summaryFrame:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], tileSize = 64, tile = true})
@@ -5234,7 +5234,7 @@ function Details.OpenDpsBenchmark()
 			summaryFrame.BossSimulationDropdown = DF:CreateDropDown (summaryFrame, build_bosssimulation_list, default, 150, 20, _, _, options_dropdown_template)
 			
 		--boss records line with a tooltip importing data from the storage
-			summaryFrame.BossRecordsFrame = CreateFrame ("frame", nil, summaryFrame)
+			summaryFrame.BossRecordsFrame = CreateFrame ("frame", nil, summaryFrame,"BackdropTemplate")
 			summaryFrame.BossRecordsFrame:SetSize (f.FrameSizes.default[1]-20, 20)
 			summaryFrame.BossRecordsFrame:SetBackdropColor (0, 0, 0, 0.3)
 			summaryFrame.BossRecordsFrame:SetScript ("OnEnter", function()
@@ -5272,7 +5272,7 @@ function Details.OpenDpsBenchmark()
 	--spells block
 		
 		--declaration
-			local spellsFrame = CreateFrame ("frame", "$parentSpellsFrame", f)
+			local spellsFrame = CreateFrame ("frame", "$parentSpellsFrame", f,"BackdropTemplate")
 			spellsFrame:SetPoint ("topleft", f, "topleft", unpack (f.FrameLocations.spells))
 			spellsFrame:SetSize (unpack (f.FrameSizes.default))
 			spellsFrame:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], tileSize = 64, tile = true})
@@ -5291,7 +5291,7 @@ function Details.OpenDpsBenchmark()
 	--auras block
 		
 		--declaration
-			local aurasFrame = CreateFrame ("frame", "$parentAurasFrame", f)
+			local aurasFrame = CreateFrame ("frame", "$parentAurasFrame", f,"BackdropTemplate")
 			aurasFrame:SetPoint ("topleft", f, "topleft", unpack (f.FrameLocations.auras))
 			aurasFrame:SetSize (unpack (f.FrameSizes.default))
 			aurasFrame:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], tileSize = 64, tile = true})
@@ -5308,7 +5308,7 @@ function Details.OpenDpsBenchmark()
 	--history block
 			
 		--declaration
-			local historyFrame = CreateFrame ("frame", "$parentHistoryFrame", f)
+			local historyFrame = CreateFrame ("frame", "$parentHistoryFrame", f,"BackdropTemplate")
 			historyFrame:SetPoint ("topleft", f, "topleft", unpack (f.FrameLocations.history))
 			historyFrame:SetSize (unpack (f.FrameSizes.default))
 			historyFrame:SetBackdrop ({edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1, bgFile = [[Interface\Tooltips\UI-Tooltip-Background]], tileSize = 64, tile = true})
@@ -5480,7 +5480,7 @@ local CreateCurrentDpsFrame = function (parent, name)
 		local yellow_team_color = {1, 1, .5, 1}
 	
 	--> main farame
-		local f = CreateFrame ("frame", name, parent or UIParent)
+		local f = CreateFrame ("frame", name, parent or UIParent,"BackdropTemplate")
 		f:SetPoint ("center", UIParent, "center")
 		f:SetSize (_detalhes.current_dps_meter.frame.width, _detalhes.current_dps_meter.frame.height)
 
@@ -5927,7 +5927,7 @@ local CreateEventTrackerFrame = function (parent, name)
 	local SharedMedia = LibStub:GetLibrary ("LibSharedMedia-3.0")
 	
 	--> main farame
-		local f = CreateFrame ("frame", name, parent or UIParent)
+		local f = CreateFrame ("frame", name, parent or UIParent,"BackdropTemplate")
 		f:SetPoint ("center", UIParent, "center")
 		f:SetMinResize (150, 40)
 		f:SetMaxResize (800, 1024)
@@ -6018,7 +6018,7 @@ local CreateEventTrackerFrame = function (parent, name)
 		--> create a line on the scroll frame
 		local scroll_createline = function (self, index)
 		
-			local line = CreateFrame ("frame", "$parentLine" .. index, self)
+			local line = CreateFrame ("frame", "$parentLine" .. index, self,"BackdropTemplate")
 			line:EnableMouse (false)
 			line.Index = index --> hack to not trigger error on UpdateWorldTrackerLines since Index is set after this function is ran
 			
@@ -6027,7 +6027,7 @@ local CreateEventTrackerFrame = function (parent, name)
 			--line:SetBackdropColor (1, 1, 1, 0.75)
 			
 			--> statusbar
-			local statusbar = CreateFrame ("statusbar", "$parentStatusBar", line)
+			local statusbar = CreateFrame ("statusbar", "$parentStatusBar", line,"BackdropTemplate")
 			statusbar:SetAllPoints()
 			local statusbartexture = statusbar:CreateTexture (nil, "border")
 			statusbar:SetStatusBarTexture (statusbartexture)
@@ -7115,7 +7115,7 @@ function Details:ScrollDamage()
 			{text = "Amount", width = 80},
 			
 			{text = "Time", width = 80},
-			{text = "Token", width = 130},
+			{text = "Token", width = 80},
 			{text = "Spell ID", width = 80},
 			{text = "School", width = 80},
 		}
@@ -7200,7 +7200,7 @@ function Details:ScrollDamage()
 		
 		local scroll_createline = function (self, index)
 		
-			local line = CreateFrame ("button", "$parentLine" .. index, self)
+			local line = CreateFrame ("button", "$parentLine" .. index, self,"BackdropTemplate")
 			line:SetPoint ("topleft", self, "topleft", 1, -((index-1)*(scroll_line_height+1)) - 1)
 			line:SetSize (scroll_width - 2, scroll_line_height)
 			

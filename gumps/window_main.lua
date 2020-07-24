@@ -1924,7 +1924,7 @@ local barra_scripts_onenter = function (self)
 		end
 	end
 
-	local lefttext = self.texto_esquerdo
+	local lefttext = self.lineText1
 	if (lefttext:IsTruncated()) then
 		if (not _detalhes.left_anti_truncate) then
 			
@@ -1965,7 +1965,7 @@ local barra_scripts_onleave = function (self)
 	self.showing_allspells = false
 	self:SetScript ("OnUpdate", nil)
 	
-	local lefttext = self.texto_esquerdo
+	local lefttext = self.lineText1
 	if (lefttext.untruncated) then
 		lefttext.untruncated = nil
 		_detalhes.left_anti_truncate:Hide()
@@ -1977,7 +1977,7 @@ local barra_scripts_onmousedown = function (self, button)
 		return
 	end
 	
-	local lefttext = self.texto_esquerdo
+	local lefttext = self.lineText1
 	if (lefttext.untruncated) then
 		lefttext.untruncated = nil
 		_detalhes.left_anti_truncate:Hide()
@@ -2082,39 +2082,39 @@ function _detalhes:HandleTextsOnMouseClick (row, type)
 
 	if (self.bars_inverted) then
 		if (type == "down") then
-			row.texto_direita:SetPoint ("left", row.statusbar, "left", 2, -1)
+			row.lineText4:SetPoint ("left", row.statusbar, "left", 2, -1)
 			
 			if (self.row_info.no_icon) then
-				row.texto_esquerdo:SetPoint ("right", row.statusbar, "right", -1, -1)
+				row.lineText1:SetPoint ("right", row.statusbar, "right", -1, -1)
 			else
-				row.texto_esquerdo:SetPoint ("right", row.icone_classe, "left", -1, -1)
+				row.lineText1:SetPoint ("right", row.icone_classe, "left", -1, -1)
 			end
 			
 		elseif (type == "up") then
-			row.texto_direita:SetPoint ("left", row.statusbar, "left", 1, 0)
+			row.lineText4:SetPoint ("left", row.statusbar, "left", 1, 0)
 			
 			if (self.row_info.no_icon) then
-				row.texto_esquerdo:SetPoint ("right", row.statusbar, "right", -2, 0)
+				row.lineText1:SetPoint ("right", row.statusbar, "right", -2, 0)
 			else
-				row.texto_esquerdo:SetPoint ("right", row.icone_classe, "left", -2, 0)
+				row.lineText1:SetPoint ("right", row.icone_classe, "left", -2, 0)
 			end
 		end
 
 	else
 		if (type == "down") then
-			row.texto_direita:SetPoint ("right", row.statusbar, "right", 1, -1)
+			row.lineText4:SetPoint ("right", row.statusbar, "right", 1, -1)
 			if (self.row_info.no_icon) then
-				row.texto_esquerdo:SetPoint ("left", row.statusbar, "left", 3, -1)
+				row.lineText1:SetPoint ("left", row.statusbar, "left", 3, -1)
 			else
-				row.texto_esquerdo:SetPoint ("left", row.icone_classe, "right", 4, -1)
+				row.lineText1:SetPoint ("left", row.icone_classe, "right", 4, -1)
 			end
 			
 		elseif (type == "up") then
-			row.texto_direita:SetPoint ("right", row.statusbar, "right")
+			row.lineText4:SetPoint ("right", row.statusbar, "right")
 			if (self.row_info.no_icon) then
-				row.texto_esquerdo:SetPoint ("left", row.statusbar, "left", 2, 0)
+				row.lineText1:SetPoint ("left", row.statusbar, "left", 2, 0)
 			else
-				row.texto_esquerdo:SetPoint ("left", row.icone_classe, "right", 3, 0)
+				row.lineText1:SetPoint ("left", row.icone_classe, "right", 3, 0)
 			end
 		end
 	end
@@ -2567,7 +2567,7 @@ function _detalhes:ReportSingleLine (instancia, barra)
 		--> dump cooltip
 		local GameCooltip = GameCooltip
 		if (GameCooltipFrame1:IsShown()) then
-			local actor_name = barra.texto_esquerdo:GetText() or ""
+			local actor_name = barra.lineText1:GetText() or ""
 			actor_name = actor_name:gsub ((".*%."), "")
 			
 			if (instancia.segmento == -1) then --overall
@@ -2583,14 +2583,14 @@ function _detalhes:ReportSingleLine (instancia, barra)
 			end
 		else
 			reportar = {"Details!: " .. instancia.customName .. ": " .. Loc ["STRING_CUSTOM_REPORT"]}
-			reportar [#reportar+1] = barra.texto_esquerdo:GetText() .. " " .. barra.texto_direita:GetText()
+			reportar [#reportar+1] = barra.lineText1:GetText() .. " " .. barra.lineText4:GetText()
 			
 			--reportar [#reportar+1] = (i-1) .. ". " .. left_text .. " ... " .. right_text
 		end
 		
 	else
 		reportar = {"Details!: " .. Loc ["STRING_REPORT"] .. " " .. _detalhes.sub_atributos [instancia.atributo].lista [instancia.sub_atributo]}
-		reportar [#reportar+1] = barra.texto_esquerdo:GetText() .. " " .. barra.texto_direita:GetText()
+		reportar [#reportar+1] = barra.lineText1:GetText() .. " " .. barra.lineText4:GetText()
 	end
 
 
@@ -4104,16 +4104,26 @@ function gump:CriaNovaBarra (instancia, index)
 	new_row.statusbar:SetPoint ("topleft", icone_classe, "topright")
 	new_row.statusbar:SetPoint ("bottomright", new_row, "bottomright")
 	
-	--> left text
-	new_row.texto_esquerdo = new_row.border:CreateFontString (nil, "overlay", "GameFontHighlight")
-	new_row.texto_esquerdo:SetPoint ("left", new_row.icone_classe, "right", 3, 0)
-	new_row.texto_esquerdo:SetJustifyH ("left")
-	new_row.texto_esquerdo:SetNonSpaceWrap (true)
+	--> left text 1
+	new_row.lineText1 = new_row.border:CreateFontString (nil, "overlay", "GameFontHighlight")
+	new_row.lineText1:SetPoint ("left", new_row.icone_classe, "right", 3, 0)
+	new_row.lineText1:SetJustifyH ("left")
+	new_row.lineText1:SetNonSpaceWrap (true)
 
-	--> right text
-	new_row.texto_direita = new_row.border:CreateFontString (nil, "overlay", "GameFontHighlight")
-	new_row.texto_direita:SetPoint ("right", new_row.statusbar, "right")
-	new_row.texto_direita:SetJustifyH ("right")
+	--> right text 2
+	new_row.lineText2 = new_row.border:CreateFontString (nil, "overlay", "GameFontHighlight")
+	new_row.lineText2:SetPoint("right", new_row.statusbar, "right", -60, 0) --to be defined
+	new_row.lineText2:SetJustifyH("right")
+
+	--> right text 3
+	new_row.lineText3 = new_row.border:CreateFontString (nil, "overlay", "GameFontHighlight")
+	new_row.lineText3:SetPoint("right", new_row.statusbar, "right", -30, 0) --to be defined
+	new_row.lineText3:SetJustifyH("right")
+
+	--> right text 4
+	new_row.lineText4 = new_row.border:CreateFontString (nil, "overlay", "GameFontHighlight")
+	new_row.lineText4:SetPoint ("right", new_row.statusbar, "right")
+	new_row.lineText4:SetJustifyH ("right")
 
 	--> set the onclick, on enter scripts
 	barra_scripts (new_row, instancia, index)
@@ -4125,7 +4135,7 @@ function gump:CriaNovaBarra (instancia, index)
 	instancia.barras [index] = new_row
 	
 	--> set the left text
-	new_row.texto_esquerdo:SetText (Loc ["STRING_NEWROW"])
+	new_row.lineText1:SetText (Loc ["STRING_NEWROW"])
 	
 	--> refresh rows
 	instancia:InstanceRefreshRows()
@@ -4479,8 +4489,8 @@ local fast_ps_func = function (self)
 						local new_dps = _math_floor (actor.total / combat_time)
 						local formated_dps = tok_functions [ps_type] (_, new_dps)
 
-						--row.texto_direita:SetText (row.texto_direita:GetText():gsub (dps_text, formated_dps))
-						row.texto_direita:SetText (( row.texto_direita:GetText() or "" ):gsub (dps_text, formated_dps))
+						--row.lineText4:SetText (row.lineText4:GetText():gsub (dps_text, formated_dps))
+						row.lineText4:SetText (( row.lineText4:GetText() or "" ):gsub (dps_text, formated_dps))
 						row.ps_text = formated_dps
 					end
 				end
@@ -4667,17 +4677,17 @@ function _detalhes:InstanceRefreshRows (instancia)
 		--> icon and texture anchors
 		if (not is_mirror) then
 
-			row.texto_esquerdo:ClearAllPoints()
-			row.texto_direita:ClearAllPoints()
-			row.texto_direita:SetJustifyH ("right")
-			row.texto_esquerdo:SetJustifyH ("left")
+			row.lineText1:ClearAllPoints()
+			row.lineText4:ClearAllPoints()
+			row.lineText4:SetJustifyH ("right")
+			row.lineText1:SetJustifyH ("left")
 			
-			row.texto_direita:SetPoint ("right", row.statusbar, "right")
+			row.lineText4:SetPoint ("right", row.statusbar, "right")
 
 			if (no_icon) then
 				row.statusbar:SetPoint ("topleft", row, "topleft")
 				row.statusbar:SetPoint ("bottomright", row, "bottomright")
-				row.texto_esquerdo:SetPoint ("left", row.statusbar, "left", 2, 0)
+				row.lineText1:SetPoint ("left", row.statusbar, "left", 2, 0)
 				row.icone_classe:Hide()
 			else
 				row.icone_classe:ClearAllPoints()
@@ -4691,21 +4701,21 @@ function _detalhes:InstanceRefreshRows (instancia)
 				end
 				
 				row.statusbar:SetPoint ("bottomright", row, "bottomright")
-				row.texto_esquerdo:SetPoint ("left", row.icone_classe, "right", 3, 0)
+				row.lineText1:SetPoint ("left", row.icone_classe, "right", 3, 0)
 			end
 		else
 		
-			row.texto_esquerdo:ClearAllPoints()
-			row.texto_direita:ClearAllPoints()
-			row.texto_direita:SetJustifyH ("left")
-			row.texto_esquerdo:SetJustifyH ("right")
+			row.lineText1:ClearAllPoints()
+			row.lineText4:ClearAllPoints()
+			row.lineText4:SetJustifyH ("left")
+			row.lineText1:SetJustifyH ("right")
 			
-			row.texto_direita:SetPoint ("left", row.statusbar, "left", 1, 0)
+			row.lineText4:SetPoint ("left", row.statusbar, "left", 1, 0)
 		
 			if (no_icon) then
 				row.statusbar:SetPoint ("topleft", row, "topleft")
 				row.statusbar:SetPoint ("bottomright", row, "bottomright")
-				row.texto_esquerdo:SetPoint ("right", row.statusbar, "right", -2, 0)
+				row.lineText1:SetPoint ("right", row.statusbar, "right", -2, 0)
 				row.icone_classe:Hide()
 				
 				row.right_to_left_texture:SetPoint ("topright", row.statusbar, "topright")
@@ -4724,7 +4734,7 @@ function _detalhes:InstanceRefreshRows (instancia)
 				
 				row.statusbar:SetPoint ("topleft", row, "topleft")
 
-				row.texto_esquerdo:SetPoint ("right", row.icone_classe, "left", -2, 0)
+				row.lineText1:SetPoint ("right", row.icone_classe, "left", -2, 0)
 			end
 		end
 	
@@ -4739,30 +4749,30 @@ function _detalhes:InstanceRefreshRows (instancia)
 	
 		--> outline
 		if (left_text_outline) then
-			_detalhes:SetFontOutline (row.texto_esquerdo, left_text_outline)
+			_detalhes:SetFontOutline (row.lineText1, left_text_outline)
 		else
-			_detalhes:SetFontOutline (row.texto_esquerdo, nil)
+			_detalhes:SetFontOutline (row.lineText1, nil)
 		end
 		
 		if (right_text_outline) then
-			self:SetFontOutline (row.texto_direita, right_text_outline)
+			self:SetFontOutline (row.lineText4, right_text_outline)
 		else
-			self:SetFontOutline (row.texto_direita, nil)
+			self:SetFontOutline (row.lineText4, nil)
 		end
 		
 		--> small outline
 		if (textL_outline_small) then
 			local c = textL_outline_small_color
-			row.texto_esquerdo:SetShadowColor (c[1], c[2], c[3], c[4])
-			--row.texto_esquerdo:SetShadowOffset (3, -2)
+			row.lineText1:SetShadowColor (c[1], c[2], c[3], c[4])
+			--row.lineText1:SetShadowOffset (3, -2)
 		else
-			row.texto_esquerdo:SetShadowColor (0, 0, 0, 0)
+			row.lineText1:SetShadowColor (0, 0, 0, 0)
 		end
 		if (textR_outline_small) then
 			local c = textR_outline_small_color
-			row.texto_direita:SetShadowColor (c[1], c[2], c[3], c[4])
+			row.lineText4:SetShadowColor (c[1], c[2], c[3], c[4])
 		else
-			row.texto_direita:SetShadowColor (0, 0, 0, 0)
+			row.lineText4:SetShadowColor (0, 0, 0, 0)
 		end
 		
 		--> texture:
@@ -4789,19 +4799,19 @@ function _detalhes:InstanceRefreshRows (instancia)
 		
 		--> text class color: if true color changes on the fly through class refresh
 		if (not left_text_class_color) then
-			row.texto_esquerdo:SetTextColor (text_r, text_g, text_b)
+			row.lineText1:SetTextColor (text_r, text_g, text_b)
 		end
 		if (not right_text_class_color) then
-			row.texto_direita:SetTextColor (text_r, text_g, text_b)
+			row.lineText4:SetTextColor (text_r, text_g, text_b)
 		end
 		
 		--> text size
-		_detalhes:SetFontSize (row.texto_esquerdo, self.row_info.font_size or height * 0.75)
-		_detalhes:SetFontSize (row.texto_direita, self.row_info.font_size or height * 0.75)
+		_detalhes:SetFontSize (row.lineText1, self.row_info.font_size or height * 0.75)
+		_detalhes:SetFontSize (row.lineText4, self.row_info.font_size or height * 0.75)
 		
 		--> text font
-		_detalhes:SetFontFace (row.texto_esquerdo, self.row_info.font_face_file or "GameFontHighlight")
-		_detalhes:SetFontFace (row.texto_direita, self.row_info.font_face_file or "GameFontHighlight")
+		_detalhes:SetFontFace (row.lineText1, self.row_info.font_face_file or "GameFontHighlight")
+		_detalhes:SetFontFace (row.lineText4, self.row_info.font_face_file or "GameFontHighlight")
 
 		--backdrop
 		if (backdrop) then

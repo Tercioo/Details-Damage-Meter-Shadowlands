@@ -557,7 +557,7 @@ do
 		
 		_detalhes.icones = {
 			--> report window
-			report = { 
+			report = {
 					up = "Interface\\FriendsFrame\\UI-Toast-FriendOnlineIcon",
 					down = "Interface\\ItemAnimations\\MINIMAP\\TRACKING\\Profession",
 					disabled = "Interface\\ItemAnimations\\MINIMAP\\TRACKING\\Profession",

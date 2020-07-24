@@ -1074,7 +1074,7 @@ Damage Update Status: @INSTANCEDAMAGESTATUS
 	
 		local instancia = _detalhes.tabela_instancias [1]
 		for _, barra in ipairs (instancia.barras) do 
-			local _, _, flags = barra.texto_esquerdo:GetFont()
+			local _, _, flags = barra.lineText1:GetFont()
 			print ("outline:",flags)
 		end
 	

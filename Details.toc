@@ -27,13 +27,13 @@ API.lua
 
 functions\profiles.lua
 functions\hooks.lua
+functions\bossmods.lua
 functions\skins.lua
 functions\boss.lua
 functions\spells.lua
 functions\events.lua
 functions\classes.lua
 functions\buff.lua
-functions\link.lua
 functions\spellcache.lua
 functions\attributes.lua
 functions\savedata.lua
@@ -49,11 +49,18 @@ functions\mythicdungeon.lua
 functions\immersion.lua
 functions\schedules.lua
 functions\autorun.lua
+functions\deathrecap.lua
+functions\plater.lua
+functions\deathmenu.lua
+functions\macros.lua
 
 core\timemachine.lua
 
 gumps\anime.lua
 gumps\anime.xml
+gumps\fw_mods.lua
+gumps\toolbar_button.xml
+
 gumps\window_copy.lua
 gumps\window_options.lua
 gumps\window_playerdetail.lua
@@ -62,9 +69,9 @@ gumps\window_main.lua
 gumps\window_custom.lua
 gumps\window_welcome.lua
 gumps\window_news.lua
-gumps\fw_mods.lua
+gumps\window_wa.lua
+gumps\window_forge.lua
 gumps\window_switch.lua
-gumps\toolbar_button.xml
 
 classes\class_error.lua
 classes\class_combat.lua
