@@ -56,22 +56,24 @@ functions\macros.lua
 
 core\timemachine.lua
 
-gumps\anime.lua
-gumps\anime.xml
-gumps\fw_mods.lua
-gumps\toolbar_button.xml
+frames\anime.lua
+frames\anime.xml
+frames\fw_mods.lua
+frames\toolbar_button.xml
 
-gumps\window_copy.lua
-gumps\window_options.lua
-gumps\window_playerdetail.lua
-gumps\window_report.lua
-gumps\window_main.lua
-gumps\window_custom.lua
-gumps\window_welcome.lua
-gumps\window_news.lua
-gumps\window_wa.lua
-gumps\window_forge.lua
-gumps\window_switch.lua
+frames\window_copy.lua
+frames\window_options.lua
+frames\window_playerbreakdown.lua
+frames\window_playerbreakdown_list.lua
+frames\window_report.lua
+frames\window_main.lua
+frames\window_custom.lua
+frames\window_welcome.lua
+frames\window_news.lua
+frames\window_wa.lua
+frames\window_forge.lua
+frames\window_switch.lua
+frames\window_scrolldamage.lua
 
 classes\class_error.lua
 classes\class_combat.lua

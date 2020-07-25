@@ -37,6 +37,7 @@ local SharedMedia = LibStub:GetLibrary("LibSharedMedia-3.0")
 local LDB = LibStub ("LibDataBroker-1.1", true)
 local LDBIcon = LDB and LibStub ("LibDBIcon-1.0", true)
 local tinsert = tinsert
+local CreateFrame = CreateFrame
 
 local g =	_detalhes.gump
 local _
@@ -184,7 +185,7 @@ function _detalhes:OpenOptionsWindow (instance, no_reopen, section)
 		window.frame.Initialized = true
 		
 		window.instance = instance
-		tinsert (UISpecialFrames, "DetailsOptionsWindow")
+		tinsert (_G.UISpecialFrames, "DetailsOptionsWindow")
 		window:SetFrameStrata ("HIGH")
 		window:SetToplevel (true)
 		window:SetPoint ("center", UIParent, "Center")
@@ -11234,7 +11235,7 @@ function window:CreateFrame12()
 	local allplugins_raid = _detalhes.RaidTables.NameTable
 	for absName, pluginObject in pairs (allplugins_raid) do 
 
-		local bframe = CreateFrame ("frame", "OptionsPluginRaidBG", frame4)
+		local bframe = CreateFrame ("frame", "OptionsPluginRaidBG", frame4, "BackdropTemplate")
 		bframe:SetSize (640, 20)
 		bframe:SetPoint ("topleft", frame4, "topleft", 10, y)
 		bframe:SetBackdrop ({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", tile = true, tileSize = 16, insets = {left = 1, right = 1, top = 0, bottom = 1}})
@@ -11701,7 +11702,7 @@ end --> if not window
 		if (skin_object.skin_options and not skin_object.options_created) then
 			skin_object.options_created = true
 
-			local f = CreateFrame ("frame", "DetailsSkinOptions" .. skin_name_formated, frame3)
+			local f = CreateFrame ("frame", "DetailsSkinOptions" .. skin_name_formated, frame3, "BackdropTemplate")
 			frame3.ExtraOptions [skin_name_formated] = f
 			f:SetPoint ("topleft", frame3, "topleft", window.right_start_at, window.top_start_at + (25 * -1))
 			f:SetPoint ("topleft", frame3.SkinExtraOptionsAnchor.widget, "bottomleft", 0, -10)

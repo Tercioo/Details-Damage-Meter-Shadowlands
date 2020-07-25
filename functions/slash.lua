@@ -703,7 +703,65 @@ function SlashCmdList.DETAILS (msg, editbox)
 		
 		--tonumber((UnitGUID("target")):sub(-12, -9), 16))
 	
-	elseif (command == "guid") then --> localize-me
+	elseif (command == "npcid") then
+		if (UnitExists("target")) then
+			local serial = UnitGUID("target")
+			if (serial) then
+				local npcId = _G.DetailsFramework:GetNpcIdFromGuid(serial)
+				if (npcId) then
+
+					if (not Details.id_frame) then
+						local backdrop = {
+							bgFile = "Interface\\ChatFrame\\ChatFrameBackground",
+							edgeFile = "Interface\\ChatFrame\\ChatFrameBackground",
+							tile = true, edgeSize = 1, tileSize = 5,
+						}
+					
+						Details.id_frame = CreateFrame ("Frame", "DetailsID", UIParent, "BackdropTemplate")
+						Details.id_frame:SetHeight(14)
+						Details.id_frame:SetWidth(120)
+						Details.id_frame:SetPoint ("center", UIParent, "center")
+						Details.id_frame:SetBackdrop(backdrop)
+						
+						tinsert(UISpecialFrames, "DetailsID")
+						
+						Details.id_frame.texto = CreateFrame ("editbox", nil, Details.id_frame, "BackdropTemplate")
+						Details.id_frame.texto:SetPoint ("topleft", Details.id_frame, "topleft")
+						Details.id_frame.texto:SetAutoFocus(false)
+						Details.id_frame.texto:SetFontObject (GameFontHighlightSmall)
+						Details.id_frame.texto:SetHeight(14)
+						Details.id_frame.texto:SetWidth(120)
+						Details.id_frame.texto:SetJustifyH("CENTER")
+						Details.id_frame.texto:EnableMouse(true)
+						Details.id_frame.texto:SetBackdropColor(0, 0, 0, 0.5)
+						Details.id_frame.texto:SetBackdropBorderColor(0.3, 0.3, 0.30, 0.80)
+						Details.id_frame.texto:SetText ("")
+						Details.id_frame.texto.perdeu_foco = nil
+						
+						Details.id_frame.texto:SetScript ("OnEnterPressed", function ()
+							Details.id_frame.texto:ClearFocus()
+							Details.id_frame:Hide()
+						end)
+						
+						Details.id_frame.texto:SetScript ("OnEscapePressed", function()
+							Details.id_frame.texto:ClearFocus()
+							Details.id_frame:Hide()
+						end)
+						
+					end
+					
+					C_Timer.After(0.1, function()
+						Details.id_frame:Show()
+						Details.id_frame.texto:SetFocus()
+						Details.id_frame.texto:SetText ("" .. npcId)
+						Details.id_frame.texto:HighlightText()
+					end)
+				end
+			end
+		end
+
+
+	elseif (command == "guid") then
 	
 		local pass_guid = rest:match("^(%S*)%s*(.-)$")
 	
@@ -1342,6 +1400,14 @@ Damage Update Status: @INSTANCEDAMAGESTATUS
 	elseif (msg == "scroll" or msg == "scrolldamage" or msg == "scrolling") then
 		Details:ScrollDamage()
 	
+	elseif (msg == "me" or msg == "ME" or msg == "Me" or msg == "mE") then
+		local role = UnitGroupRolesAssigned("player")
+		if (role == "HEALER") then
+			Details:OpenPlayerDetails(2)
+		else
+			Details:OpenPlayerDetails(1)
+		end
+
 	elseif (msg == "spec") then
 	
 	local spec = DetailsFramework.GetSpecialization()
@@ -1351,7 +1417,6 @@ Damage Update Status: @INSTANCEDAMAGESTATUS
 			print ("Current SpecID: ", specID)
 		end
 	end
-		
 	
 	elseif (msg == "senditemlevel") then
 		_detalhes:SendCharacterData()
@@ -1655,6 +1720,7 @@ Damage Update Status: @INSTANCEDAMAGESTATUS
 		print ("|cffffaeae/details|r |cffffff33" .. "API" .. "|r: " .. Loc ["STRING_SLASH_API_DESC"])
 		print ("|cffffaeae/details|r |cffffff33" .. Loc ["STRING_SLASH_CHANGES"] .. "|r: " .. Loc ["STRING_SLASH_CHANGES_DESC"])
 		print ("|cffffaeae/details|r |cffffff33" .. Loc ["STRING_SLASH_WIPECONFIG"] .. "|r: " .. Loc ["STRING_SLASH_WIPECONFIG_DESC"])
+		print ("|cffffaeae/details|r |cffffff33" .. "me" .. "|r: open the player breakdown for you.") --localize-me
 		
 		--print ("|cffffaeae/details " .. Loc ["STRING_SLASH_WORLDBOSS"] .. "|r: " .. Loc ["STRING_SLASH_WORLDBOSS_DESC"])
 		print (" ")
@@ -1834,10 +1900,6 @@ function Details:UpdateUserPanel (usersTable)
 end
 
 function _detalhes:CreateListPanel()
-
-
-
-
 	_detalhes.ListPanel = _detalhes.gump:NewPanel (UIParent, nil, "DetailsActorsFrame", nil, 300, 600)
 	_detalhes.ListPanel:SetPoint ("center", UIParent, "center", 300, 0)
 	_detalhes.ListPanel.barras = {}
@@ -1903,6 +1965,3 @@ function _detalhes:CreateListPanel()
 	
 	return _detalhes.ListPanel
 end
-
---doe
---endd elsee

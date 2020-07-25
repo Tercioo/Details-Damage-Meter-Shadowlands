@@ -315,18 +315,31 @@ function Details:StartMeUp() --I'll never stop!
 	
 	--check is this is the first run of this version
 	if (self.is_version_first_run) then
-		local enable_reset_warning = true
-	
+
 		local lower_instance = _detalhes:GetLowerInstanceNumber()
 		if (lower_instance) then
 			lower_instance = _detalhes:GetInstance (lower_instance)
-			if (lower_instance and _detalhes.latest_news_saw ~= _detalhes.userversion) then
-				_G.C_Timer.After(10, function()
-					if (lower_instance:IsEnabled()) then
-						lower_instance:InstanceAlert(Loc ["STRING_VERSION_UPDATE"], {[[Interface\GossipFrame\AvailableQuestIcon]], 16, 16, false}, 60, {_detalhes.OpenNewsWindow}, true)
-						Details:Msg("A new version has been installed: /details news") --localize-me
+
+			if (lower_instance) then
+				--check if there's changes in the size of the news string
+				if (Details.last_changelog_size < #Loc["STRING_VERSION_LOG"]) then
+					Details.last_changelog_size = #Loc["STRING_VERSION_LOG"]
+
+					if (Details.auto_open_news_window) then
+						C_Timer.After(5, function()
+							Details.OpenNewsWindow()
+						end)
 					end
-				end)
+
+					if (lower_instance) then
+						_G.C_Timer.After(10, function()
+							if (lower_instance:IsEnabled()) then
+								lower_instance:InstanceAlert(Loc ["STRING_VERSION_UPDATE"], {[[Interface\GossipFrame\AvailableQuestIcon]], 16, 16, false}, 60, {_detalhes.OpenNewsWindow}, true)
+								Details:Msg("A new version has been installed: /details news") --localize-me
+							end
+						end)
+					end
+				end
 			end
 		end
 		
@@ -464,6 +477,10 @@ function Details:StartMeUp() --I'll never stop!
 		--print ("|CFFFFFF00[Details!]: Details! now has a separated version for Classic, Twitch app should give the right version, any issues report at Discord (/details discord).")
 	else
 		print ("|CFFFFFF00[Details!]: you're using Details! for RETAIL on Classic WOW, please get the classic version (Details! Damage Meter Classic WoW), if you need help see our Discord (/details discord).")
+	end
+
+	if (math.random(10) == 1) then
+		Details:Msg("use '/details me' macro to open the player breakdown for you!")
 	end
 
 	function Details:InstallOkey()
