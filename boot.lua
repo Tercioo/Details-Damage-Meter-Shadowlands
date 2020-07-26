@@ -4,8 +4,8 @@
 		_ = nil
 		_detalhes = LibStub("AceAddon-3.0"):NewAddon("_detalhes", "AceTimer-3.0", "AceComm-3.0", "AceSerializer-3.0", "NickTag-1.0")
 		
-		_detalhes.build_counter = 7535
-		_detalhes.alpha_build_counter = 7535 --if this is higher than the regular counter, use it instead
+		_detalhes.build_counter = 7544
+		_detalhes.alpha_build_counter = 7544 --if this is higher than the regular counter, use it instead
 		_detalhes.game_version = "v9.0.1"
 		_detalhes.userversion = "v9.0.1." .. _detalhes.build_counter
 		_detalhes.realversion = 142 --core version, this is used to check API version for scripts and plugins (see alias below)
@@ -28,7 +28,9 @@ do
 	local Loc = _G.LibStub("AceLocale-3.0"):GetLocale( "Details" )
 
 	local news = {
-		{"v9.0.1.7531.142", "July 25th, 2020"},
+		{"v9.0.1.7544.142", "July 25th, 2020"},
+		"Changed texts alignment to be parallel.",
+		"Changed icons to white color.",
 		"Added player list on the Player Breakdown Window.",
 		"Added a new plugin: 'Cast Timeline' available at the Player Breakdown Window.",
 		"Added macro '/Details me' to open your Breakdown Window.",
