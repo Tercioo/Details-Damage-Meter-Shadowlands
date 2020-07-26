@@ -315,7 +315,7 @@
 			return total, instance_container._ActorTable, top, amount, "report_name"
 		end
 		
-		instance:AtualizarScrollBar (amount)
+		instance:RefreshScrollBar (amount)
 
 		atributo_custom:Refresh (instance, instance_container, combat, force, total, top, custom_object)
 		
@@ -428,7 +428,7 @@
 --> refresh functions
 
 	function atributo_custom:Refresh (instance, instance_container, combat, force, total, top, custom_object)
-		local qual_barra = 1
+		local whichRowLine = 1
 		local barras_container = instance.barras
 		local percentage_type = instance.row_info.percent_type
 		
@@ -456,7 +456,7 @@
 			
 			if (use_total_bar and instance.barraS[1] == 1) then
 			
-				qual_barra = 2
+				whichRowLine = 2
 				local iter_last = instance.barraS[2]
 				if (iter_last == instance.rows_fit_in_window) then
 					iter_last = iter_last - 1
@@ -477,14 +477,14 @@
 				gump:Fade (row1, "out")
 				
 				for i = instance.barraS[1], iter_last, 1 do
-					instance_container._ActorTable[i]:UpdateBar (barras_container, qual_barra, percentage_type, i, total, top, instance, force, percent_script, total_script, combat, bars_show_data, bars_brackets, bars_separator)
-					qual_barra = qual_barra+1
+					instance_container._ActorTable[i]:UpdateBar (barras_container, whichRowLine, percentage_type, i, total, top, instance, force, percent_script, total_script, combat, bars_show_data, bars_brackets, bars_separator)
+					whichRowLine = whichRowLine+1
 				end
 			
 			else
 				for i = instance.barraS[1], instance.barraS[2], 1 do
-					instance_container._ActorTable[i]:UpdateBar (barras_container, qual_barra, percentage_type, i, total, top, instance, force, percent_script, total_script, combat, bars_show_data, bars_brackets, bars_separator)
-					qual_barra = qual_barra+1
+					instance_container._ActorTable[i]:UpdateBar (barras_container, whichRowLine, percentage_type, i, total, top, instance, force, percent_script, total_script, combat, bars_show_data, bars_brackets, bars_separator)
+					whichRowLine = whichRowLine+1
 				end
 			end
 			
@@ -492,7 +492,7 @@
 		
 			if (use_total_bar and instance.barraS[1] == 1) then
 			
-				qual_barra = 2
+				whichRowLine = 2
 				local iter_last = instance.barraS[2]
 				if (iter_last == instance.rows_fit_in_window) then
 					iter_last = iter_last - 1
@@ -513,14 +513,14 @@
 				gump:Fade (row1, "out")
 				
 				for i = iter_last, instance.barraS[1], -1 do --> vai atualizar s� o range que esta sendo mostrado
-					instance_container._ActorTable[i]:UpdateBar (barras_container, qual_barra, percentage_type, i, total, top, instance, force, percent_script, total_script, combat, bars_show_data, bars_brackets, bars_separator)
-					qual_barra = qual_barra+1
+					instance_container._ActorTable[i]:UpdateBar (barras_container, whichRowLine, percentage_type, i, total, top, instance, force, percent_script, total_script, combat, bars_show_data, bars_brackets, bars_separator)
+					whichRowLine = whichRowLine+1
 				end
 			
 			else
 				for i = instance.barraS[2], instance.barraS[1], -1 do --> vai atualizar s� o range que esta sendo mostrado
-					instance_container._ActorTable[i]:UpdateBar (barras_container, qual_barra, percentage_type, i, total, top, instance, force, percent_script, total_script, combat, bars_show_data, bars_brackets, bars_separator)
-					qual_barra = qual_barra+1
+					instance_container._ActorTable[i]:UpdateBar (barras_container, whichRowLine, percentage_type, i, total, top, instance, force, percent_script, total_script, combat, bars_show_data, bars_brackets, bars_separator)
+					whichRowLine = whichRowLine+1
 				end
 			end
 			
@@ -528,7 +528,7 @@
 		
 		if (force) then
 			if (instance:IsGroupMode()) then
-				for i = qual_barra, instance.rows_fit_in_window  do
+				for i = whichRowLine, instance.rows_fit_in_window  do
 					gump:Fade (instance.barras [i], "in", 0.3)
 				end
 			end
@@ -623,7 +623,7 @@
 		
 	end
 	
-	function atributo_custom:RefreshBarra2 (esta_barra, instancia, tabela_anterior, forcar, esta_porcentagem, qual_barra, barras_container)
+	function atributo_custom:RefreshBarra2 (esta_barra, instancia, tabela_anterior, forcar, esta_porcentagem, whichRowLine, barras_container)
 		
 		--> primeiro colocado
 		if (esta_barra.colocacao == 1) then
@@ -673,7 +673,7 @@
 					--> apenas atualizar
 					if (_detalhes.is_using_row_animations) then
 						
-						local upRow = barras_container [qual_barra-1]
+						local upRow = barras_container [whichRowLine-1]
 						if (upRow) then
 							if (upRow.statusbar:GetValue() < esta_barra.statusbar:GetValue()) then
 								esta_barra:SetValue (esta_porcentagem)

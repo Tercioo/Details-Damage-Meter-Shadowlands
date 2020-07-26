@@ -550,13 +550,13 @@ function atributo_misc:ReportSingleDebuffUptimeLine (misc_actor, instance)
 	return _detalhes:Reportar (report_table, {_no_current = true, _no_inverse = true, _custom = true})	
 end
 
-function atributo_misc:DeadAtualizarBarra (morte, qual_barra, colocacao, instancia)
+function atributo_misc:DeadAtualizarBarra (morte, whichRowLine, colocacao, instancia)
 	
 	morte ["dead"] = true --> marca que esta tabela � uma tabela de mortes, usado no controla na hora de montar o tooltip
-	local esta_barra = instancia.barras[qual_barra] --> pega a refer�ncia da barra na janela
+	local esta_barra = instancia.barras[whichRowLine] --> pega a refer�ncia da barra na janela
 	
 	if (not esta_barra) then
-		print ("DEBUG: problema com <instancia.esta_barra> "..qual_barra.." "..lugar)
+		print ("DEBUG: problema com <instancia.esta_barra> "..whichRowLine.." "..lugar)
 		return
 	end
 	
@@ -565,7 +565,7 @@ function atributo_misc:DeadAtualizarBarra (morte, qual_barra, colocacao, instanc
 	esta_barra.minha_tabela = morte
 	
 	morte.nome = morte [3] --> evita dar erro ao redimencionar a janela
-	morte.minha_barra = qual_barra
+	morte.minha_barra = whichRowLine
 	esta_barra.colocacao = colocacao
 	
 	if (not _getmetatable (morte)) then 
@@ -602,7 +602,7 @@ function atributo_misc:DeadAtualizarBarra (morte, qual_barra, colocacao, instanc
 	esta_barra.icone_classe:SetVertexColor (1, 1, 1)
 	
 	if (esta_barra.mouse_over and not instancia.baseframe.isMoving) then --> precisa atualizar o tooltip
-		gump:UpdateTooltip (qual_barra, esta_barra, instancia)
+		gump:UpdateTooltip (whichRowLine, esta_barra, instancia)
 	end
 	
 	esta_barra.lineText1:SetSize (esta_barra:GetWidth() - esta_barra.lineText4:GetStringWidth() - 20, 15)
@@ -693,17 +693,17 @@ function atributo_misc:RefreshWindow (instancia, tabela_do_combate, forcar, expo
 		end
 		
 		--estra mostrando ALL ent�o posso seguir o padr�o correto? primeiro, atualiza a scroll bar...
-		instancia:AtualizarScrollBar (total)
+		instancia:RefreshScrollBar (total)
 		
 		--depois faz a atualiza��o normal dele atrav�s dos_ iterators
-		local qual_barra = 1
+		local whichRowLine = 1
 		local barras_container = instancia.barras
 		local percentage_type = instancia.row_info.percent_type
 
 		for i = instancia.barraS[1], instancia.barraS[2], 1 do --> vai atualizar s� o range que esta sendo mostrado
 			if (mortes[i]) then --> corre��o para um raro e desconhecido problema onde mortes[i] � nil
-				atributo_misc:DeadAtualizarBarra (mortes[i], qual_barra, i, instancia)
-				qual_barra = qual_barra+1
+				atributo_misc:DeadAtualizarBarra (mortes[i], whichRowLine, i, instancia)
+				whichRowLine = whichRowLine+1
 			end
 		end
 		
@@ -786,10 +786,10 @@ function atributo_misc:RefreshWindow (instancia, tabela_do_combate, forcar, expo
 	end
 
 	--estra mostrando ALL ent�o posso seguir o padr�o correto? primeiro, atualiza a scroll bar...
-	instancia:AtualizarScrollBar (amount)
+	instancia:RefreshScrollBar (amount)
 	
 	--depois faz a atualiza��o normal dele atrav�s dos_ iterators
-	local qual_barra = 1
+	local whichRowLine = 1
 	local barras_container = instancia.barras
 	local percentage_type = instancia.row_info.percent_type
 	local bars_show_data = instancia.row_info.textR_show_data
@@ -806,22 +806,22 @@ function atributo_misc:RefreshWindow (instancia, tabela_do_combate, forcar, expo
 	
 	if (instancia.bars_sort_direction == 1) then --top to bottom
 		for i = instancia.barraS[1], instancia.barraS[2], 1 do --> vai atualizar s� o range que esta sendo mostrado
-			conteudo[i]:AtualizaBarra (instancia, barras_container, qual_barra, i, total, sub_atributo, forcar, keyName, nil, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator)
-			qual_barra = qual_barra+1
+			conteudo[i]:RefreshLine (instancia, barras_container, whichRowLine, i, total, sub_atributo, forcar, keyName, nil, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator)
+			whichRowLine = whichRowLine+1
 		end
 		
 	elseif (instancia.bars_sort_direction == 2) then --bottom to top
 		for i = instancia.barraS[2], instancia.barraS[1], -1 do --> vai atualizar s� o range que esta sendo mostrado
 			if (conteudo[i]) then
-				conteudo[i]:AtualizaBarra (instancia, barras_container, qual_barra, i, total, sub_atributo, forcar, keyName, nil, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator)
-				qual_barra = qual_barra+1
+				conteudo[i]:RefreshLine (instancia, barras_container, whichRowLine, i, total, sub_atributo, forcar, keyName, nil, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator)
+				whichRowLine = whichRowLine+1
 			end
 		end
 		
 	end
 	
 	if (use_animations) then
-		instancia:fazer_animacoes (qual_barra-1)
+		instancia:PerformAnimations (whichRowLine-1)
 	end
 	
 	if (instancia.atributo == 5) then --> custom
@@ -838,7 +838,7 @@ function atributo_misc:RefreshWindow (instancia, tabela_do_combate, forcar, expo
 	--> beta, hidar barras n�o usadas durante um refresh for�ado
 	if (forcar) then
 		if (instancia.modo == 2) then --> group
-			for i = qual_barra, instancia.rows_fit_in_window  do
+			for i = whichRowLine, instancia.rows_fit_in_window  do
 				gump:Fade (instancia.barras [i], "in", 0.3)
 			end
 		end
@@ -850,12 +850,12 @@ end
 
 local actor_class_color_r, actor_class_color_g, actor_class_color_b
 
-function atributo_misc:AtualizaBarra (instancia, barras_container, qual_barra, lugar, total, sub_atributo, forcar, keyName, is_dead, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator)
+function atributo_misc:RefreshLine (instancia, barras_container, whichRowLine, lugar, total, sub_atributo, forcar, keyName, is_dead, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator)
 
-	local esta_barra = instancia.barras[qual_barra] --> pega a refer�ncia da barra na janela
+	local esta_barra = instancia.barras[whichRowLine] --> pega a refer�ncia da barra na janela
 	
 	if (not esta_barra) then
-		print ("DEBUG: problema com <instancia.esta_barra> "..qual_barra.." "..lugar)
+		print ("DEBUG: problema com <instancia.esta_barra> "..whichRowLine.." "..lugar)
 		return
 	end
 	
@@ -894,19 +894,19 @@ function atributo_misc:AtualizaBarra (instancia, barras_container, qual_barra, l
 	if (UsingCustomRightText) then
 		esta_barra.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, meu_total, "", porcentagem, self, instancia.showing, instancia, rightText))
 	else
-		esta_barra.lineText4:SetText (rightText)
+		Details:SetTextsOnLine(esta_barra.lineText4, "", meu_total, porcentagem)
 	end
 	
 	if (esta_barra.mouse_over and not instancia.baseframe.isMoving) then --> precisa atualizar o tooltip
-		gump:UpdateTooltip (qual_barra, esta_barra, instancia)
+		gump:UpdateTooltip (whichRowLine, esta_barra, instancia)
 	end
 	
 	actor_class_color_r, actor_class_color_g, actor_class_color_b = self:GetBarColor()	
 
-	return self:RefreshBarra2 (esta_barra, instancia, tabela_anterior, forcar, esta_porcentagem, qual_barra, barras_container, use_animations)
+	return self:RefreshBarra2 (esta_barra, instancia, tabela_anterior, forcar, esta_porcentagem, whichRowLine, barras_container, use_animations)
 end
 
-function atributo_misc:RefreshBarra2 (esta_barra, instancia, tabela_anterior, forcar, esta_porcentagem, qual_barra, barras_container, use_animations)
+function atributo_misc:RefreshBarra2 (esta_barra, instancia, tabela_anterior, forcar, esta_porcentagem, whichRowLine, barras_container, use_animations)
 	
 	--> primeiro colocado
 	if (esta_barra.colocacao == 1) then

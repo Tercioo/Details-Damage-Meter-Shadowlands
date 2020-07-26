@@ -1641,13 +1641,13 @@
 			end
 		end
 		
-		function Details:MontaTooltip (frame, qual_barra, keydown)
+		function Details:MontaTooltip (frame, whichRowLine, keydown)
 		
 			self:BuildInstanceBarTooltip (frame)
 			
 			local GameCooltip = GameCooltip
 		
-			local esta_barra = self.barras [qual_barra] --> barra que o mouse passou em cima e ir� mostrar o tooltip
+			local esta_barra = self.barras [whichRowLine] --> barra que o mouse passou em cima e ir� mostrar o tooltip
 			local objeto = esta_barra.minha_tabela --> pega a referencia da tabela --> retorna a classe_damage ou classe_heal
 			if (not objeto) then --> a barra n�o possui um objeto
 				return false
@@ -1664,7 +1664,7 @@
 				return Details:ToolTipVoidZones (self, objeto, esta_barra, keydown)
 			end
 			
-			local t = objeto:ToolTip (self, qual_barra, esta_barra, keydown) --> inst�ncia, n� barra, objeto barra, keydown
+			local t = objeto:ToolTip (self, whichRowLine, esta_barra, keydown) --> inst�ncia, n� barra, objeto barra, keydown
 			
 			if (t) then
 			
@@ -1689,15 +1689,15 @@
 			end
 		end
 		
-		function Details.gump:UpdateTooltip (qual_barra, esta_barra, instancia)
+		function Details.gump:UpdateTooltip (whichRowLine, esta_barra, instancia)
 			if (_IsShiftKeyDown()) then
-				return instancia:MontaTooltip (esta_barra, qual_barra, "shift")
+				return instancia:MontaTooltip (esta_barra, whichRowLine, "shift")
 			elseif (_IsControlKeyDown()) then
-				return instancia:MontaTooltip (esta_barra, qual_barra, "ctrl")
+				return instancia:MontaTooltip (esta_barra, whichRowLine, "ctrl")
 			elseif (_IsAltKeyDown()) then
-				return instancia:MontaTooltip (esta_barra, qual_barra, "alt")
+				return instancia:MontaTooltip (esta_barra, whichRowLine, "alt")
 			else
-				return instancia:MontaTooltip (esta_barra, qual_barra)
+				return instancia:MontaTooltip (esta_barra, whichRowLine)
 			end
 		end
 		

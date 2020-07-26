@@ -667,10 +667,10 @@ function SlashCmdList.DETAILS (msg, editbox)
 	--> debug
 	elseif (command == "barra") then 
 	
-		local qual_barra = rest and tonumber (rest) or 1
+		local whichRowLine = rest and tonumber (rest) or 1
 	
 		local instancia = _detalhes.tabela_instancias [1]
-		local barra = instancia.barras [qual_barra]
+		local barra = instancia.barras [whichRowLine]
 		
 		for i = 1, barra:GetNumPoints() do 
 			local point, relativeTo, relativePoint, xOfs, yOfs = barra:GetPoint (i)

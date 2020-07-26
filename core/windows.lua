@@ -80,7 +80,7 @@
 	
 	
 
-	function _detalhes:fazer_animacoes (amt_barras)
+	function _detalhes:PerformAnimations (amt_barras)
 
 		if (self.bars_sort_direction == 2) then
 		
@@ -724,7 +724,7 @@
 			--> verifica se precisa criar mais barras
 			if (self.rows_fit_in_window > #self.barras) then--> verifica se precisa criar mais barras
 				for i  = #self.barras+1, self.rows_fit_in_window, 1 do
-					gump:CriaNovaBarra (self, i) --> cria nova barra
+					gump:CreateNewLine(self, i) --> cria nova barra
 				end
 				self.rows_created = #self.barras
 			end
@@ -840,9 +840,9 @@
 			end
 			
 			--> verificar o tamanho dos nomes
-			local qual_barra = 1
+			local whichRowLine = 1
 			for i = self.barraS[1], self.barraS[2], 1 do
-				local esta_barra = self.barras [qual_barra]
+				local esta_barra = self.barras [whichRowLine]
 				local tabela = esta_barra.minha_tabela
 				
 				if (tabela) then --> a barra esta mostrando alguma coisa
@@ -857,7 +857,7 @@
 
 				end
 				
-				qual_barra = qual_barra+1
+				whichRowLine = whichRowLine+1
 			end
 			
 			--> for�a o pr�ximo refresh

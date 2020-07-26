@@ -356,10 +356,10 @@ function atributo_heal:RefreshWindow (instancia, tabela_do_combate, forcar, expo
 	end
 	
 	--estra mostrando ALL ent�o posso seguir o padr�o correto? primeiro, atualiza a scroll bar...
-	instancia:AtualizarScrollBar (amount)
+	instancia:RefreshScrollBar (amount)
 	
 	--depois faz a atualiza��o normal dele atrav�s dos iterators
-	local qual_barra = 1
+	local whichRowLine = 1
 	local barras_container = instancia.barras --> evita buscar N vezes a key .barras dentro da inst�ncia
 	local percentage_type = instancia.row_info.percent_type
 	local bars_show_data = instancia.row_info.textR_show_data
@@ -407,7 +407,7 @@ function atributo_heal:RefreshWindow (instancia, tabela_do_combate, forcar, expo
 		
 		if (use_total_bar and instancia.barraS[1] == 1) then
 		
-			qual_barra = 2
+			whichRowLine = 2
 			local iter_last = instancia.barraS[2]
 			if (iter_last == instancia.rows_fit_in_window) then
 				iter_last = iter_last - 1
@@ -416,7 +416,8 @@ function atributo_heal:RefreshWindow (instancia, tabela_do_combate, forcar, expo
 			local row1 = barras_container [1]
 			row1.minha_tabela = nil
 			row1.lineText1:SetText (Loc ["STRING_TOTAL"])
-			row1.lineText4:SetText (_detalhes:ToK2 (total) .. " (" .. _detalhes:ToK (total / combat_time) .. ")")
+			--row1.lineText4:SetText (_detalhes:ToK2 (total) .. " (" .. _detalhes:ToK (total / combat_time) .. ")")
+			Details:SetTextsOnLine(row1.lineText4, "", _detalhes:ToK2 (total), _detalhes:ToK (total / combat_time))
 			
 			row1:SetValue (100)
 			local r, g, b = unpack (instancia.total_bar.color)
@@ -430,19 +431,19 @@ function atributo_heal:RefreshWindow (instancia, tabela_do_combate, forcar, expo
 			if (following and myPos and myPos > instancia.rows_fit_in_window and instancia.barraS[2] < myPos) then
 				for i = instancia.barraS[1], iter_last-1, 1 do --> vai atualizar s� o range que esta sendo mostrado
 					if (conteudo[i]) then
-						conteudo[i]:AtualizaBarra (instancia, barras_container, qual_barra, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) 
-						qual_barra = qual_barra+1
+						conteudo[i]:RefreshLine (instancia, barras_container, whichRowLine, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) 
+						whichRowLine = whichRowLine+1
 					end
 				end
 				
-				conteudo[myPos]:AtualizaBarra (instancia, barras_container, qual_barra, myPos, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) 
-				qual_barra = qual_barra+1
+				conteudo[myPos]:RefreshLine (instancia, barras_container, whichRowLine, myPos, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) 
+				whichRowLine = whichRowLine+1
 			else
 			
 				for i = instancia.barraS[1], iter_last, 1 do --> vai atualizar s� o range que esta sendo mostrado
 					if (conteudo[i]) then
-						conteudo[i]:AtualizaBarra (instancia, barras_container, qual_barra, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) 
-						qual_barra = qual_barra+1
+						conteudo[i]:RefreshLine (instancia, barras_container, whichRowLine, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) 
+						whichRowLine = whichRowLine+1
 					end
 				end
 			end
@@ -451,18 +452,18 @@ function atributo_heal:RefreshWindow (instancia, tabela_do_combate, forcar, expo
 			if (following and myPos and myPos > instancia.rows_fit_in_window and instancia.barraS[2] < myPos) then
 				for i = instancia.barraS[1], instancia.barraS[2]-1, 1 do --> vai atualizar s� o range que esta sendo mostrado
 					if (conteudo[i]) then
-						conteudo[i]:AtualizaBarra (instancia, barras_container, qual_barra, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) 
-						qual_barra = qual_barra+1
+						conteudo[i]:RefreshLine (instancia, barras_container, whichRowLine, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) 
+						whichRowLine = whichRowLine+1
 					end
 				end
 				
-				conteudo[myPos]:AtualizaBarra (instancia, barras_container, qual_barra, myPos, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) 
-				qual_barra = qual_barra+1
+				conteudo[myPos]:RefreshLine (instancia, barras_container, whichRowLine, myPos, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) 
+				whichRowLine = whichRowLine+1
 			else
 				for i = instancia.barraS[1], instancia.barraS[2], 1 do --> vai atualizar s� o range que esta sendo mostrado
 					if (conteudo[i]) then
-						conteudo[i]:AtualizaBarra (instancia, barras_container, qual_barra, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) 
-						qual_barra = qual_barra+1
+						conteudo[i]:RefreshLine (instancia, barras_container, whichRowLine, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) 
+						whichRowLine = whichRowLine+1
 					end
 				end
 			end
@@ -472,7 +473,7 @@ function atributo_heal:RefreshWindow (instancia, tabela_do_combate, forcar, expo
 	
 		if (use_total_bar and instancia.barraS[1] == 1) then
 		
-			qual_barra = 2
+			whichRowLine = 2
 			local iter_last = instancia.barraS[2]
 			if (iter_last == instancia.rows_fit_in_window) then
 				iter_last = iter_last - 1
@@ -481,7 +482,8 @@ function atributo_heal:RefreshWindow (instancia, tabela_do_combate, forcar, expo
 			local row1 = barras_container [1]
 			row1.minha_tabela = nil
 			row1.lineText1:SetText (Loc ["STRING_TOTAL"])
-			row1.lineText4:SetText (_detalhes:ToK2 (total) .. " (" .. _detalhes:ToK (total / combat_time) .. ")")
+			--row1.lineText4:SetText (_detalhes:ToK2 (total) .. " (" .. _detalhes:ToK (total / combat_time) .. ")")
+			Details:SetTextsOnLine(row1.lineText4, "", _detalhes:ToK2(total), _detalhes:ToK(total / combat_time))
 			
 			row1:SetValue (100)
 			local r, g, b = unpack (instancia.total_bar.color)
@@ -495,18 +497,18 @@ function atributo_heal:RefreshWindow (instancia, tabela_do_combate, forcar, expo
 			if (following and myPos and myPos > instancia.rows_fit_in_window and instancia.barraS[2] < myPos) then
 				for i = iter_last-1, instancia.barraS[1], -1 do --> vai atualizar s� o range que esta sendo mostrado
 					if (conteudo[i]) then
-						conteudo[i]:AtualizaBarra (instancia, barras_container, qual_barra, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) 
-						qual_barra = qual_barra+1
+						conteudo[i]:RefreshLine (instancia, barras_container, whichRowLine, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) 
+						whichRowLine = whichRowLine+1
 					end
 				end
 				
-				conteudo[myPos]:AtualizaBarra (instancia, barras_container, qual_barra, myPos, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) 
-				qual_barra = qual_barra+1
+				conteudo[myPos]:RefreshLine (instancia, barras_container, whichRowLine, myPos, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) 
+				whichRowLine = whichRowLine+1
 			else
 				for i = iter_last, instancia.barraS[1], -1 do --> vai atualizar s� o range que esta sendo mostrado
 					if (conteudo[i]) then
-						conteudo[i]:AtualizaBarra (instancia, barras_container, qual_barra, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) 
-						qual_barra = qual_barra+1
+						conteudo[i]:RefreshLine (instancia, barras_container, whichRowLine, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) 
+						whichRowLine = whichRowLine+1
 					end
 				end
 			end
@@ -514,18 +516,18 @@ function atributo_heal:RefreshWindow (instancia, tabela_do_combate, forcar, expo
 			if (following and myPos and myPos > instancia.rows_fit_in_window and instancia.barraS[2] < myPos) then
 				for i = instancia.barraS[2]-1, instancia.barraS[1], -1 do --> vai atualizar s� o range que esta sendo mostrado
 					if (conteudo[i]) then
-						conteudo[i]:AtualizaBarra (instancia, barras_container, qual_barra, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) 
-						qual_barra = qual_barra+1
+						conteudo[i]:RefreshLine (instancia, barras_container, whichRowLine, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) 
+						whichRowLine = whichRowLine+1
 					end
 				end
 				
-				conteudo[myPos]:AtualizaBarra (instancia, barras_container, qual_barra, myPos, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) 
-				qual_barra = qual_barra+1
+				conteudo[myPos]:RefreshLine (instancia, barras_container, whichRowLine, myPos, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) 
+				whichRowLine = whichRowLine+1
 			else
 				for i = instancia.barraS[2], instancia.barraS[1], -1 do --> vai atualizar s� o range que esta sendo mostrado
 					if (conteudo[i]) then
-						conteudo[i]:AtualizaBarra (instancia, barras_container, qual_barra, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) 
-						qual_barra = qual_barra+1
+						conteudo[i]:RefreshLine (instancia, barras_container, whichRowLine, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) 
+						whichRowLine = whichRowLine+1
 					end
 				end
 			end
@@ -534,7 +536,7 @@ function atributo_heal:RefreshWindow (instancia, tabela_do_combate, forcar, expo
 	end
 
 	if (use_animations) then
-		instancia:fazer_animacoes (qual_barra - 1)
+		instancia:PerformAnimations (whichRowLine - 1)
 	end
 	
 	if (instancia.atributo == 5) then --> custom
@@ -551,7 +553,7 @@ function atributo_heal:RefreshWindow (instancia, tabela_do_combate, forcar, expo
 	--> beta, hidar barras n�o usadas durante um refresh for�ado
 	if (forcar) then
 		if (instancia.modo == 2) then --> group
-			for i = qual_barra, instancia.rows_fit_in_window  do
+			for i = whichRowLine, instancia.rows_fit_in_window  do
 				gump:Fade (instancia.barras [i], "in", 0.3)
 			end
 		end
@@ -564,22 +566,22 @@ end
 
 local actor_class_color_r, actor_class_color_g, actor_class_color_b
 
---function atributo_heal:AtualizaBarra (instancia, qual_barra, lugar, total, sub_atributo, forcar)
-function atributo_heal:AtualizaBarra (instancia, barras_container, qual_barra, lugar, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator)
+--function atributo_heal:RefreshLine (instancia, whichRowLine, lugar, total, sub_atributo, forcar)
+function atributo_heal:RefreshLine(instancia, barras_container, whichRowLine, lugar, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator)
 
-	local esta_barra = instancia.barras[qual_barra] --> pega a refer�ncia da barra na janela
+	local thisLine = instancia.barras[whichRowLine] --> pega a refer�ncia da barra na janela
 	
-	if (not esta_barra) then
-		print ("DEBUG: problema com <instancia.esta_barra> "..qual_barra.." "..lugar)
+	if (not thisLine) then
+		print ("DEBUG: problema com <instancia.thisLine> "..whichRowLine.." "..lugar)
 		return
 	end
 	
-	local tabela_anterior = esta_barra.minha_tabela
+	local tabela_anterior = thisLine.minha_tabela
 	
-	esta_barra.minha_tabela = self --grava uma refer�ncia dessa classe de dano na barra
-	self.minha_barra = esta_barra --> salva uma refer�ncia da barra no objeto do jogador
+	thisLine.minha_tabela = self --grava uma refer�ncia dessa classe de dano na barra
+	self.minha_barra = thisLine --> salva uma refer�ncia da barra no objeto do jogador
 	
-	esta_barra.colocacao = lugar --> salva na barra qual a coloca��o dela.
+	thisLine.colocacao = lugar --> salva na barra qual a coloca��o dela.
 	self.colocacao = lugar --> salva qual a coloca��o do jogador no objeto dele
 	
 	local healing_total = self.total --> total de dano que este jogador deu
@@ -591,6 +593,7 @@ function atributo_heal:AtualizaBarra (instancia, barras_container, qual_barra, l
 	
 	if (percentage_type == 1) then
 		porcentagem = _cstr ("%.1f", self [keyName] / total * 100)
+
 	elseif (percentage_type == 2) then
 		porcentagem = _cstr ("%.1f", self [keyName] / instancia.top * 100)
 	end
@@ -626,7 +629,8 @@ function atributo_heal:AtualizaBarra (instancia, barras_container, qual_barra, l
 	
 	-- >>>>>>>>>>>>>>> texto da direita
 	if (instancia.atributo == 5) then --> custom
-		esta_barra.lineText4:SetText (_detalhes:ToK (self.custom) .. " (" .. porcentagem .. "%)")
+		--thisLine.lineText4:SetText (_detalhes:ToK (self.custom) .. " (" .. porcentagem .. "%)")
+		Details:SetTextsOnLine(thisLine.lineText4, "", _detalhes:ToK (self.custom), porcentagem .. "%")
 		esta_porcentagem = _math_floor ((self.custom/instancia.top) * 100)
 		
 	else	
@@ -635,7 +639,7 @@ function atributo_heal:AtualizaBarra (instancia, barras_container, qual_barra, l
 			hps = _math_floor (hps)
 			local formated_heal = SelectedToKFunction (_, healing_total)
 			local formated_hps = SelectedToKFunction (_, hps)
-			esta_barra.ps_text = formated_hps
+			thisLine.ps_text = formated_hps
 		
 			if (not bars_show_data [1]) then
 				formated_heal = ""
@@ -651,9 +655,9 @@ function atributo_heal:AtualizaBarra (instancia, barras_container, qual_barra, l
 			
 			local rightText = formated_heal .. bars_brackets[1] .. formated_hps .. bars_separator .. porcentagem .. bars_brackets[2]
 			if (UsingCustomRightText) then
-				esta_barra.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_heal, formated_hps, porcentagem, self, instancia.showing, instancia, rightText))
+				thisLine.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_heal, formated_hps, porcentagem, self, instancia.showing, instancia, rightText))
 			else
-				esta_barra.lineText4:SetText (rightText)
+				Details:SetTextsOnLine(thisLine, formated_heal, formated_hps, porcentagem)
 			end
 			esta_porcentagem = _math_floor ((healing_total/instancia.top) * 100)
 			
@@ -662,7 +666,7 @@ function atributo_heal:AtualizaBarra (instancia, barras_container, qual_barra, l
 			hps = _math_floor (hps)
 			local formated_heal = SelectedToKFunction (_, healing_total)
 			local formated_hps = SelectedToKFunction (_, hps)
-			esta_barra.ps_text = formated_hps
+			thisLine.ps_text = formated_hps
 			
 			if (not bars_show_data [1]) then
 				formated_hps = ""
@@ -678,9 +682,9 @@ function atributo_heal:AtualizaBarra (instancia, barras_container, qual_barra, l
 			
 			local rightText = formated_hps .. bars_brackets[1] .. formated_heal .. bars_separator .. porcentagem .. bars_brackets[2]
 			if (UsingCustomRightText) then
-				esta_barra.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_hps, formated_heal, porcentagem, self, instancia.showing, instancia, rightText))
+				thisLine.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_hps, formated_heal, porcentagem, self, instancia.showing, instancia, rightText))
 			else
-				esta_barra.lineText4:SetText (rightText)
+				Details:SetTextsOnLine(thisLine, formated_hps, formated_heal, porcentagem)
 			end
 			
 			esta_porcentagem = _math_floor ((hps/instancia.top) * 100)
@@ -707,9 +711,9 @@ function atributo_heal:AtualizaBarra (instancia, barras_container, qual_barra, l
 			
 			local rightText = formated_overheal .. bars_brackets[1] .. overheal_percent .. bars_brackets[2]
 			if (UsingCustomRightText) then
-				esta_barra.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_overheal, "", overheal_percent, self, instancia.showing, instancia, rightText))
+				thisLine.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_overheal, "", overheal_percent, self, instancia.showing, instancia, rightText))
 			else
-				esta_barra.lineText4:SetText (rightText)
+				Details:SetTextsOnLine(thisLine, "", formated_overheal, overheal_percent)
 			end
 			
 			esta_porcentagem = _math_floor ((self.totalover/instancia.top) * 100)
@@ -729,9 +733,9 @@ function atributo_heal:AtualizaBarra (instancia, barras_container, qual_barra, l
 			
 			local rightText = formated_healtaken .. bars_brackets[1] .. porcentagem .. bars_brackets[2]
 			if (UsingCustomRightText) then
-				esta_barra.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_healtaken, "", porcentagem, self, instancia.showing, instancia, rightText))
+				thisLine.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_healtaken, "", porcentagem, self, instancia.showing, instancia, rightText))
 			else
-				esta_barra.lineText4:SetText (rightText)
+				Details:SetTextsOnLine(thisLine, "", formated_healtaken, porcentagem)
 			end
 			
 			esta_porcentagem = _math_floor ((self.healing_taken/instancia.top) * 100)
@@ -751,9 +755,9 @@ function atributo_heal:AtualizaBarra (instancia, barras_container, qual_barra, l
 		
 			local rightText = formated_enemyheal .. bars_brackets[1] .. porcentagem .. bars_brackets[2]
 			if (UsingCustomRightText) then
-				esta_barra.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_enemyheal, "", porcentagem, self, instancia.showing, instancia, rightText))
+				thisLine.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_enemyheal, "", porcentagem, self, instancia.showing, instancia, rightText))
 			else
-				esta_barra.lineText4:SetText (rightText)
+				Details:SetTextsOnLine(thisLine, "", formated_enemyheal, porcentagem)
 			end
 			esta_porcentagem = _math_floor ((self.heal_enemy_amt/instancia.top) * 100)
 			
@@ -772,9 +776,9 @@ function atributo_heal:AtualizaBarra (instancia, barras_container, qual_barra, l
 			
 			local rightText = formated_absorbs .. bars_brackets[1] .. porcentagem .. bars_brackets[2]
 			if (UsingCustomRightText) then
-				esta_barra.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_absorbs, "", porcentagem, self, instancia.showing, instancia, rightText))
+				thisLine.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_absorbs, "", porcentagem, self, instancia.showing, instancia, rightText))
 			else
-				esta_barra.lineText4:SetText (rightText)
+				Details:SetTextsOnLine(thisLine, "", formated_absorbs, porcentagem)
 			end
 			esta_porcentagem = _math_floor ((self.totalabsorb/instancia.top) * 100)
 			
@@ -793,86 +797,86 @@ function atributo_heal:AtualizaBarra (instancia, barras_container, qual_barra, l
 			
 			local rightText = formated_absorbs .. bars_brackets[1] .. porcentagem .. bars_brackets[2]
 			if (UsingCustomRightText) then
-				esta_barra.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_absorbs, "", porcentagem, self, instancia.showing, instancia, rightText))
+				thisLine.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_absorbs, "", porcentagem, self, instancia.showing, instancia, rightText))
 			else
-				esta_barra.lineText4:SetText (rightText)
+				Details:SetTextsOnLine(thisLine, "", formated_absorbs, porcentagem)
 			end
 			esta_porcentagem = _math_floor ((self.totaldenied/instancia.top) * 100)
 			
 		end
 	end
 	
-	if (esta_barra.mouse_over and not instancia.baseframe.isMoving) then --> precisa atualizar o tooltip
-		gump:UpdateTooltip (qual_barra, esta_barra, instancia)
+	if (thisLine.mouse_over and not instancia.baseframe.isMoving) then --> precisa atualizar o tooltip
+		gump:UpdateTooltip (whichRowLine, thisLine, instancia)
 	end
 
 	actor_class_color_r, actor_class_color_g, actor_class_color_b = self:GetBarColor()
 	
-	return self:RefreshBarra2 (esta_barra, instancia, tabela_anterior, forcar, esta_porcentagem, qual_barra, barras_container, use_animations)	
+	return self:RefreshBarra2 (thisLine, instancia, tabela_anterior, forcar, esta_porcentagem, whichRowLine, barras_container, use_animations)	
 end
 
-function atributo_heal:RefreshBarra2 (esta_barra, instancia, tabela_anterior, forcar, esta_porcentagem, qual_barra, barras_container, use_animations)
+function atributo_heal:RefreshBarra2 (thisLine, instancia, tabela_anterior, forcar, esta_porcentagem, whichRowLine, barras_container, use_animations)
 	
 	--> primeiro colocado
-	if (esta_barra.colocacao == 1) then
-		if (not tabela_anterior or tabela_anterior ~= esta_barra.minha_tabela or forcar) then
-			esta_barra:SetValue (100)
+	if (thisLine.colocacao == 1) then
+		if (not tabela_anterior or tabela_anterior ~= thisLine.minha_tabela or forcar) then
+			thisLine:SetValue (100)
 			
-			if (esta_barra.hidden or esta_barra.fading_in or esta_barra.faded) then
-				gump:Fade (esta_barra, "out")
+			if (thisLine.hidden or thisLine.fading_in or thisLine.faded) then
+				gump:Fade (thisLine, "out")
 			end
 			
-			return self:RefreshBarra (esta_barra, instancia)
+			return self:RefreshBarra (thisLine, instancia)
 		else
 			return
 		end
 	else
 
-		if (esta_barra.hidden or esta_barra.fading_in or esta_barra.faded) then
+		if (thisLine.hidden or thisLine.fading_in or thisLine.faded) then
 		
-			esta_barra:SetValue (esta_porcentagem)
+			thisLine:SetValue (esta_porcentagem)
 			if (use_animations) then
-				esta_barra.animacao_fim = esta_porcentagem
+				thisLine.animacao_fim = esta_porcentagem
 			else
-				esta_barra.animacao_ignorar = true
+				thisLine.animacao_ignorar = true
 			end
 			
-			gump:Fade (esta_barra, "out")
+			gump:Fade (thisLine, "out")
 			
 			if (instancia.row_info.texture_class_colors) then
-				esta_barra.textura:SetVertexColor (actor_class_color_r, actor_class_color_g, actor_class_color_b)
+				thisLine.textura:SetVertexColor (actor_class_color_r, actor_class_color_g, actor_class_color_b)
 			end
 			if (instancia.row_info.texture_background_class_color) then
-				esta_barra.background:SetVertexColor (actor_class_color_r, actor_class_color_g, actor_class_color_b)
+				thisLine.background:SetVertexColor (actor_class_color_r, actor_class_color_g, actor_class_color_b)
 			end
 			
-			return self:RefreshBarra (esta_barra, instancia)
+			return self:RefreshBarra (thisLine, instancia)
 			
 		else
 			--> agora esta comparando se a tabela da barra � diferente da tabela na atualiza��o anterior
-			if (not tabela_anterior or tabela_anterior ~= esta_barra.minha_tabela or forcar) then --> aqui diz se a barra do jogador mudou de posi��o ou se ela apenas ser� atualizada
+			if (not tabela_anterior or tabela_anterior ~= thisLine.minha_tabela or forcar) then --> aqui diz se a barra do jogador mudou de posi��o ou se ela apenas ser� atualizada
 			
 				if (use_animations) then
-					esta_barra.animacao_fim = esta_porcentagem
+					thisLine.animacao_fim = esta_porcentagem
 				else
-					esta_barra:SetValue (esta_porcentagem)
-					esta_barra.animacao_ignorar = true
+					thisLine:SetValue (esta_porcentagem)
+					thisLine.animacao_ignorar = true
 				end
 			
-				esta_barra.last_value = esta_porcentagem --> reseta o ultimo valor da barra
+				thisLine.last_value = esta_porcentagem --> reseta o ultimo valor da barra
 				
-				return self:RefreshBarra (esta_barra, instancia)
+				return self:RefreshBarra (thisLine, instancia)
 				
-			elseif (esta_porcentagem ~= esta_barra.last_value) then --> continua mostrando a mesma tabela ent�o compara a porcentagem
+			elseif (esta_porcentagem ~= thisLine.last_value) then --> continua mostrando a mesma tabela ent�o compara a porcentagem
 				--> apenas atualizar
 				if (use_animations) then
-					esta_barra.animacao_fim = esta_porcentagem
+					thisLine.animacao_fim = esta_porcentagem
 				else
-					esta_barra:SetValue (esta_porcentagem)
+					thisLine:SetValue (esta_porcentagem)
 				end
-				esta_barra.last_value = esta_porcentagem
+				thisLine.last_value = esta_porcentagem
 				
-				return self:RefreshBarra (esta_barra, instancia)
+				return self:RefreshBarra (thisLine, instancia)
 			end
 		end
 
@@ -880,7 +884,7 @@ function atributo_heal:RefreshBarra2 (esta_barra, instancia, tabela_anterior, fo
 	
 end
 
-function atributo_heal:RefreshBarra (esta_barra, instancia, from_resize)
+function atributo_heal:RefreshBarra (thisLine, instancia, from_resize)
 	
 	local class, enemy, arena_enemy, arena_ally = self.classe, self.enemy, self.arena_enemy, self.arena_ally
 	
@@ -889,13 +893,13 @@ function atributo_heal:RefreshBarra (esta_barra, instancia, from_resize)
 	end
 	
 	--> icon
-	self:SetClassIcon (esta_barra.icone_classe, instancia, class)
+	self:SetClassIcon (thisLine.icone_classe, instancia, class)
 	--> texture color
-	self:SetBarColors (esta_barra, instancia, actor_class_color_r, actor_class_color_g, actor_class_color_b)
+	self:SetBarColors (thisLine, instancia, actor_class_color_r, actor_class_color_g, actor_class_color_b)
 	--> left text
-	self:SetBarLeftText (esta_barra, instancia, enemy, arena_enemy, arena_ally, UsingCustomLeftText)
+	self:SetBarLeftText (thisLine, instancia, enemy, arena_enemy, arena_ally, UsingCustomLeftText)
 	
-	esta_barra.lineText1:SetSize (esta_barra:GetWidth() - esta_barra.lineText4:GetStringWidth() - 20, 15)
+	thisLine.lineText1:SetSize (thisLine:GetWidth() - thisLine.lineText4:GetStringWidth() - 20, 15)
 	
 end
 
@@ -1990,9 +1994,9 @@ function atributo_heal:MontaInfoHealingDone()
 	
 end
 
-function atributo_heal:MontaTooltipAlvos (esta_barra, index, instancia)
+function atributo_heal:MontaTooltipAlvos (thisLine, index, instancia)
 
-	local inimigo = esta_barra.nome_inimigo
+	local inimigo = thisLine.nome_inimigo
 	local container = self.spells._ActorTable
 	local habilidades = {}
 	local total
@@ -2008,8 +2012,8 @@ function atributo_heal:MontaTooltipAlvos (esta_barra, index, instancia)
 	end
 
 	_detalhes:FormatCooltipForSpells()
-	GameCooltip:SetOwner(esta_barra, "bottom", "top", 4, -2)
-	GameCooltip:SetOption ("MinWidth", max(230, esta_barra:GetWidth()*0.98))
+	GameCooltip:SetOwner(thisLine, "bottom", "top", 4, -2)
+	GameCooltip:SetOption ("MinWidth", max(230, thisLine:GetWidth()*0.98))
 
 	--> add spells
 	for spellid, tabela in _pairs (container) do

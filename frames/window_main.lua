@@ -141,7 +141,7 @@ end
 	}
 	
 	
-function _detalhes:AtualizarScrollBar (x) --> x = quantas barras esta sendo mostrado
+function _detalhes:RefreshScrollBar (x) --> x = quantas barras esta sendo mostrado
 
 	local cabe = self.rows_fit_in_window --> quantas barras cabem na janela
 
@@ -4001,13 +4001,13 @@ end
 
 --> Alias
 function gump:NewRow (instancia, index)
-	return gump:CriaNovaBarra (instancia, index)
+	return gump:CreateNewLine (instancia, index)
 end
 
 _detalhes.barras_criadas = 0
 
 --> search key: ~row ~barra
-function gump:CriaNovaBarra (instancia, index)
+function gump:CreateNewLine (instancia, index)
 
 	--> instancia = window object, index = row number
 	local baseframe = instancia.baseframe
@@ -4110,20 +4110,10 @@ function gump:CriaNovaBarra (instancia, index)
 	new_row.lineText1:SetJustifyH ("left")
 	new_row.lineText1:SetNonSpaceWrap (true)
 
-	--> right text 2
-	new_row.lineText2 = new_row.border:CreateFontString (nil, "overlay", "GameFontHighlight")
-	new_row.lineText2:SetPoint("right", new_row.statusbar, "right", -60, 0) --to be defined
-	new_row.lineText2:SetJustifyH("right")
-
-	--> right text 3
-	new_row.lineText3 = new_row.border:CreateFontString (nil, "overlay", "GameFontHighlight")
-	new_row.lineText3:SetPoint("right", new_row.statusbar, "right", -30, 0) --to be defined
-	new_row.lineText3:SetJustifyH("right")
-
-	--> right text 4
-	new_row.lineText4 = new_row.border:CreateFontString (nil, "overlay", "GameFontHighlight")
-	new_row.lineText4:SetPoint ("right", new_row.statusbar, "right")
-	new_row.lineText4:SetJustifyH ("right")
+	--create text columns
+	for i = 2, 4 do
+		new_row ["lineText" .. i] = new_row.border:CreateFontString (nil, "overlay", "GameFontHighlight")
+	end
 
 	--> set the onclick, on enter scripts
 	barra_scripts (new_row, instancia, index)
@@ -4621,7 +4611,6 @@ function _detalhes:InstanceRefreshRows (instancia)
 	
 	--icons
 		local no_icon = self.row_info.no_icon
-		local icon_texture = self.row_info.icon_file
 		local start_after_icon = self.row_info.start_after_icon
 	
 		if (self.row_info.use_spec_icons) then
@@ -4629,12 +4618,7 @@ function _detalhes:InstanceRefreshRows (instancia)
 		end
 		
 		local icon_force_grayscale = self.row_info.icon_grayscale
-		
 		local icon_offset_x, icon_offset_y = unpack (self.row_info.icon_offset)
-	
-	--custom right text
-		local custom_right_text_enabled = self.row_info.textR_enable_custom_text
-		local custom_right_text = self.row_info.textR_custom_text
 
 	--backdrop
 		local backdrop = self.row_info.backdrop.enabled
@@ -4676,13 +4660,20 @@ function _detalhes:InstanceRefreshRows (instancia)
 		
 		--> icon and texture anchors
 		if (not is_mirror) then
-
 			row.lineText1:ClearAllPoints()
-			row.lineText4:ClearAllPoints()
-			row.lineText4:SetJustifyH ("right")
-			row.lineText1:SetJustifyH ("left")
 			
-			row.lineText4:SetPoint ("right", row.statusbar, "right")
+			row.lineText2:ClearAllPoints()
+			row.lineText3:ClearAllPoints()
+			row.lineText4:ClearAllPoints()
+			
+			row.lineText1:SetJustifyH("left")
+			row.lineText2:SetJustifyH("right")
+			row.lineText3:SetJustifyH("right")
+			row.lineText4:SetJustifyH("right")
+			
+			row.lineText2:SetPoint ("right", row.statusbar, "right", -self.fontstrings_text2_anchor, 0)
+			row.lineText3:SetPoint ("right", row.statusbar, "right", -self.fontstrings_text3_anchor, 0)
+			row.lineText4:SetPoint ("right", row.statusbar, "right", -self.fontstrings_text4_anchor, 0)
 
 			if (no_icon) then
 				row.statusbar:SetPoint ("topleft", row, "topleft")
@@ -4704,13 +4695,19 @@ function _detalhes:InstanceRefreshRows (instancia)
 				row.lineText1:SetPoint ("left", row.icone_classe, "right", 3, 0)
 			end
 		else
-		
 			row.lineText1:ClearAllPoints()
+			row.lineText2:ClearAllPoints()
+			row.lineText3:ClearAllPoints()
 			row.lineText4:ClearAllPoints()
-			row.lineText4:SetJustifyH ("left")
-			row.lineText1:SetJustifyH ("right")
+
+			row.lineText4:SetJustifyH("left")
+			row.lineText3:SetJustifyH("left")
+			row.lineText2:SetJustifyH("left")
+			row.lineText1:SetJustifyH("right")
 			
-			row.lineText4:SetPoint ("left", row.statusbar, "left", 1, 0)
+			row.lineText4:SetPoint ("left", row.statusbar, "left", self.fontstrings_text4_anchor + 1, 0)
+			row.lineText3:SetPoint ("left", row.statusbar, "left", self.fontstrings_text3_anchor + 1, 0)
+			row.lineText2:SetPoint ("left", row.statusbar, "left", self.fontstrings_text2_anchor + 1, 0)
 		
 			if (no_icon) then
 				row.statusbar:SetPoint ("topleft", row, "topleft")
@@ -4749,14 +4746,18 @@ function _detalhes:InstanceRefreshRows (instancia)
 	
 		--> outline
 		if (left_text_outline) then
-			_detalhes:SetFontOutline (row.lineText1, left_text_outline)
+			_detalhes:SetFontOutline(row.lineText1, left_text_outline)
 		else
-			_detalhes:SetFontOutline (row.lineText1, nil)
+			_detalhes:SetFontOutline(row.lineText1, nil)
 		end
 		
 		if (right_text_outline) then
+			self:SetFontOutline (row.lineText2, right_text_outline)
+			self:SetFontOutline (row.lineText3, right_text_outline)
 			self:SetFontOutline (row.lineText4, right_text_outline)
 		else
+			self:SetFontOutline (row.lineText2, nil)
+			self:SetFontOutline (row.lineText3, nil)
 			self:SetFontOutline (row.lineText4, nil)
 		end
 		
@@ -4764,15 +4765,19 @@ function _detalhes:InstanceRefreshRows (instancia)
 		if (textL_outline_small) then
 			local c = textL_outline_small_color
 			row.lineText1:SetShadowColor (c[1], c[2], c[3], c[4])
-			--row.lineText1:SetShadowOffset (3, -2)
 		else
 			row.lineText1:SetShadowColor (0, 0, 0, 0)
 		end
+
 		if (textR_outline_small) then
 			local c = textR_outline_small_color
 			row.lineText4:SetShadowColor (c[1], c[2], c[3], c[4])
+			row.lineText3:SetShadowColor (c[1], c[2], c[3], c[4])
+			row.lineText2:SetShadowColor (c[1], c[2], c[3], c[4])
 		else
 			row.lineText4:SetShadowColor (0, 0, 0, 0)
+			row.lineText3:SetShadowColor (0, 0, 0, 0)
+			row.lineText2:SetShadowColor (0, 0, 0, 0)
 		end
 		
 		--> texture:
@@ -4803,22 +4808,28 @@ function _detalhes:InstanceRefreshRows (instancia)
 		end
 		if (not right_text_class_color) then
 			row.lineText4:SetTextColor (text_r, text_g, text_b)
+			row.lineText3:SetTextColor (text_r, text_g, text_b)
+			row.lineText2:SetTextColor (text_r, text_g, text_b)
 		end
 		
 		--> text size
 		_detalhes:SetFontSize (row.lineText1, self.row_info.font_size or height * 0.75)
+		_detalhes:SetFontSize (row.lineText2, self.row_info.font_size or height * 0.75)
+		_detalhes:SetFontSize (row.lineText3, self.row_info.font_size or height * 0.75)
 		_detalhes:SetFontSize (row.lineText4, self.row_info.font_size or height * 0.75)
 		
 		--> text font
 		_detalhes:SetFontFace (row.lineText1, self.row_info.font_face_file or "GameFontHighlight")
+		_detalhes:SetFontFace (row.lineText2, self.row_info.font_face_file or "GameFontHighlight")
+		_detalhes:SetFontFace (row.lineText3, self.row_info.font_face_file or "GameFontHighlight")
 		_detalhes:SetFontFace (row.lineText4, self.row_info.font_face_file or "GameFontHighlight")
 
 		--backdrop
 		if (backdrop) then
-			row.border:SetBackdrop (backdrop)
-			row.border:SetBackdropBorderColor (_unpack (backdrop_color))
+			row.border:SetBackdrop(backdrop)
+			row.border:SetBackdropBorderColor(_unpack (backdrop_color))
 		else
-			row.border:SetBackdrop (nil)
+			row.border:SetBackdrop(nil)
 		end
 		
 		--> models

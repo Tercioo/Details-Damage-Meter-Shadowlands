@@ -52,6 +52,7 @@ do
 	Loc ["STRING_DETAILS1"] = "|cffffaeaeDetails!:|r "
 
 	--> startup
+		_detalhes.max_windowline_columns = 11
 		_detalhes.initializing = true
 		_detalhes.enabled = true
 		_detalhes.__index = _detalhes

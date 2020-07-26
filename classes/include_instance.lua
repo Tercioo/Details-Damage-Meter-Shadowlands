@@ -181,6 +181,14 @@ _detalhes.instance_defaults = {
 		total_bar = {enabled = false, color = {1, 1, 1}, only_in_group = true, icon = [[Interface\ICONS\INV_Sigil_Thorim]]},
 	--row animation when show
 		row_show_animation = {anim = "Fade", options = {}},
+
+		--use one fontstring for each value in the lines, e.g. one fontstring to damage done, another fontstring to dps and another to percent amount
+		use_multi_fontstrings = true,
+		fontstrings_width = 35,
+		fontstrings_text4_anchor = 0,
+		fontstrings_text3_anchor = 35,
+		fontstrings_text2_anchor = 70,
+
 	--row info
 		row_info = {
 			--if true the texture of the bars will have the color of his actor class

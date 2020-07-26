@@ -195,12 +195,12 @@ local function RefreshBarraResources (tabela, barra, instancia)
 	tabela:AtualizarResources (tabela.minha_barra, barra.colocacao, instancia)
 end
 
-function atributo_energy:AtualizarResources (qual_barra, colocacao, instancia)
+function atributo_energy:AtualizarResources (whichRowLine, colocacao, instancia)
 	
-	local esta_barra = instancia.barras [qual_barra]
+	local esta_barra = instancia.barras [whichRowLine]
 	
 	if (not esta_barra) then
-		print ("DEBUG: problema com <instancia.esta_barra> "..qual_barra.." "..colocacao)
+		print ("DEBUG: problema com <instancia.esta_barra> "..whichRowLine.." "..colocacao)
 		return
 	end
 	
@@ -208,7 +208,7 @@ function atributo_energy:AtualizarResources (qual_barra, colocacao, instancia)
 	
 	local tabela_anterior = esta_barra.minha_tabela
 	esta_barra.minha_tabela = self
-	self.minha_barra = qual_barra
+	self.minha_barra = whichRowLine
 	esta_barra.colocacao = colocacao
 	
 	local total = instancia.showing.totals.resources
@@ -247,7 +247,8 @@ function atributo_energy:AtualizarResources (qual_barra, colocacao, instancia)
 	if (UsingCustomRightText) then
 		esta_barra.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_resource, formated_rps, porcentagem, self, instancia.showing, instancia, rightText))
 	else
-		esta_barra.lineText4:SetText (rightText)
+		Details:SetTextsOnLine(esta_barra, formated_resource, formated_rps .. " r/s", porcentagem .. "%")
+		--esta_barra.lineText4:SetText (rightText)
 	end
 	
 	esta_barra.lineText1:SetText (colocacao .. ". " .. self.nome)
@@ -335,20 +336,20 @@ function atributo_energy:RefreshWindow (instancia, tabela_do_combate, forcar, ex
 		
 		tabela_do_combate.totals.resources = total
 		
-		instancia:AtualizarScrollBar (amount)
+		instancia:RefreshScrollBar (amount)
 		
-		local qual_barra = 1
+		local whichRowLine = 1
 		local barras_container = instancia.barras
 		
 		for i = instancia.barraS[1], instancia.barraS[2], 1 do
-			conteudo[i]:AtualizarResources (qual_barra, i, instancia)
-			qual_barra = qual_barra+1
+			conteudo[i]:AtualizarResources (whichRowLine, i, instancia)
+			whichRowLine = whichRowLine+1
 		end
 		
 		--> beta, hidar barras n�o usadas durante um refresh for�ado
 		if (forcar) then
 			if (instancia.modo == 2) then --> group
-				for i = qual_barra, instancia.rows_fit_in_window  do
+				for i = whichRowLine, instancia.rows_fit_in_window  do
 					gump:Fade (instancia.barras [i], "in", 0.3)
 				end
 			end
@@ -462,9 +463,9 @@ function atributo_energy:RefreshWindow (instancia, tabela_do_combate, forcar, ex
 		return _detalhes:EndRefresh (instancia, total, tabela_do_combate, showing) --> retorna a tabela que precisa ganhar o refresh
 	end
 
-	instancia:AtualizarScrollBar (amount)
+	instancia:RefreshScrollBar (amount)
 
-	local qual_barra = 1
+	local whichRowLine = 1
 	local barras_container = instancia.barras
 	local percentage_type = instancia.row_info.percent_type
 	local bars_show_data = instancia.row_info.textR_show_data
@@ -512,7 +513,7 @@ function atributo_energy:RefreshWindow (instancia, tabela_do_combate, forcar, ex
 		
 		if (use_total_bar and instancia.barraS[1] == 1) then
 		
-			qual_barra = 2
+			whichRowLine = 2
 			local iter_last = instancia.barraS[2]
 			if (iter_last == instancia.rows_fit_in_window) then
 				iter_last = iter_last - 1
@@ -521,7 +522,7 @@ function atributo_energy:RefreshWindow (instancia, tabela_do_combate, forcar, ex
 			local row1 = barras_container [1]
 			row1.minha_tabela = nil
 			row1.lineText1:SetText (Loc ["STRING_TOTAL"])
-			row1.lineText4:SetText (_detalhes:ToK2 (total) .. " (" .. _detalhes:ToK (total / combat_time) .. ")")
+			Details:SetTextsOnLine(row1.lineText4, "", _detalhes:ToK2 (total, _detalhes:ToK (total / combat_time)))
 			
 			row1:SetValue (100)
 			local r, g, b = unpack (instancia.total_bar.color)
@@ -534,32 +535,32 @@ function atributo_energy:RefreshWindow (instancia, tabela_do_combate, forcar, ex
 			
 			if (following and myPos and myPos > instancia.rows_fit_in_window and instancia.barraS[2] < myPos) then
 				for i = instancia.barraS[1], iter_last-1, 1 do --> vai atualizar s� o range que esta sendo mostrado
-					conteudo[i]:AtualizaBarra (instancia, barras_container, qual_barra, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) --> inst�ncia, index, total, valor da 1� barra
-					qual_barra = qual_barra+1
+					conteudo[i]:RefreshLine (instancia, barras_container, whichRowLine, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) --> inst�ncia, index, total, valor da 1� barra
+					whichRowLine = whichRowLine+1
 				end
 				
-				conteudo[myPos]:AtualizaBarra (instancia, barras_container, qual_barra, myPos, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) --> inst�ncia, index, total, valor da 1� barra
-				qual_barra = qual_barra+1
+				conteudo[myPos]:RefreshLine (instancia, barras_container, whichRowLine, myPos, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) --> inst�ncia, index, total, valor da 1� barra
+				whichRowLine = whichRowLine+1
 			else
 				for i = instancia.barraS[1], iter_last, 1 do --> vai atualizar s� o range que esta sendo mostrado
-					conteudo[i]:AtualizaBarra (instancia, barras_container, qual_barra, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) --> inst�ncia, index, total, valor da 1� barra
-					qual_barra = qual_barra+1
+					conteudo[i]:RefreshLine (instancia, barras_container, whichRowLine, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) --> inst�ncia, index, total, valor da 1� barra
+					whichRowLine = whichRowLine+1
 				end
 			end
 
 		else
 			if (following and myPos and myPos > instancia.rows_fit_in_window and instancia.barraS[2] < myPos) then
 				for i = instancia.barraS[1], instancia.barraS[2]-1, 1 do --> vai atualizar s� o range que esta sendo mostrado
-					conteudo[i]:AtualizaBarra (instancia, barras_container, qual_barra, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) --> inst�ncia, index, total, valor da 1� barra
-					qual_barra = qual_barra+1
+					conteudo[i]:RefreshLine (instancia, barras_container, whichRowLine, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) --> inst�ncia, index, total, valor da 1� barra
+					whichRowLine = whichRowLine+1
 				end
 				
-				conteudo[myPos]:AtualizaBarra (instancia, barras_container, qual_barra, myPos, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) --> inst�ncia, index, total, valor da 1� barra
-				qual_barra = qual_barra+1
+				conteudo[myPos]:RefreshLine (instancia, barras_container, whichRowLine, myPos, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) --> inst�ncia, index, total, valor da 1� barra
+				whichRowLine = whichRowLine+1
 			else
 				for i = instancia.barraS[1], instancia.barraS[2], 1 do --> vai atualizar s� o range que esta sendo mostrado
-					conteudo[i]:AtualizaBarra (instancia, barras_container, qual_barra, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) --> inst�ncia, index, total, valor da 1� barra
-					qual_barra = qual_barra+1
+					conteudo[i]:RefreshLine (instancia, barras_container, whichRowLine, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) --> inst�ncia, index, total, valor da 1� barra
+					whichRowLine = whichRowLine+1
 				end
 			end
 		end
@@ -568,7 +569,7 @@ function atributo_energy:RefreshWindow (instancia, tabela_do_combate, forcar, ex
 	
 		if (use_total_bar and instancia.barraS[1] == 1) then
 		
-			qual_barra = 2
+			whichRowLine = 2
 			local iter_last = instancia.barraS[2]
 			if (iter_last == instancia.rows_fit_in_window) then
 				iter_last = iter_last - 1
@@ -578,6 +579,7 @@ function atributo_energy:RefreshWindow (instancia, tabela_do_combate, forcar, ex
 			row1.minha_tabela = nil
 			row1.lineText1:SetText (Loc ["STRING_TOTAL"])
 			row1.lineText4:SetText (_detalhes:ToK2 (total) .. " (" .. _detalhes:ToK (total / combat_time) .. ")")
+			Details:SetTextsOnLine(row1.lineText4, "", _detalhes:ToK2 (total), _detalhes:ToK (total / combat_time))
 			
 			row1:SetValue (100)
 			local r, g, b = unpack (instancia.total_bar.color)
@@ -590,31 +592,31 @@ function atributo_energy:RefreshWindow (instancia, tabela_do_combate, forcar, ex
 			
 			if (following and myPos and myPos > instancia.rows_fit_in_window and instancia.barraS[2] < myPos) then
 				for i = iter_last-1, instancia.barraS[1], -1 do --> vai atualizar s� o range que esta sendo mostrado
-					conteudo[i]:AtualizaBarra (instancia, barras_container, qual_barra, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) --> inst�ncia, index, total, valor da 1� barra
-					qual_barra = qual_barra+1
+					conteudo[i]:RefreshLine (instancia, barras_container, whichRowLine, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) --> inst�ncia, index, total, valor da 1� barra
+					whichRowLine = whichRowLine+1
 				end
 				
-				conteudo[myPos]:AtualizaBarra (instancia, barras_container, qual_barra, myPos, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) --> inst�ncia, index, total, valor da 1� barra
-				qual_barra = qual_barra+1
+				conteudo[myPos]:RefreshLine (instancia, barras_container, whichRowLine, myPos, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) --> inst�ncia, index, total, valor da 1� barra
+				whichRowLine = whichRowLine+1
 			else
 				for i = iter_last, instancia.barraS[1], -1 do --> vai atualizar s� o range que esta sendo mostrado
-					conteudo[i]:AtualizaBarra (instancia, barras_container, qual_barra, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) --> inst�ncia, index, total, valor da 1� barra
-					qual_barra = qual_barra+1
+					conteudo[i]:RefreshLine (instancia, barras_container, whichRowLine, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) --> inst�ncia, index, total, valor da 1� barra
+					whichRowLine = whichRowLine+1
 				end
 			end
 		else
 			if (following and myPos and myPos > instancia.rows_fit_in_window and instancia.barraS[2] < myPos) then
 				for i = instancia.barraS[2]-1, instancia.barraS[1], -1 do --> vai atualizar s� o range que esta sendo mostrado
-					conteudo[i]:AtualizaBarra (instancia, barras_container, qual_barra, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) --> inst�ncia, index, total, valor da 1� barra
-					qual_barra = qual_barra+1
+					conteudo[i]:RefreshLine (instancia, barras_container, whichRowLine, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) --> inst�ncia, index, total, valor da 1� barra
+					whichRowLine = whichRowLine+1
 				end
 				
-				conteudo[myPos]:AtualizaBarra (instancia, barras_container, qual_barra, myPos, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) --> inst�ncia, index, total, valor da 1� barra
-				qual_barra = qual_barra+1
+				conteudo[myPos]:RefreshLine (instancia, barras_container, whichRowLine, myPos, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) --> inst�ncia, index, total, valor da 1� barra
+				whichRowLine = whichRowLine+1
 			else
 				for i = instancia.barraS[2], instancia.barraS[1], -1 do --> vai atualizar s� o range que esta sendo mostrado
-					conteudo[i]:AtualizaBarra (instancia, barras_container, qual_barra, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) --> inst�ncia, index, total, valor da 1� barra
-					qual_barra = qual_barra+1
+					conteudo[i]:RefreshLine (instancia, barras_container, whichRowLine, i, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator) --> inst�ncia, index, total, valor da 1� barra
+					whichRowLine = whichRowLine+1
 				end
 			end
 		end
@@ -622,12 +624,12 @@ function atributo_energy:RefreshWindow (instancia, tabela_do_combate, forcar, ex
 	end
 	
 	if (use_animations) then
-		instancia:fazer_animacoes (qual_barra-1)
+		instancia:PerformAnimations (whichRowLine-1)
 	end
 	
 	if (forcar) then
 		if (instancia.modo == 2) then --> group
-			for i = qual_barra, instancia.rows_fit_in_window  do
+			for i = whichRowLine, instancia.rows_fit_in_window  do
 				gump:Fade (instancia.barras [i], "in", 0.3)
 			end
 		end
@@ -637,12 +639,12 @@ function atributo_energy:RefreshWindow (instancia, tabela_do_combate, forcar, ex
 
 end
 
-function atributo_energy:AtualizaBarra (instancia, barras_container, qual_barra, lugar, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator)
+function atributo_energy:RefreshLine (instancia, barras_container, whichRowLine, lugar, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator)
 
-	local esta_barra = instancia.barras[qual_barra] --> pega a refer�ncia da barra na janela
+	local esta_barra = instancia.barras[whichRowLine] --> pega a refer�ncia da barra na janela
 	
 	if (not esta_barra) then
-		print ("DEBUG: problema com <instancia.esta_barra> "..qual_barra.." "..lugar)
+		print ("DEBUG: problema com <instancia.esta_barra> "..whichRowLine.." "..lugar)
 		return
 	end
 	
@@ -681,19 +683,19 @@ function atributo_energy:AtualizaBarra (instancia, barras_container, qual_barra,
 	if (UsingCustomRightText) then
 		esta_barra.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_energy, "", porcentagem, self, instancia.showing, instancia, rightText))
 	else
-		esta_barra.lineText4:SetText (rightText)
+		Details:SetTextsOnLine(esta_barra.lineText4, "", formated_energy, porcentagem)
 	end
 	
 	if (esta_barra.mouse_over and not instancia.baseframe.isMoving) then --> precisa atualizar o tooltip
-		gump:UpdateTooltip (qual_barra, esta_barra, instancia)
+		gump:UpdateTooltip (whichRowLine, esta_barra, instancia)
 	end
 
 	actor_class_color_r, actor_class_color_g, actor_class_color_b = self:GetBarColor()
 	
-	return self:RefreshBarra2 (esta_barra, instancia, tabela_anterior, forcar, esta_porcentagem, qual_barra, barras_container, use_animations)
+	return self:RefreshBarra2 (esta_barra, instancia, tabela_anterior, forcar, esta_porcentagem, whichRowLine, barras_container, use_animations)
 end
 
-function atributo_energy:RefreshBarra2 (esta_barra, instancia, tabela_anterior, forcar, esta_porcentagem, qual_barra, barras_container, use_animations)
+function atributo_energy:RefreshBarra2 (esta_barra, instancia, tabela_anterior, forcar, esta_porcentagem, whichRowLine, barras_container, use_animations)
 	
 	--> primeiro colocado
 	if (esta_barra.colocacao == 1) then

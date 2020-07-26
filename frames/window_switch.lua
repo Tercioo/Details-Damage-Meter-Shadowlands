@@ -620,7 +620,7 @@ function _detalhes.switch:ShowMe (instancia)
 		
 		if (not _detalhes.tutorial.ctrl_click_close_tutorial) then
 			if (not DetailsCtrlCloseWindowPanelTutorial) then
-				local tutorial_frame = CreateFrame ("frame", "DetailsCtrlCloseWindowPanelTutorial", _detalhes.switch.frame)
+				local tutorial_frame = CreateFrame ("frame", "DetailsCtrlCloseWindowPanelTutorial", _detalhes.switch.frame, "BackdropTemplate")
 				tutorial_frame:SetFrameStrata ("FULLSCREEN_DIALOG")
 				tutorial_frame:SetAllPoints()
 				tutorial_frame:EnableMouse (true)
@@ -1558,7 +1558,7 @@ function _detalhes.switch:NewSwitchButton (frame, index, x, y, rightButton)
 		}
 
 	--botao dentro da caixa
-	local button = CreateFrame ("button", "DetailsSwitchPanelButton_1_"..index, frame) --botao com o icone
+	local button = CreateFrame ("button", "DetailsSwitchPanelButton_1_"..index, frame, "BackdropTemplate") --botao com o icone
 	button:SetSize (15, 24) 
 	button:SetPoint ("topleft", frame, "topleft", x, -y)
 	button:SetScript ("OnMouseDown", left_box_on_click)
@@ -1592,7 +1592,7 @@ function _detalhes.switch:NewSwitchButton (frame, index, x, y, rightButton)
 	button.line2:SetPoint ("bottomleft", button, "bottomright", fundo_x, fundo_y)
 	
 	--botao do fundo marrom
-	local button2 = CreateFrame ("button", "DetailsSwitchPanelButton_2_"..index, button) --botao com o texto
+	local button2 = CreateFrame ("button", "DetailsSwitchPanelButton_2_"..index, button, "BackdropTemplate") --botao com o texto
 	button2:SetSize (1, 1)
 	button2:SetPoint ("topleft", button, "topright", 1, 0)
 	button2:SetPoint ("bottomright", button, "bottomright", 90, 0)
