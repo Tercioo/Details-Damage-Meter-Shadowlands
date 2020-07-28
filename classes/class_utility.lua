@@ -894,7 +894,7 @@ function atributo_misc:RefreshLine (instancia, barras_container, whichRowLine, l
 	if (UsingCustomRightText) then
 		esta_barra.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, meu_total, "", porcentagem, self, instancia.showing, instancia, rightText))
 	else
-		Details:SetTextsOnLine(esta_barra.lineText4, "", meu_total, porcentagem)
+		Details:SetTextsOnLine(esta_barra, "", meu_total, porcentagem)
 	end
 	
 	if (esta_barra.mouse_over and not instancia.baseframe.isMoving) then --> precisa atualizar o tooltip

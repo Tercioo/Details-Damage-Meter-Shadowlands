@@ -945,7 +945,7 @@
 
 		--local bars_brackets = instancia:GetBarBracket()
 		--thisLine.lineText4:SetText ((spell_damage and SelectedToKFunction (_, spell_damage) or "") .. bars_brackets[1] .. porcentagem .. bars_brackets[2])
-		Details:SetTextsOnLine(thisLine.lineText4, "", (spell_damage and SelectedToKFunction (_, spell_damage) or ""), porcentagem)
+		Details:SetTextsOnLine(thisLine, "", (spell_damage and SelectedToKFunction (_, spell_damage) or ""), porcentagem)
 
 		thisLine.lineText1:SetTextColor(1, 1, 1, 1)
 		thisLine.lineText2:SetTextColor(1, 1, 1, 1)
@@ -1130,7 +1130,7 @@
 		end
 		
 		--thisLine.lineText4:SetText (total_frags .. bars_brackets[1] .. porcentagem .. bars_brackets[2])
-		Details:SetTextsOnLine(thisLine.lineText4, "", total_frags, porcentagem)
+		Details:SetTextsOnLine(thisLine, "", total_frags, porcentagem)
 
 		thisLine.lineText1:SetSize (thisLine:GetWidth() - thisLine.lineText4:GetStringWidth() - 20, 15)
 		
@@ -1545,7 +1545,7 @@
 		if (UsingCustomRightText) then
 			thisLine.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_damage, formated_dps, porcentagem, self, instancia.showing, instancia, rightText))
 		else
-			Details:SetTextsOnLine(thisLine.lineText4, formated_damage, formated_dps, porcentagem)
+			Details:SetTextsOnLine(thisLine, formated_damage, formated_dps, porcentagem)
 			--thisLine.lineText4:SetText (rightText)
 		end
 
@@ -2356,6 +2356,37 @@ end
 
 local actor_class_color_r, actor_class_color_g, actor_class_color_b
 
+-- ~texts
+function Details:SetTextsOnLine(thisLine, valueText, perSecondText, percentText)
+	--set defaults
+	valueText = valueText or ""
+	perSecondText = perSecondText or ""
+	percentText = percentText or ""
+
+	--parse information
+	if (percentText ~= "") then --has percent text
+		thisLine.lineText4:SetText(percentText)
+
+		if (perSecondText ~= "") then --has dps?
+			thisLine.lineText3:SetText(perSecondText) --set dps
+			thisLine.lineText2:SetText(valueText) --set amount
+		else
+			thisLine.lineText3:SetText(valueText) --set amount
+			thisLine.lineText2:SetText("") --clear
+		end
+	else --no percent text
+		if (perSecondText ~= "") then --has dps and no percent
+			thisLine.lineText4:SetText(perSecondText) --set dps
+			thisLine.lineText3:SetText(valueText) --set amount
+			thisLine.lineText2:SetText("") --clear
+		else --no dps and not percent
+			thisLine.lineText4:SetText(valueText) --set dps
+			thisLine.lineText3:SetText("") --clear
+			thisLine.lineText2:SetText("") --clear
+		end
+	end
+end
+
 -- ~atualizar ~barra ~update
 function atributo_damage:RefreshLine (instance, lineContainer, whichRowLine, rank, total, sub_atributo, forcar, keyName, combat_time, percentage_type, use_animations, bars_show_data, bars_brackets, bars_separator)
 	
@@ -2437,36 +2468,6 @@ function atributo_damage:RefreshLine (instance, lineContainer, whichRowLine, ran
 		end
 		
 		local rightText = formated_damage .. bars_brackets[1] .. formated_dps .. bars_separator .. porcentagem .. bars_brackets[2]
-
-		function Details:SetTextsOnLine(thisLine, valueText, perSecondText, percentText)
-			--set defaults
-			valueText = valueText or ""
-			perSecondText = perSecondText or ""
-			percentText = percentText or ""
-
-			--parse information
-			if (percentText ~= "") then --has percent text
-				thisLine.lineText4:SetText(percentText)
-
-				if (perSecondText ~= "") then --has dps?
-					thisLine.lineText3:SetText(perSecondText) --set dps
-					thisLine.lineText2:SetText(valueText) --set amount
-				else
-					thisLine.lineText3:SetText(valueText) --set amount
-					thisLine.lineText2:SetText("") --clear
-				end
-			else --no percent text
-				if (perSecondText ~= "") then --has dps and no percent
-					thisLine.lineText4:SetText(perSecondText) --set dps
-					thisLine.lineText3:SetText(valueText) --set amount
-					thisLine.lineText2:SetText("") --clear
-				else --no dps and not percent
-					thisLine.lineText4:SetText(valueText) --set dps
-					thisLine.lineText3:SetText("") --clear
-					thisLine.lineText2:SetText("") --clear
-				end
-			end
-		end
 
 		if (UsingCustomRightText) then
 			thisLine.lineText4:SetText(_string_replace (instance.row_info.textR_custom_text, formated_damage, formated_dps, porcentagem, self, instance.showing, instance, rightText))

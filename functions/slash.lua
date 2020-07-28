@@ -196,10 +196,18 @@ function SlashCmdList.DETAILS (msg, editbox)
 		else
 			Details:Msg ("Window 1 not found.")
 		end
-	
+
+	elseif (command == "bosstimers" or command == "bosstimer" or command == "timer" or command == "timers") then
+		Details.OpenForge()
+		DetailsForgePanel.SelectModule (_, _, 4)
+
 	elseif (command == "spells") then
 		Details.OpenForge()
 		DetailsForgePanel.SelectModule (_, _, 1)
+		
+	elseif (msg == "WA" or msg == "wa" or msg == "Wa" or msg == "wA") then
+		_G.DetailsPluginContainerWindow.OpenPlugin(_G.DetailsAuraPanel)
+		_G.DetailsAuraPanel.RefreshWindow()
 	
 	elseif (command == "feedback") then
 		_detalhes.OpenFeedbackWindow()
@@ -1399,7 +1407,7 @@ Damage Update Status: @INSTANCEDAMAGESTATUS
 	
 	elseif (msg == "scroll" or msg == "scrolldamage" or msg == "scrolling") then
 		Details:ScrollDamage()
-	
+
 	elseif (msg == "me" or msg == "ME" or msg == "Me" or msg == "mE") then
 		local role = UnitGroupRolesAssigned("player")
 		if (role == "HEALER") then
@@ -1563,7 +1571,21 @@ Damage Update Status: @INSTANCEDAMAGESTATUS
 		
 		Details:DumpTable (result)
 	
-	elseif (msg == "record") then	
+	elseif (msg == "saveskin") then
+		local skin = Details.skins["Dark Theme"].instance_cprops
+		local instance1 = Details:GetInstance(1)
+		if (instance1) then
+			local exportedValues = {}
+			for key, _ in pairs (skin) do
+				local value = instance1[key]
+				if (value) then
+					exportedValues[key] = value
+				end
+			end
+			Details:Dump(exportedValues)
+		end
+
+	elseif (msg == "record") then
 			
 			
 			_detalhes.ScheduleLoadStorage()

@@ -522,7 +522,7 @@ function atributo_energy:RefreshWindow (instancia, tabela_do_combate, forcar, ex
 			local row1 = barras_container [1]
 			row1.minha_tabela = nil
 			row1.lineText1:SetText (Loc ["STRING_TOTAL"])
-			Details:SetTextsOnLine(row1.lineText4, "", _detalhes:ToK2 (total, _detalhes:ToK (total / combat_time)))
+			Details:SetTextsOnLine(row1, "", _detalhes:ToK2 (total, _detalhes:ToK (total / combat_time)))
 			
 			row1:SetValue (100)
 			local r, g, b = unpack (instancia.total_bar.color)
@@ -579,7 +579,7 @@ function atributo_energy:RefreshWindow (instancia, tabela_do_combate, forcar, ex
 			row1.minha_tabela = nil
 			row1.lineText1:SetText (Loc ["STRING_TOTAL"])
 			row1.lineText4:SetText (_detalhes:ToK2 (total) .. " (" .. _detalhes:ToK (total / combat_time) .. ")")
-			Details:SetTextsOnLine(row1.lineText4, "", _detalhes:ToK2 (total), _detalhes:ToK (total / combat_time))
+			Details:SetTextsOnLine(row1, "", _detalhes:ToK2 (total), _detalhes:ToK (total / combat_time))
 			
 			row1:SetValue (100)
 			local r, g, b = unpack (instancia.total_bar.color)
@@ -683,7 +683,7 @@ function atributo_energy:RefreshLine (instancia, barras_container, whichRowLine,
 	if (UsingCustomRightText) then
 		esta_barra.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_energy, "", porcentagem, self, instancia.showing, instancia, rightText))
 	else
-		Details:SetTextsOnLine(esta_barra.lineText4, "", formated_energy, porcentagem)
+		Details:SetTextsOnLine(esta_barra, "", formated_energy, porcentagem)
 	end
 	
 	if (esta_barra.mouse_over and not instancia.baseframe.isMoving) then --> precisa atualizar o tooltip

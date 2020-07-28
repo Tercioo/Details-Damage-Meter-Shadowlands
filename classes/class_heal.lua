@@ -417,7 +417,7 @@ function atributo_heal:RefreshWindow (instancia, tabela_do_combate, forcar, expo
 			row1.minha_tabela = nil
 			row1.lineText1:SetText (Loc ["STRING_TOTAL"])
 			--row1.lineText4:SetText (_detalhes:ToK2 (total) .. " (" .. _detalhes:ToK (total / combat_time) .. ")")
-			Details:SetTextsOnLine(row1.lineText4, "", _detalhes:ToK2 (total), _detalhes:ToK (total / combat_time))
+			Details:SetTextsOnLine(row1, "", _detalhes:ToK2 (total), _detalhes:ToK (total / combat_time))
 			
 			row1:SetValue (100)
 			local r, g, b = unpack (instancia.total_bar.color)
@@ -483,7 +483,7 @@ function atributo_heal:RefreshWindow (instancia, tabela_do_combate, forcar, expo
 			row1.minha_tabela = nil
 			row1.lineText1:SetText (Loc ["STRING_TOTAL"])
 			--row1.lineText4:SetText (_detalhes:ToK2 (total) .. " (" .. _detalhes:ToK (total / combat_time) .. ")")
-			Details:SetTextsOnLine(row1.lineText4, "", _detalhes:ToK2(total), _detalhes:ToK(total / combat_time))
+			Details:SetTextsOnLine(row1, "", _detalhes:ToK2(total), _detalhes:ToK(total / combat_time))
 			
 			row1:SetValue (100)
 			local r, g, b = unpack (instancia.total_bar.color)
@@ -630,7 +630,7 @@ function atributo_heal:RefreshLine(instancia, barras_container, whichRowLine, lu
 	-- >>>>>>>>>>>>>>> texto da direita
 	if (instancia.atributo == 5) then --> custom
 		--thisLine.lineText4:SetText (_detalhes:ToK (self.custom) .. " (" .. porcentagem .. "%)")
-		Details:SetTextsOnLine(thisLine.lineText4, "", _detalhes:ToK (self.custom), porcentagem .. "%")
+		Details:SetTextsOnLine(thisLine, "", _detalhes:ToK (self.custom), porcentagem .. "%")
 		esta_porcentagem = _math_floor ((self.custom/instancia.top) * 100)
 		
 	else	

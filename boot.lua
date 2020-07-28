@@ -63,6 +63,9 @@ do
 		_detalhes.debug_chr = false
 		_detalhes.opened_windows = 0
 		_detalhes.last_combat_time = 0
+
+		--store functions to create options frame
+		Details.optionsSection = {}
 		
 	--> containers
 		--> armazenas as fun��es do parser - All parse functions 
@@ -302,7 +305,7 @@ do
 		--> armazena instancias inativas
 			_detalhes.unused_instances = {}
 			--_detalhes.default_skin_to_use = "Minimalistic"
-			_detalhes.default_skin_to_use = "Minimalistic"
+			_detalhes.default_skin_to_use = "Dark Theme"
 			_detalhes.instance_title_text_timer = {}
 		--> player detail skin
 			_detalhes.playerdetailwindow_skins = {}

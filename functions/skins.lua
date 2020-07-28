@@ -2102,9 +2102,502 @@ local _
 			{type = "button", name = Loc ["STRING_OPTIONS_SKIN_ELVUI_BUTTON2"], func = set_tooltip_elvui1, desc = Loc ["STRING_OPTIONS_SKIN_ELVUI_BUTTON2_DESC"]},
 			{type = "button", name = Loc ["STRING_OPTIONS_SKIN_ELVUI_BUTTON3"], func = set_tooltip_elvui2, desc = Loc ["STRING_OPTIONS_SKIN_ELVUI_BUTTON3_DESC"]},
 		}
-	})	
+	})
 	
-	
+	_detalhes:InstallSkin ("Dark Theme", {
+		file = [[Interface\AddOns\Details\images\skins\darktheme.blp]],
+		author = "Details!",
+		version = "1.0",
+		site = "unknown",
+		desc = "Regular Details! skin but with a dark theme.",
+		
+		--general
+		can_change_alpha_head = true,
+
+		--icon anchors
+		icon_anchor_main = {-4, -5},
+		icon_anchor_plugins = {-7, -13},
+		icon_plugins_size = {19, 18},
+
+		--micro frames
+		micro_frames = {
+			color = {1, 1, 1, 0.7},
+			font = "Oswald",
+			size = 9,
+			textymod = 0,
+			["left"] = "DETAILS_STATUSBAR_PLUGIN_PSEGMENT",
+			["center"] = "DETAILS_STATUSBAR_PLUGIN_CLOCK",
+			["right"] = "DETAILS_STATUSBAR_PLUGIN_PDURABILITY",
+		},
+
+		
+		-- the four anchors (for when the toolbar is on the top side)
+		icon_point_anchor = {-35, -0.5},
+		left_corner_anchor = {-106, 0},
+		right_corner_anchor = {95, 0},
+		
+		-- the four anchors (for when the toolbar is on the bottom side)
+		icon_point_anchor_bottom = {-37, 12},
+		left_corner_anchor_bottom = {-106, 0},
+		right_corner_anchor_bottom = {95, 0},
+
+		--[[ callback function execute after all changes on the window, first argument is this skin table, second is the instance where the skin was applied --]]
+		callback = function (self, instance) end,
+		--[[ control_script is a OnUpdate script, it start right after all changes on the window and also after the callback --]]
+		--[[ control_script_on_start run before the control_script, use it to reset values if needed --]]
+		control_script_on_start = nil,
+		control_script = nil,
+		
+		--instance overwrites
+		--[[ when a skin is selected, all customized properties of the window is reseted and then the overwrites are applied]]
+		--[[ for the complete cprop list see the file classe_instancia_include.lua]]
+		
+		icon_on_top = true,
+		icon_ignore_alpha = true,
+		icon_titletext_position = {2, 5},
+		
+		instance_cprops = {
+			["hide_in_combat_type"] = 1,
+			["fontstrings_text3_anchor"] = 35,
+			["menu_anchor"] = {
+				19, -- [1]
+				1, -- [2]
+				["side"] = 2,
+			},
+			["bg_r"] = 0.32941176470588,
+			["hide_out_of_combat"] = false,
+			["color_buttons"] = {
+				1, -- [1]
+				1, -- [2]
+				1, -- [3]
+				1, -- [4]
+			},
+			["toolbar_icon_file"] = "Interface\\AddOns\\Details\\images\\toolbar_icons",
+			["bars_sort_direction"] = 1,
+			["fontstrings_width"] = 35,
+			["tooltip"] = {
+				["n_abilities"] = 3,
+				["n_enemies"] = 3,
+			},
+			["switch_all_roles_in_combat"] = false,
+			["clickthrough_toolbaricons"] = false,
+			["row_info"] = {
+				["textR_outline"] = false,
+				["spec_file"] = "Interface\\AddOns\\Details\\images\\spec_icons_normal",
+				["textL_outline"] = false,
+				["textR_outline_small"] = true,
+				["textL_outline_small"] = true,
+				["textL_enable_custom_text"] = false,
+				["fixed_text_color"] = {
+					1, -- [1]
+					1, -- [2]
+					1, -- [3]
+				},
+				["space"] = {
+					["right"] = 0,
+					["left"] = 0,
+					["between"] = 1,
+				},
+				["texture_background_class_color"] = false,
+				["textL_outline_small_color"] = {
+					0, -- [1]
+					0, -- [2]
+					0, -- [3]
+					1, -- [4]
+				},
+				["font_face_file"] = "Interface\\Addons\\Details\\fonts\\Oswald-Regular.otf",
+				["backdrop"] = {
+					["enabled"] = false,
+					["texture"] = "Details BarBorder 2",
+					["color"] = {
+						0, -- [1]
+						0, -- [2]
+						0, -- [3]
+						1, -- [4]
+					},
+					["size"] = 4,
+				},
+				["font_size"] = 12,
+				["textL_translit_text"] = false,
+				["height"] = 21,
+				["texture_file"] = "Interface\\AddOns\\Details\\images\\bar_background",
+				["use_spec_icons"] = true,
+				["models"] = {
+					["upper_model"] = "Spells\\AcidBreath_SuperGreen.M2",
+					["lower_model"] = "World\\EXPANSION02\\DOODADS\\Coldarra\\COLDARRALOCUS.m2",
+					["upper_alpha"] = 0.5,
+					["lower_enabled"] = false,
+					["lower_alpha"] = 0.1,
+					["upper_enabled"] = false,
+				},
+				["icon_file"] = "Interface\\AddOns\\Details\\images\\classes_small",
+				["icon_grayscale"] = false,
+				["textL_custom_text"] = "{data1}. {data3}{data2}",
+				["textR_bracket"] = "[",
+				["textR_enable_custom_text"] = false,
+				["percent_type"] = 1,
+				["fixed_texture_color"] = {
+					0, -- [1]
+					0, -- [2]
+					0, -- [3]
+				},
+				["textL_show_number"] = true,
+				["texture_custom"] = "AddOns\\Details\\images\\bar_textures\\texture2020.blp",
+				["texture_highlight"] = "Interface\\FriendsFrame\\UI-FriendsList-Highlight",
+				["textR_custom_text"] = "{data1} ({data2}, {data3}%)",
+				["texture"] = "DGround",
+				["start_after_icon"] = true,
+				["texture_background_file"] = "Interface\\AddOns\\Details\\images\\bar_background",
+				["textR_class_colors"] = false,
+				["alpha"] = 0.8,
+				["textL_class_colors"] = false,
+				["texture_background"] = "Details Flat",
+				["textR_outline_small_color"] = {
+					0, -- [1]
+					0, -- [2]
+					0, -- [3]
+					1, -- [4]
+				},
+				["no_icon"] = false,
+				["icon_offset"] = {
+					0, -- [1]
+					0, -- [2]
+				},
+				["fixed_texture_background_color"] = {
+					0.1843137254902, -- [1]
+					0.1921568627451, -- [2]
+					0.18823529411765, -- [3]
+					0.41242814064026, -- [4]
+				},
+				["font_face"] = "Oswald",
+				["texture_class_colors"] = true,
+				["textR_show_data"] = {
+					true, -- [1]
+					true, -- [2]
+					false, -- [3]
+				},
+				["fast_ps_update"] = false,
+				["textR_separator"] = ",",
+				["texture_custom_file"] = "Interface\\AddOns\\Details\\images\\bar_textures\\texture2020.blp",
+			},
+			["switch_tank"] = false,
+			["plugins_grow_direction"] = 1,
+			["menu_icons"] = {
+				true, -- [1]
+				true, -- [2]
+				true, -- [3]
+				true, -- [4]
+				true, -- [5]
+				false, -- [6]
+				["space"] = -2,
+				["shadow"] = false,
+			},
+			["desaturated_menu"] = false,
+			["micro_displays_side"] = 2,
+			["window_scale"] = 1,
+			["hide_icon"] = false,
+			["toolbar_side"] = 1,
+			["bg_g"] = 0.32941176470588,
+			["bg_b"] = 0.32941176470588,
+			["switch_healer_in_combat"] = false,
+			["color"] = {
+				1, -- [1]
+				1, -- [2]
+				1, -- [3]
+				1, -- [4]
+			},
+			["hide_on_context"] = {
+				{
+					["enabled"] = false,
+					["inverse"] = false,
+					["value"] = 100,
+				}, -- [1]
+				{
+					["enabled"] = false,
+					["inverse"] = false,
+					["value"] = 100,
+				}, -- [2]
+				{
+					["enabled"] = false,
+					["inverse"] = false,
+					["value"] = 100,
+				}, -- [3]
+				{
+					["enabled"] = false,
+					["inverse"] = false,
+					["value"] = 100,
+				}, -- [4]
+				{
+					["enabled"] = false,
+					["inverse"] = false,
+					["value"] = 100,
+				}, -- [5]
+				{
+					["enabled"] = false,
+					["inverse"] = false,
+					["value"] = 100,
+				}, -- [6]
+				{
+					["enabled"] = false,
+					["inverse"] = false,
+					["value"] = 100,
+				}, -- [7]
+				{
+					["enabled"] = false,
+					["inverse"] = false,
+					["value"] = 100,
+				}, -- [8]
+				{
+					["enabled"] = false,
+					["inverse"] = false,
+					["value"] = 100,
+				}, -- [9]
+				{
+					["enabled"] = false,
+					["inverse"] = false,
+					["value"] = 100,
+				}, -- [10]
+				{
+					["enabled"] = false,
+					["inverse"] = false,
+					["value"] = 100,
+				}, -- [11]
+				{
+					["enabled"] = false,
+					["inverse"] = false,
+					["value"] = 100,
+				}, -- [12]
+				{
+					["enabled"] = false,
+					["inverse"] = false,
+					["value"] = 100,
+				}, -- [13]
+				{
+					["enabled"] = false,
+					["inverse"] = false,
+					["value"] = 100,
+				}, -- [14]
+				{
+					["enabled"] = false,
+					["inverse"] = false,
+					["value"] = 100,
+				}, -- [15]
+			},
+			["skin"] = "Dark Theme",
+			["following"] = {
+				["enabled"] = false,
+				["bar_color"] = {
+					1, -- [1]
+					1, -- [2]
+					1, -- [3]
+				},
+				["text_color"] = {
+					1, -- [1]
+					1, -- [2]
+					1, -- [3]
+				},
+			},
+			["switch_healer"] = false,
+			["fontstrings_text2_anchor"] = 70,
+			["StatusBarSaved"] = {
+				["center"] = "DETAILS_STATUSBAR_PLUGIN_CLOCK",
+				["right"] = "DETAILS_STATUSBAR_PLUGIN_PDURABILITY",
+				["options"] = {
+					["DETAILS_STATUSBAR_PLUGIN_CLOCK"] = {
+						["textColor"] = {
+							1, -- [1]
+							1, -- [2]
+							1, -- [3]
+							0.7, -- [4]
+						},
+						["textFace"] = "Oswald",
+						["textXMod"] = 6,
+						["textAlign"] = 0,
+						["timeType"] = 1,
+						["textStyle"] = 2,
+						["textSize"] = 9,
+						["textYMod"] = 0.5605735778808594,
+					},
+					["DETAILS_STATUSBAR_PLUGIN_PSEGMENT"] = {
+						["isHidden"] = false,
+						["textStyle"] = 2,
+						["textYMod"] = 0.5605735778808594,
+						["segmentType"] = 2,
+						["textFace"] = "Oswald",
+						["textXMod"] = 0,
+						["textAlign"] = 0,
+						["textSize"] = 9,
+						["textColor"] = {
+							1, -- [1]
+							1, -- [2]
+							1, -- [3]
+							0.7, -- [4]
+						},
+					},
+					["DETAILS_STATUSBAR_PLUGIN_PDURABILITY"] = {
+						["isHidden"] = false,
+						["textColor"] = {
+							1, -- [1]
+							1, -- [2]
+							1, -- [3]
+							0.7, -- [4]
+						},
+						["textXMod"] = 0,
+						["textFace"] = "Oswald",
+						["textStyle"] = 2,
+						["textAlign"] = 0,
+						["textSize"] = 9,
+						["textYMod"] = 0.747441291809082,
+					},
+				},
+				["left"] = "DETAILS_STATUSBAR_PLUGIN_PSEGMENT",
+			},
+			["grab_on_top"] = false,
+			["__was_opened"] = true,
+			["instance_button_anchor"] = {
+				-27, -- [1]
+				1, -- [2]
+			},
+			["version"] = 3,
+			["fontstrings_text4_anchor"] = 0,
+			["__locked"] = false,
+			["menu_alpha"] = {
+				["enabled"] = false,
+				["onenter"] = 1,
+				["iconstoo"] = true,
+				["ignorebars"] = false,
+				["onleave"] = 1,
+			},
+			["auto_hide_menu"] = {
+				["left"] = false,
+				["right"] = false,
+			},
+			["stretch_button_side"] = 1,
+			["show_sidebars"] = false,
+			["strata"] = "LOW",
+			["clickthrough_incombatonly"] = true,
+			["__snap"] = {
+			},
+			["backdrop_texture"] = "Details Ground",
+			["hide_in_combat_alpha"] = 0,
+			["menu_icons_size"] = 0.8999999761581421,
+			["show_statusbar"] = true,
+			["libwindow"] = {
+				["y"] = -155.9998626708984,
+				["x"] = -372.999755859375,
+				["point"] = "RIGHT",
+				["scale"] = 1,
+			},
+			["statusbar_info"] = {
+				["alpha"] = 1,
+				["overlay"] = {
+					1, -- [1]
+					1, -- [2]
+					1, -- [3]
+				},
+			},
+			["clickthrough_window"] = false,
+			["bars_grow_direction"] = 1,
+			["bg_alpha"] = 0.51000002026558,
+			["switch_tank_in_combat"] = false,
+			["bars_inverted"] = false,
+			["switch_damager_in_combat"] = false,
+			["micro_displays_locked"] = true,
+			["icon_desaturated"] = false,
+			["auto_current"] = true,
+			["menu_anchor_down"] = {
+				16, -- [1]
+				-2, -- [2]
+			},
+			["clickthrough_rows"] = false,
+			["attribute_text"] = {
+				["enabled"] = true,
+				["shadow"] = false,
+				["side"] = 1,
+				["text_size"] = 12,
+				["custom_text"] = "{name}",
+				["text_face"] = "Oswald",
+				["anchor"] = {
+					1, -- [1]
+					2, -- [2]
+				},
+				["show_timer"] = {
+					true, -- [1]
+					true, -- [2]
+					true, -- [3]
+				},
+				["enable_custom_text"] = false,
+				["text_color"] = {
+					1, -- [1]
+					1, -- [2]
+					1, -- [3]
+					0.69272297620773, -- [4]
+				},
+			},
+			["hide_in_combat"] = false,
+			["posicao"] = {
+				["normal"] = {
+					["y"] = -155.9998779296875,
+					["x"] = 431.5001220703125,
+					["w"] = 311.000244140625,
+					["h"] = 154.0000610351563,
+				},
+				["solo"] = {
+					["y"] = 2,
+					["x"] = 1,
+					["w"] = 300,
+					["h"] = 200,
+				},
+			},
+			["skin_custom"] = "",
+			["switch_damager"] = false,
+			["wallpaper"] = {
+				["enabled"] = true,
+				["width"] = 266,
+				["texcoord"] = {
+					0.048000001907349, -- [1]
+					0.29800001144409, -- [2]
+					0.63099998474121, -- [3]
+					0.75599998474121, -- [4]
+				},
+				["overlay"] = {
+					0.99999779462814, -- [1]
+					0.99999779462814, -- [2]
+					0.99999779462814, -- [3]
+					0.79999822378159, -- [4]
+				},
+				["anchor"] = "all",
+				["height"] = 226.00001525879,
+				["alpha"] = 0.80000007152557,
+				["texture"] = "Interface\\AddOns\\Details\\images\\skins\\darktheme",
+			},
+			["total_bar"] = {
+				["enabled"] = false,
+				["only_in_group"] = true,
+				["icon"] = "Interface\\ICONS\\INV_Sigil_Thorim",
+				["color"] = {
+					1, -- [1]
+					1, -- [2]
+					1, -- [3]
+				},
+			},
+			["switch_all_roles_after_wipe"] = false,
+			["ignore_mass_showhide"] = false,
+			["use_multi_fontstrings"] = true,
+			["row_show_animation"] = {
+				["anim"] = "Fade",
+				["options"] = {
+				},
+			},
+		},
+		
+		skin_options = {
+			{spacement = true, type = "button", name = Loc ["STRING_OPTIONS_SKIN_ELVUI_BUTTON1"], func = align_right_chat, desc = Loc ["STRING_OPTIONS_SKIN_ELVUI_BUTTON1_DESC"]},
+			{type = "button", name = Loc ["STRING_OPTIONS_SKIN_ELVUI_BUTTON2"], func = set_tooltip_elvui1, desc = Loc ["STRING_OPTIONS_SKIN_ELVUI_BUTTON2_DESC"]},
+			{type = "button", name = Loc ["STRING_OPTIONS_SKIN_ELVUI_BUTTON3"], func = set_tooltip_elvui2, desc = Loc ["STRING_OPTIONS_SKIN_ELVUI_BUTTON3_DESC"]},
+		}
+	})
+
 	_detalhes:InstallSkin ("New Gray", {
 		file = [[Interface\AddOns\Details\images\skins\classic_skin_v1.blp]],
 		author = "Details!", 

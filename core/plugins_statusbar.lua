@@ -573,7 +573,7 @@
 				value = child.options.textSize
 			end
 		
-			child.options.textSize = value
+			child.options.textSize = value or 9
 			child:SetFontSize (child.text, child.options.textSize)
 			
 		elseif (option == "textface") then

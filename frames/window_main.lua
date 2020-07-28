@@ -5210,10 +5210,10 @@ function _detalhes:InstanceColor (red, green, blue, alpha, no_save, change_statu
 --	print (self.skin, self.meu_id)
 	local skin = _detalhes.skins [self.skin]
 	if (not skin) then --the skin isn't available any more
-		Details:Msg ("Skin " .. (self.skin or "?") .. " not found, changing to 'Minimalistic'.")
+		Details:Msg ("Skin " .. (self.skin or "?") .. " not found, changing to 'Dark Theme'.")
 		Details:Msg ("Recommended to change the skin in the option panel > Skin Selection.")
-		skin = _detalhes.skins ["Minimalistic"]
-		self.skin = "Minimalistic"
+		skin = _detalhes.skins ["Dark Theme"]
+		self.skin = "Dark Theme"
 	end
 	
 	--[[
@@ -5469,6 +5469,10 @@ function _detalhes:SetIconAlpha (alpha, hide, no_animations)
 	SetIconAlphaCacheButtonsTable [4] = self.baseframe.cabecalho.report
 	SetIconAlphaCacheButtonsTable [5] = self.baseframe.cabecalho.reset
 	SetIconAlphaCacheButtonsTable [6] = self.baseframe.cabecalho.fechar
+
+	if (alpha == 1) then
+		alpha = self.menu_icons_alpha
+	end
 
 	for index, button in _ipairs (SetIconAlphaCacheButtonsTable) do
 		if (self.menu_icons [index]) then
@@ -6974,6 +6978,9 @@ function _detalhes:ChangeSkin (skin_name)
 					if (not _detalhes.instance_skin_ignored_values [cprop]) then
 						if (type (value) == "table") then
 							for cprop2, value2 in _pairs (value) do
+								if (not self[cprop]) then
+									self[cprop] = {}
+								end
 								self [cprop] [cprop2] = value2
 							end
 						else
@@ -6981,7 +6988,6 @@ function _detalhes:ChangeSkin (skin_name)
 						end
 					end
 				end
-				
 			end
 			
 		--> reset micro frames
@@ -7853,6 +7859,9 @@ function _detalhes:AttributeMenu (enabled, pos_x, pos_y, font, size, color, side
 	
 	--color
 	_detalhes:SetFontColor (self.menu_attribute_string, color)
+	C_Timer.After(1, function()
+		_detalhes:SetFontColor (self.menu_attribute_string, color)
+	end)
 	
 	--shadow
 	_detalhes:SetFontOutline (self.menu_attribute_string, shadow)
@@ -8446,7 +8455,6 @@ function _detalhes:HideMainIcon (value)
 	
 		self.hide_icon = true
 		gump:Fade (self.baseframe.cabecalho.atributo_icon, 1)
-		--self.baseframe.cabecalho.ball:SetParent (self.baseframe)
 		
 		if (self.toolbar_side == 1) then
 			self.baseframe.cabecalho.ball:SetTexCoord (unpack (COORDS_LEFT_BALL_NO_ICON))
@@ -8471,7 +8479,6 @@ function _detalhes:HideMainIcon (value)
 	else
 		self.hide_icon = false
 		gump:Fade (self.baseframe.cabecalho.atributo_icon, 0)
-		--self.baseframe.cabecalho.ball:SetParent (_detalhes.listener)
 		
 		if (self.toolbar_side == 1) then
 

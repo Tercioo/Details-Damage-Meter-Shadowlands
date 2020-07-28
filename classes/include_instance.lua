@@ -130,6 +130,8 @@ _detalhes.instance_defaults = {
 		statusbar_info = {alpha = 1, overlay = {1, 1, 1}},
 	--hide main window attribute icon
 		hide_icon = false,
+	--attribute icon is desaturated
+		icon_desaturated = false,
 	--anchor side of main window toolbar (1 = top 2 = bottom)
 		toolbar_side = 1,
 	--micro displays side
@@ -152,6 +154,7 @@ _detalhes.instance_defaults = {
 		--anchor store the anchor point of main menu
 		menu_anchor = {5, 1, side = 1}, --mode segment attribute report on top position
 		menu_anchor_down = {5, 1}, --mode segment attribute report on bottom position
+		menu_icons_alpha = 0.5,
 		--blackwhiite icons
 		desaturated_menu = false, --mode segment attribute report
 		--icons on menu

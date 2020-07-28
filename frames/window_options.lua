@@ -3762,12 +3762,10 @@ function window:CreateFrame14()
 	--anchors
 		g:NewLabel (frame14, _, "$parentAttributeAnchorXLabel", "attributeAnchorXLabel", Loc ["STRING_OPTIONS_MENU_ATTRIBUTE_ANCHORX"], "GameFontHighlightLeft")
 		g:NewLabel (frame14, _, "$parentAttributeAnchorYLabel", "attributeAnchorYLabel", Loc ["STRING_OPTIONS_MENU_ATTRIBUTE_ANCHORY"], "GameFontHighlightLeft")
-		local s = g:NewSlider (frame14, _, "$parentAttributeAnchorXSlider", "attributeAnchorXSlider", SLIDER_WIDTH, SLIDER_HEIGHT, -20, 300, 1, instance.attribute_text.anchor [1], nil, nil, nil, options_slider_template)
-		--config_slider (s)
+		local s = g:NewSlider (frame14, _, "$parentAttributeAnchorXSlider", "attributeAnchorXSlider", SLIDER_WIDTH, SLIDER_HEIGHT, -30, 300, 1, instance.attribute_text.anchor [1], nil, nil, nil, options_slider_template)
 		s:SetThumbSize (24)
 		local s = g:NewSlider (frame14, _, "$parentAttributeAnchorYSlider", "attributeAnchorYSlider", SLIDER_WIDTH, SLIDER_HEIGHT, -100, 50, 1, instance.attribute_text.anchor [2], nil, nil, nil, options_slider_template)
-		--config_slider (s)
-		--s:SetThumbSize (28)
+		s:SetThumbSize (24)
 		
 		frame14.attributeAnchorXSlider:SetPoint ("left", frame14.attributeAnchorXLabel, "right", 2)
 		frame14.attributeAnchorYSlider:SetPoint ("left", frame14.attributeAnchorYLabel, "right", 2)
@@ -4127,15 +4125,6 @@ function window:CreateFrame1()
 		g:NewLabel (frame1, _, "$parentIgnoreNicknamesLabel", "IgnoreNicknamesLabel", Loc ["STRING_OPTIONS_IGNORENICKNAME"], "GameFontHighlightLeft")
 		g:NewSwitch (frame1, _, "$parentIgnoreNicknamesSlider", "IgnoreNicknamesSlider", 60, 20, _, _, _detalhes.ignore_nicktag, nil, nil, nil, nil, options_switch_template)
 		frame1.IgnoreNicknamesSlider:SetPoint ("left", frame1.IgnoreNicknamesLabel, "right", 2)
-		
-		if (not frame1.IgnoreNicknamesSlider.SetAsCheckBox) then
-			print ("================")
-			print ("================")
-			print ("Details!: |cFFFFFF00A very old Framework version is installed by another addon, please update (if you have any of these installed): |cFFFFFFFFIskarAssist|r, |cFFFFFFFFSalvageYardSeller|r, |cFFFFFFFFHansgar&Franzok Assist|r and |cFFFFFFFFFlashTaskbar|r.|r")
-			print ("================")
-			print ("================")
-		end
-		
 		frame1.IgnoreNicknamesSlider:SetAsCheckBox()
 
 		frame1.IgnoreNicknamesSlider.OnSwitch = function (self, _, value)

@@ -1096,7 +1096,7 @@ end
 _detalhes.MakeInstanceGroup = _detalhes.agrupar_janelas
 
 function _detalhes:UngroupInstance()
-	return self:Desagrupar (-1)
+	return self:Desagrupar(-1)
 end
 
 function _detalhes:Desagrupar (instancia, lado, lado2)
@@ -1490,23 +1490,26 @@ function _detalhes:RestauraJanela (index, temp, load_only)
 		self.StatusBarSaved = self.StatusBarSaved or {options = {}}
 		self.StatusBar.options = self.StatusBarSaved.options
 
-		if (self.StatusBarSaved.center and self.StatusBarSaved.center == "NONE") then
-			self.StatusBarSaved.center = "DETAILS_STATUSBAR_PLUGIN_CLOCK"
-		end
-		local clock = _detalhes.StatusBar:CreateStatusBarChildForInstance (self, self.StatusBarSaved.center or "DETAILS_STATUSBAR_PLUGIN_CLOCK")
-		_detalhes.StatusBar:SetCenterPlugin (self, clock, true)
-		
 		if (self.StatusBarSaved.left and self.StatusBarSaved.left == "NONE") then
 			self.StatusBarSaved.left = "DETAILS_STATUSBAR_PLUGIN_PSEGMENT"
 		end
 		local segment = _detalhes.StatusBar:CreateStatusBarChildForInstance (self, self.StatusBarSaved.left or "DETAILS_STATUSBAR_PLUGIN_PSEGMENT")
 		_detalhes.StatusBar:SetLeftPlugin (self, segment, true)
-		
-		if (self.StatusBarSaved.right and self.StatusBarSaved.right == "NONE") then
-			self.StatusBarSaved.right = "DETAILS_STATUSBAR_PLUGIN_PDPS"
+
+
+		if (self.StatusBarSaved.center and self.StatusBarSaved.center == "NONE") then
+			self.StatusBarSaved.center = "DETAILS_STATUSBAR_PLUGIN_CLOCK"
 		end
-		local dps = _detalhes.StatusBar:CreateStatusBarChildForInstance (self, self.StatusBarSaved.right or "DETAILS_STATUSBAR_PLUGIN_PDPS")
-		_detalhes.StatusBar:SetRightPlugin (self, dps, true)
+		local clock = _detalhes.StatusBar:CreateStatusBarChildForInstance (self, self.StatusBarSaved.center or "DETAILS_STATUSBAR_PLUGIN_CLOCK")
+		_detalhes.StatusBar:SetCenterPlugin (self, clock, true)
+
+
+		if (self.StatusBarSaved.right and self.StatusBarSaved.right == "NONE") then
+			self.StatusBarSaved.right = "DETAILS_STATUSBAR_PLUGIN_PDURABILITY"
+		end
+		local durability = _detalhes.StatusBar:CreateStatusBarChildForInstance (self, self.StatusBarSaved.right or "DETAILS_STATUSBAR_PLUGIN_PDURABILITY")
+		_detalhes.StatusBar:SetRightPlugin (self, durability, true)
+
 
 	--> load mode
 
@@ -2474,14 +2477,11 @@ function _detalhes:MontaSoloOption (instancia)
 end
 
 -- ~menu
-local menu_wallpaper_tex = {63/512, 331/512, 109/512, 143/512}
-local menu_wallpaper_color = {.8, .8, .8, 0.2}
 local menu_wallpaper_custom_color = {1, 0, 0, 1}
-
 local wallpaper_bg_color = {.8, .8, .8, 0.2}
 local menu_icones = {
-	"Interface\\AddOns\\Details\\images\\atributos_icones_damage", 
-	"Interface\\AddOns\\Details\\images\\atributos_icones_heal", 
+	"Interface\\AddOns\\Details\\images\\atributos_icones_damage",
+	"Interface\\AddOns\\Details\\images\\atributos_icones_heal",
 	"Interface\\AddOns\\Details\\images\\atributos_icones_energyze",
 	"Interface\\AddOns\\Details\\images\\atributos_icones_misc"
 }
@@ -2612,13 +2612,23 @@ function _detalhes:MontaAtributosOption (instancia, func)
 	return menu_principal, sub_menus
 end
 
-function _detalhes:ChangeIcon (icon)
-	
+local iconCoords = {
+	[1] = {-1, 0, 0, 0, -1, -1, 0, 0}, --damage, dps, taken, friendldire, frags, enemy damage taken, auras, by spell
+	[2] = {0, 1, 1, 1, 0, 0, 1}, --healing, hps, overheal, taken, enemyheal, damageprevented, healabsorbed
+	[3] = {0, -2, -1, 0, 0, 0}, --mana, rage, energy, rune, other resources, alternate power
+	[4] = {0, 0, -1, 0, 0, 0, 0, 0}, --ccBreak, res, kick, dispel, deaths, cooldowns, buffUptime, debuffUptime
+}
+local getFineTunedIconCoords = function(attribute, subAttribute)
+	return iconCoords[attribute] and iconCoords[attribute][subAttribute] or 0
+end
+
+function _detalhes:ChangeIcon(icon)
+
 	local skin = _detalhes.skins [self.skin]
 	if (not skin) then
 		skin = _detalhes.skins [_detalhes.default_skin_to_use]
 	end
-	
+
 	if (not self.hide_icon) then
 		if (skin.icon_on_top) then
 			self.baseframe.cabecalho.atributo_icon:SetParent (self.floatingframe)
@@ -2626,27 +2636,26 @@ function _detalhes:ChangeIcon (icon)
 			self.baseframe.cabecalho.atributo_icon:SetParent (self.baseframe)
 		end
 	end
-	
+
 	if (icon) then
-		
 		--> plugin chamou uma troca de icone
 		self.baseframe.cabecalho.atributo_icon:SetTexture (icon)
 		self.baseframe.cabecalho.atributo_icon:SetTexCoord (5/64, 60/64, 3/64, 62/64)
-		
+
 		local icon_size = skin.icon_plugins_size
 		self.baseframe.cabecalho.atributo_icon:SetWidth (icon_size[1])
 		self.baseframe.cabecalho.atributo_icon:SetHeight (icon_size[2])
 		local icon_anchor = skin.icon_anchor_plugins
-		
+
 		self.baseframe.cabecalho.atributo_icon:ClearAllPoints()
 		self.baseframe.cabecalho.atributo_icon:SetPoint ("TOPRIGHT", self.baseframe.cabecalho.ball_point, "TOPRIGHT", icon_anchor[1], icon_anchor[2])
-		
+
 	elseif (self.modo == modo_alone) then --> solo
-		-- o icone � alterado pelo pr�prio plugin
-	
+		--icon is set by the plugin
+
 	elseif (self.modo == modo_grupo or self.modo == modo_all) then --> grupo
 
-		if (self.atributo == 5) then 
+		if (self.atributo == 5) then
 			--> custom
 			if (_detalhes.custom [self.sub_atributo]) then
 				local icon = _detalhes.custom [self.sub_atributo].icon
@@ -2662,28 +2671,23 @@ function _detalhes:ChangeIcon (icon)
 				self.baseframe.cabecalho.atributo_icon:SetPoint ("TOPRIGHT", self.baseframe.cabecalho.ball_point, "TOPRIGHT", icon_anchor[1], icon_anchor[2])
 			end
 		else
-			--> normal
-			local half = 0.00048828125
-			local size = 0.03125
-			
-			--normal icons
-			--local icones = _detalhes.sub_atributos [self.atributo].icones
-			--self.baseframe.cabecalho.atributo_icon:SetTexture (icones [self.sub_atributo] [1])
-			--self.baseframe.cabecalho.atributo_icon:SetTexCoord ( unpack (icones [self.sub_atributo] [2]) )
-			
-			--default
-			--self.baseframe.cabecalho.atributo_icon:SetTexture (skin.file)
-			--self.baseframe.cabecalho.atributo_icon:SetTexCoord ( (0.03125 * (self.atributo-1)) + half, (0.03125 * self.atributo) - half, 0.35693359375, 0.38720703125)
-			
 			--set the attribute icon
 			self.baseframe.cabecalho.atributo_icon:SetTexture (menu_icones [self.atributo])
+
+			if (self.icon_desaturated) then
+				self.baseframe.cabecalho.atributo_icon:SetDesaturated(true)
+			else
+				self.baseframe.cabecalho.atributo_icon:SetDesaturated(false)
+			end
+
 			local p = 0.125 --> 32/256
 			self.baseframe.cabecalho.atributo_icon:SetTexCoord (p * (self.sub_atributo-1), p * (self.sub_atributo), 0, 1)
 			self.baseframe.cabecalho.atributo_icon:SetSize (16, 16)
 			
 			self.baseframe.cabecalho.atributo_icon:ClearAllPoints()
 			if (self.menu_attribute_string) then
-				self.baseframe.cabecalho.atributo_icon:SetPoint ("right", self.menu_attribute_string.widget, "left", -4, -1)
+				local yOffset = getFineTunedIconCoords(self.atributo, self.sub_atributo)
+				self.baseframe.cabecalho.atributo_icon:SetPoint ("right", self.menu_attribute_string.widget, "left", -4, 1 + yOffset)
 			end
 			
 			if (skin.attribute_icon_anchor) then
@@ -2695,15 +2699,10 @@ function _detalhes:ChangeIcon (icon)
 				self.baseframe.cabecalho.atributo_icon:SetSize (unpack (skin.attribute_icon_size))
 			end
 
-		--	local icon_anchor = skin.icon_anchor_main
-		--	self.baseframe.cabecalho.atributo_icon:SetPoint ("TOPRIGHT", self.baseframe.cabecalho.ball_point, "TOPRIGHT", icon_anchor[1], icon_anchor[2])
-			
-		--	self.baseframe.cabecalho.atributo_icon:SetWidth (32)
-		--	self.baseframe.cabecalho.atributo_icon:SetHeight (32)
+
 		end
-		
 	elseif (self.modo == modo_raid) then --> raid
-		-- o icone � alterado pelo pr�prio plugin
+		--icon is set by the plugin
 	end
 end
 
