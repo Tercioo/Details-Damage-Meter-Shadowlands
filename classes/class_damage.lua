@@ -943,9 +943,13 @@
 			porcentagem = porcentagem .. "%"
 		end
 
-		--local bars_brackets = instancia:GetBarBracket()
-		--thisLine.lineText4:SetText ((spell_damage and SelectedToKFunction (_, spell_damage) or "") .. bars_brackets[1] .. porcentagem .. bars_brackets[2])
-		Details:SetTextsOnLine(thisLine, "", (spell_damage and SelectedToKFunction (_, spell_damage) or ""), porcentagem)
+		local bars_brackets = instancia:GetBarBracket()
+		--
+		if (instancia.use_multi_fontstrings) then
+			Details:SetTextsOnLine(thisLine, "", (spell_damage and SelectedToKFunction (_, spell_damage) or ""), porcentagem)
+		else
+			thisLine.lineText4:SetText ((spell_damage and SelectedToKFunction (_, spell_damage) or "") .. bars_brackets[1] .. porcentagem .. bars_brackets[2])
+		end
 
 		thisLine.lineText1:SetTextColor(1, 1, 1, 1)
 		thisLine.lineText2:SetTextColor(1, 1, 1, 1)
@@ -1129,8 +1133,12 @@
 			porcentagem = porcentagem .. "%"
 		end
 		
-		--thisLine.lineText4:SetText (total_frags .. bars_brackets[1] .. porcentagem .. bars_brackets[2])
-		Details:SetTextsOnLine(thisLine, "", total_frags, porcentagem)
+		--
+		if (instancia.use_multi_fontstrings) then
+			Details:SetTextsOnLine(thisLine, "", total_frags, porcentagem)
+		else
+			thisLine.lineText4:SetText (total_frags .. bars_brackets[1] .. porcentagem .. bars_brackets[2])
+		end
 
 		thisLine.lineText1:SetSize (thisLine:GetWidth() - thisLine.lineText4:GetStringWidth() - 20, 15)
 		
@@ -1545,8 +1553,11 @@
 		if (UsingCustomRightText) then
 			thisLine.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_damage, formated_dps, porcentagem, self, instancia.showing, instancia, rightText))
 		else
-			Details:SetTextsOnLine(thisLine, formated_damage, formated_dps, porcentagem)
-			--thisLine.lineText4:SetText (rightText)
+			if (instancia.use_multi_fontstrings) then
+				Details:SetTextsOnLine(thisLine, formated_damage, formated_dps, porcentagem)
+			else
+				thisLine.lineText4:SetText (rightText)
+			end
 		end
 
 		thisLine.lineText1:SetText (colocacao .. ". " .. self.nome)
@@ -2815,6 +2826,8 @@ end
 		bar.lineText1:SetTextColor (r, g, b, a)
 	end
 	if (instance.row_info.textR_class_colors) then
+		bar.lineText2:SetTextColor (r, g, b, a)
+		bar.lineText3:SetTextColor (r, g, b, a)
 		bar.lineText4:SetTextColor (r, g, b, a)
 	end
 	

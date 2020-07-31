@@ -2158,7 +2158,7 @@ local _
 		
 		instance_cprops = {
 			["hide_in_combat_type"] = 1,
-			["fontstrings_text3_anchor"] = 35,
+			["fontstrings_text3_anchor"] = 37,
 			["menu_anchor"] = {
 				19, -- [1]
 				1, -- [2]
@@ -2220,7 +2220,7 @@ local _
 				["font_size"] = 12,
 				["textL_translit_text"] = false,
 				["height"] = 21,
-				["texture_file"] = "Interface\\AddOns\\Details\\images\\bar_background",
+				["texture_file"] = "Interface\\AddOns\\Details\\images\\bar_textures\\texture2020.blp",
 				["use_spec_icons"] = true,
 				["models"] = {
 					["upper_model"] = "Spells\\AcidBreath_SuperGreen.M2",
@@ -2242,10 +2242,10 @@ local _
 					0, -- [3]
 				},
 				["textL_show_number"] = true,
-				["texture_custom"] = "AddOns\\Details\\images\\bar_textures\\texture2020.blp",
+				["texture_custom"] = "",
 				["texture_highlight"] = "Interface\\FriendsFrame\\UI-FriendsList-Highlight",
 				["textR_custom_text"] = "{data1} ({data2}, {data3}%)",
-				["texture"] = "DGround",
+				["texture"] = "Details2020",
 				["start_after_icon"] = true,
 				["texture_background_file"] = "Interface\\AddOns\\Details\\images\\bar_background",
 				["textR_class_colors"] = false,
@@ -2383,7 +2383,6 @@ local _
 					["value"] = 100,
 				}, -- [15]
 			},
-			["skin"] = "Dark Theme",
 			["following"] = {
 				["enabled"] = false,
 				["bar_color"] = {
@@ -2398,7 +2397,7 @@ local _
 				},
 			},
 			["switch_healer"] = false,
-			["fontstrings_text2_anchor"] = 70,
+			["fontstrings_text2_anchor"] = 74,
 			["StatusBarSaved"] = {
 				["center"] = "DETAILS_STATUSBAR_PLUGIN_CLOCK",
 				["right"] = "DETAILS_STATUSBAR_PLUGIN_PDURABILITY",

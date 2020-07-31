@@ -187,7 +187,7 @@ _detalhes.instance_defaults = {
 
 		--use one fontstring for each value in the lines, e.g. one fontstring to damage done, another fontstring to dps and another to percent amount
 		use_multi_fontstrings = true,
-		fontstrings_width = 35,
+		fontstrings_width = 35, --not in use
 		fontstrings_text4_anchor = 0,
 		fontstrings_text3_anchor = 35,
 		fontstrings_text2_anchor = 70,
@@ -264,7 +264,7 @@ _detalhes.instance_defaults = {
 			--percent type
 				percent_type = 1,
 			--backdrop
-				backdrop = {enabled = false, size = 12, color = {1, 1, 1, 1}, texture = "Details BarBorder 2"},
+				backdrop = {enabled = false, size = 12, color = {1, 1, 1, 1}, texture = "Details BarBorder 2"}, --texture is deprecated
 			--model
 				models = {
 					upper_enabled = false,

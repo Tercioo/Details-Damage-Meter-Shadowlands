@@ -4056,6 +4056,10 @@ function gump:CreateNewLine (instancia, index)
 	new_row.border:SetFrameLevel (new_row.statusbar:GetFrameLevel()+2)
 	new_row.border:SetAllPoints (new_row)
 	
+	--border
+	local lineBorder = CreateFrame("frame", nil, new_row, "NamePlateFullBorderTemplate, BackdropTemplate")
+	new_row.lineBorder = lineBorder
+
 	-- search key: ~model
 	
 	--low 3d bar
@@ -4229,8 +4233,7 @@ function _detalhes:SetBarTextSettings (size, font, fixedcolor, leftcolorbyclass,
 	self:InstanceRefreshRows()
 end
 
-function _detalhes:SetBarBackdropSettings (enabled, size, color, texture)
-
+function _detalhes:SetBarBackdropSettings (enabled, size, color) --argumente texture removed on shadowlands beta
 	if (type (enabled) ~= "boolean") then
 		enabled = self.row_info.backdrop.enabled
 	end
@@ -4240,15 +4243,11 @@ function _detalhes:SetBarBackdropSettings (enabled, size, color, texture)
 	if (not color) then
 		color = self.row_info.backdrop.color
 	end
-	if (not texture) then
-		texture = self.row_info.backdrop.texture
-	end
 	
 	self.row_info.backdrop.enabled = enabled
 	self.row_info.backdrop.size = size
 	self.row_info.backdrop.color = color
-	self.row_info.backdrop.texture = texture
-	
+
 	self:InstanceReset()
 	self:InstanceRefreshRows()
 	self:ReajustaGump()
@@ -4620,14 +4619,11 @@ function _detalhes:InstanceRefreshRows (instancia)
 		local icon_force_grayscale = self.row_info.icon_grayscale
 		local icon_offset_x, icon_offset_y = unpack (self.row_info.icon_offset)
 
-	--backdrop
-		local backdrop = self.row_info.backdrop.enabled
-		local backdrop_color
-		if (backdrop) then
-			backdrop = {edgeFile = SharedMedia:Fetch ("border", self.row_info.backdrop.texture), edgeSize = self.row_info.backdrop.size}
-			backdrop_color = self.row_info.backdrop.color
-		end
-		
+	--line border
+		local lineBorderEnabled = self.row_info.backdrop.enabled
+		local lineBorderColor = self.row_info.backdrop.color
+		local lineBorderSize = self.row_info.backdrop.size
+	
 	--font face
 		self.row_info.font_face_file = SharedMedia:Fetch ("font", self.row_info.font_face)
 	
@@ -4825,12 +4821,14 @@ function _detalhes:InstanceRefreshRows (instancia)
 		_detalhes:SetFontFace (row.lineText4, self.row_info.font_face_file or "GameFontHighlight")
 
 		--backdrop
-		if (backdrop) then
-			row.border:SetBackdrop(backdrop)
-			row.border:SetBackdropBorderColor(_unpack (backdrop_color))
+		if (lineBorderEnabled) then
+			row.lineBorder:Show()
+			row.lineBorder:SetVertexColor(unpack(lineBorderColor))
+			row.lineBorder:SetBorderSizes(lineBorderSize, lineBorderSize, lineBorderSize, lineBorderSize)
+			row.lineBorder:UpdateSizes()
 		else
-			row.border:SetBackdrop(nil)
-		end
+			row.lineBorder:Hide()
+		end	
 		
 		--> models
 		if (upper_model_enabled) then

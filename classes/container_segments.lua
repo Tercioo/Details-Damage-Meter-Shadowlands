@@ -408,7 +408,7 @@ function _detalhes:CheckFreeze (instancia, index_liberado, tabela)
 	end
 end
 
-function _detalhes:OverallOptions (reset_new_boss, reset_new_challenge, reset_on_logoff)
+function _detalhes:SetOverallResetOptions (reset_new_boss, reset_new_challenge, reset_on_logoff)
 	if (reset_new_boss == nil) then
 		reset_new_boss = _detalhes.overall_clear_newboss
 	end

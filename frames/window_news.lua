@@ -47,12 +47,10 @@ function Details:OpenNewsWindow(textToShow, dumpValues, keeptext)
 			newsFrame:Text ((DetailsNewsWindowText:GetText() or "") .. "\n\n" .. (textToShow or Loc ["STRING_VERSION_LOG"]))
 		else
 			newsFrame:Text (textToShow or Loc["STRING_VERSION_LOG"])
-			print("the text has neem saet")
 		end
 	end
 
 	newsFrame:Show()
-	print("shoow the player details window...")
 end
 
 function Details:CreateOrOpenNewsWindow()

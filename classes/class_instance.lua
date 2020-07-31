@@ -115,6 +115,18 @@ function _detalhes:InstanciaCallFunctionOffline (funcao, ...)
 	end
 end
 
+function Details:InstanceGroupCall(instance, funcName, ...)
+	for _, thisInstance in ipairs (instance:GetInstanceGroup()) do
+		thisInstance[funcName](thisInstance, ...)
+	end
+end
+
+function Details:InstanceGroupEditSetting(instance, keyName, value)
+	for _, thisInstance in ipairs (instance:GetInstanceGroup()) do
+		thisInstance[keyName] = value
+	end
+end
+
 function _detalhes:GetLowerInstanceNumber()
 	local lower = 999
 	for index, instancia in _ipairs (_detalhes.tabela_instancias) do
@@ -345,6 +357,9 @@ end
 		return self:DesativarInstancia()
 	end
 	function _detalhes:ShutDown()
+		return self:DesativarInstancia()
+	end
+	function _detalhes:Shutdown()
 		return self:DesativarInstancia()
 	end
 	
@@ -1428,7 +1443,12 @@ end
 
 --> ao reiniciar o addon esta fun��o � rodada para recriar a janela da inst�ncia
 --> search key: ~restaura ~inicio ~start
-function _detalhes:RestauraJanela (index, temp, load_only)
+
+function Details:RestoreWindow(index, temp, loadOnly)
+	self:RestauraJanela (index, temp, loadOnly)
+end
+
+function _detalhes:RestauraJanela(index, temp, load_only)
 
 	--> load
 		self:LoadInstanceConfig()
@@ -2285,22 +2305,6 @@ function _detalhes:TrocaTabela (instancia, segmento, atributo, sub_atributo, ini
 		if (update_coolTip) then
 			_detalhes.popup:Select (1, atributo)
 			_detalhes.popup:Select (2, instancia.sub_atributo, atributo)
-		end
-
-		--_detalhes:SetTutorialCVar ("ATTRIBUTE_SELECT_TUTORIAL1", nil)
-		if (not _detalhes:GetTutorialCVar ("ATTRIBUTE_SELECT_TUTORIAL1") and not _detalhes.initializing and not iniciando_instancia) then
-			if (not _G ["DetailsWelcomeWindow"] or not _G ["DetailsWelcomeWindow"]:IsShown()) then
-				_detalhes:TutorialBookmark (instancia)
-			end
-		end
-		
-		if (not _detalhes:GetTutorialCVar ("ATTRIBUTE_SELECT_TUTORIAL2") and not _detalhes.initializing and not iniciando_instancia) then
-
-			if (not _G ["DetailsWelcomeWindow"] or not _G ["DetailsWelcomeWindow"]:IsShown()) then
-				--_detalhes:SetTutorialCVar ("ATTRIBUTE_SELECT_TUTORIAL2", true)
-				--_detalhes:TutorialBookmark (instancia)
-			end
-			
 		end
 		
 		if (_detalhes.cloud_process) then

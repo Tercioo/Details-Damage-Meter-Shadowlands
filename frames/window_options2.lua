@@ -1,5 +1,5 @@
 if (true) then
-    return
+    --return
 end
 
 
@@ -28,50 +28,246 @@ local options_switch_template = DF:GetTemplate ("switch", "OPTIONS_CHECKBOX_TEMP
 local options_slider_template = DF:GetTemplate ("slider", "OPTIONS_SLIDER_TEMPLATE")
 local options_button_template = DF:GetTemplate ("button", "OPTIONS_BUTTON_TEMPLATE")
 
---options settings
-local startX, startY, heightSize = 10, -130, 710
-local optionsWidth, optionsHeight = 1100, 650
-local mainHeightSize = 800
+--options
+local section_menu_button_width = 120
+local section_menu_button_height = 20
 
 --build the options window
-function Details.options.InitializeOptionsWindow()
-	--local DetailsOptionsWindow = DF:NewPanel(UIParent, _, "DetailsOptionsWindow", _, 897, 592)
-    local DetailsOptionsWindow = CreateFrame("frame", "DetailsOptionsWindow", UIParent, "BackdropTemplate")
-    DetailsOptionsWindow:SetSize(897, 592)
-    local f = DetailsOptionsWindow
-    DetailsOptionsWindow.Frame = f
+function Details:InitializeOptionsWindow(instance)
+    return Details.options.InitializeOptionsWindow(instance)
+end
 
+function Details.options.InitializeOptionsWindow(instance)
+	local DetailsOptionsWindow = DF:NewPanel(UIParent, _, "DetailsOptionsWindow", _, 897, 592)
+    local f = DetailsOptionsWindow.frame
+
+	f.Frame = f
 	f.__name = "Options"
 	f.real_name = "DETAILS_OPTIONS"
-    f.__icon = [[Interface\Scenarios\ScenarioIcon-Interact]]
-    f.tabContainer = {}
+	f.__icon = [[Interface\Scenarios\ScenarioIcon-Interact]]
+    _G.DetailsPluginContainerWindow.EmbedPlugin (f, f, true)
+    f.sectionFramesContainer = {}
+    Details:FormatBackground(f)
     f:Hide()
 
-    _G.DetailsPluginContainerWindow.EmbedPlugin(f, f, true)
+    DF:CreateScaleBar(DetailsOptionsWindow, Details.options_window)
+    DetailsOptionsWindow:SetScale (Details.options_window.scale)
+
+    local titleText = DF:NewLabel(f, nil, "$parentTitleLabel", "title", "Details! " .. Loc ["STRING_OPTIONS_WINDOW"], "GameFontHighlightLeft", 12, {227/255, 186/255, 4/255})
+    titleText:SetPoint("center", f, "center")
+    titleText:SetPoint("top", f, "top", 0, -8)
+
+    local closeButton = CreateFrame("button", "DetailsOptionsWindowCloseButton", f.widget, "UIPanelCloseButton")
+    closeButton:SetWidth(32)
+    closeButton:SetHeight(32)
+    closeButton:SetPoint("TOPRIGHT", f.widget, "TOPRIGHT", 0, -19)
+    closeButton:SetText("X")
+    closeButton:SetFrameLevel(closeButton:GetFrameLevel()+2)
+
+    --select the instance to edit
+    local onSelectInstance = function (_, _, instanceId)
+        local instance = _detalhes.tabela_instancias[instanceId]
+        
+        if (not instance:IsEnabled() or not instance:IsStarted()) then
+            _detalhes.CriarInstancia (_, _, instance.meu_id)
+        end
+        
+        Details.options.SetCurrentInstance(instance)
+    end
+
+    local buildInstanceMenu = function()
+        local instanceList = {}
+        for index = 1, math.min (#_detalhes.tabela_instancias, _detalhes.instances_amount) do
+            local instance = _detalhes.tabela_instancias[index]
+
+            --what the window is showing
+            local atributo = instance.atributo
+            local sub_atributo = instance.sub_atributo
+            
+            if (atributo == 5) then --custom
+                local CustomObject = _detalhes.custom [sub_atributo]
+                if (not CustomObject) then
+                    instance:ResetAttribute()
+                    atributo = instance.atributo
+                    sub_atributo = instance.sub_atributo
+                    instanceList [#instanceList+1] = {value = index, label = "#".. index .. " " .. _detalhes.atributos.lista [atributo] .. " - " .. _detalhes.sub_atributos [atributo].lista [sub_atributo], onclick = onSelectInstance, icon = _detalhes.sub_atributos [atributo].icones[sub_atributo] [1], texcoord = _detalhes.sub_atributos [atributo].icones[sub_atributo] [2]}
+                else
+                    instanceList [#instanceList+1] = {value = index, label = "#".. index .. " " .. CustomObject.name, onclick = onSelectInstance, icon = CustomObject.icon}
+                end
+            else
+                local modo = instance.modo
+                
+                if (modo == 1) then --solo plugin
+                    atributo = _detalhes.SoloTables.Mode or 1
+                    local SoloInfo = _detalhes.SoloTables.Menu [atributo]
+                    if (SoloInfo) then
+                        instanceList [#instanceList+1] = {value = index, label = "#".. index .. " " .. SoloInfo [1], onclick = onSelectInstance, icon = SoloInfo [2]}
+                    else
+                        instanceList [#instanceList+1] = {value = index, label = "#".. index .. " unknown", onclick = onSelectInstance, icon = ""}
+                    end
+                    
+                elseif (modo == 4) then --raid plugin
+                    local plugin_name = instance.current_raid_plugin or instance.last_raid_plugin
+                    if (plugin_name) then
+                        local plugin_object = _detalhes:GetPlugin (plugin_name)
+                        if (plugin_object) then
+                            instanceList [#instanceList+1] = {value = index, label = "#".. index .. " " .. plugin_object.__name, onclick = onSelectInstance, icon = plugin_object.__icon}
+                        else
+                            instanceList [#instanceList+1] = {value = index, label = "#".. index .. " unknown", onclick = onSelectInstance, icon = ""}
+                        end
+                    else
+                        instanceList [#instanceList+1] = {value = index, label = "#".. index .. " unknown", onclick = onSelectInstance, icon = ""}
+                    end
+                else
+                    instanceList [#instanceList+1] = {value = index, label = "#".. index .. " " .. _detalhes.atributos.lista [atributo] .. " - " .. _detalhes.sub_atributos [atributo].lista [sub_atributo], onclick = onSelectInstance, icon = _detalhes.sub_atributos [atributo].icones[sub_atributo] [1], texcoord = _detalhes.sub_atributos [atributo].icones[sub_atributo] [2]}
+                end
+            end
+        end
+        return instanceList
+    end
+
+    local instanceSelection = DF:NewDropDown (f, _, "$parentInstanceSelectDropdown", "instanceDropdown", 200, 18, buildInstanceMenu) --, nil, options_dropdown_template
+    instanceSelection:SetPoint("bottomright", f, "bottomright", -7, 09)
+    instanceSelection:SetHook("OnEnter", function()
+        GameCooltip:Reset()
+        GameCooltip:Preset (2)
+        GameCooltip:AddLine(Loc ["STRING_MINITUTORIAL_OPTIONS_PANEL1"])
+        GameCooltip:ShowCooltip(instanceSelection.widget, "tooltip")
+    end)
+    instanceSelection:SetHook("OnLeave", function()
+        GameCooltip:Hide()
+    end)
+
+    local instances_string = DF:NewLabel(f, nil, "$parentInstanceDropdownLabel", "instancetext", Loc ["STRING_OPTIONS_EDITINSTANCE"], "GameFontNormal", 12)
+    instances_string:SetPoint("right", instanceSelection, "left", -2, 1)
+
+    local bigdogImage = DF:NewImage(f, [[Interface\MainMenuBar\UI-MainMenuBar-EndCap-Human]], 180*0.9, 200*0.9, nil, {1, 0, 0, 1}, "backgroundBigDog", "$parentBackgroundBigDog")
+    bigdogImage:SetPoint("bottomright", f, "bottomright", -3, 27)
+    bigdogImage:SetAlpha(.25)
+
+    --editing group checkbox
+    local onToggleEditingGroup = function(self, fixparam, value)
+        _detalhes.options_group_edit = value
+    end
+    local editingGroupCheckBox = DF:CreateSwitch(f, onToggleEditingGroup, _detalhes.options_group_edit, _, _, _, _, _, "$parentEditGroupCheckbox", _, _, _, _, DF:GetTemplate("switch", "OPTIONS_CHECKBOX_BRIGHT_TEMPLATE"))
+    editingGroupCheckBox:SetAsCheckBox()
+    editingGroupCheckBox.tooltip = Loc ["STRING_MINITUTORIAL_OPTIONS_PANEL2"]
+
+    local editingGroupLabel = DF:NewLabel(f, nil, "$parentEditingGroupLabel", "editingGroupLabel", "Editing Group:", "GameFontNormal", 12) --localize-me
+    editingGroupLabel:SetPoint("bottomleft", instances_string, "topleft", 0, 5)
+    editingGroupCheckBox:SetPoint("left", editingGroupLabel, "right", 2, 0)
+
+	--create bars
+    DF:NewColor ("C_OptionsButtonOrange", 0.9999, 0.8196, 0, 1)
+
+    local create_test_bars_func = function()
+        _detalhes.CreateTestBars()
+        if (not _detalhes.test_bar_update) then
+            _detalhes:StartTestBarUpdate()
+        else
+            _detalhes:StopTestBarUpdate()
+        end
+    end
+    local fillbars = DF:NewButton (f, _, "$parentCreateExampleBarsButton", nil, 120, 20, create_test_bars_func, nil, nil, nil, Loc ["STRING_OPTIONS_TESTBARS"], 1)
+    fillbars:SetPoint ("bottomleft", f.widget, "bottomleft", 41, 12)
+    fillbars:SetTemplate(options_button_template)
+
+    --change log
+    local changelog = DF:NewButton (f, _, "$parentOpenChangeLogButton", nil, 120, 20, _detalhes.OpenNewsWindow, "change_log", nil, nil, Loc ["STRING_OPTIONS_CHANGELOG"], 1)
+    changelog:SetPoint ("left", fillbars, "right", 10, 0)
+    changelog:SetTemplate (options_button_template)
+
+    local sectionsName = { --section names
+        Loc ["STRING_OPTIONSMENU_DISPLAY"],
+        Loc ["STRING_OPTIONSMENU_SKIN"],
+
+        Loc ["STRING_OPTIONSMENU_ROWSETTINGS"],
+        Loc ["STRING_OPTIONSMENU_ROWTEXTS"],
+
+        Loc ["STRING_OPTIONSMENU_PROFILES"],
+        Loc ["STRING_OPTIONSMENU_TOOLTIP"],
+        Loc ["STRING_OPTIONSMENU_DATAFEED"],
+        
+        Loc ["STRING_OPTIONSMENU_ROWMODELS"],
+        Loc ["STRING_OPTIONSMENU_LEFTMENU"],
+        Loc ["STRING_OPTIONSMENU_TITLETEXT"],
+        Loc ["STRING_OPTIONSMENU_WINDOW"],
+        Loc ["STRING_OPTIONSMENU_AUTOMATIC"],
+        Loc ["STRING_OPTIONSMENU_WALLPAPER"],
+        "Streamer Settings",
+        Loc ["STRING_OPTIONSMENU_RAIDTOOLS"],
+        Loc ["STRING_OPTIONSMENU_PERFORMANCE"],
+        Loc ["STRING_OPTIONSMENU_PLUGINS"],
+        Loc ["STRING_OPTIONSMENU_SPELLS"],
+        Loc ["STRING_OPTIONSMENU_DATACHART"],
+    }
+
+    local optionsSectionsOrder = {
+        1, 2, 3, 4, 5, 6, "", 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
+    }
 
     --total amount of sections
-    DETAILS_OPTIONS_AMOUNT_SECTION = 1
+    _G.DETAILS_OPTIONS_AMOUNT_SECTION = 0
 
-    function Details.options.GetOptionsSection(sectionId)
-        return f.tabContainer[sectionId]
-    end
+    local buttonYPosition = -40
 
     function Details.options.SelectOptionsSection(sectionId)
         for i = 1, DETAILS_OPTIONS_AMOUNT_SECTION do
-            f.tabContainer[i]:Hide()
+            f.sectionFramesContainer[i]:Hide()
         end
-        f.tabContainer[sectionId]:Show()
+        f.sectionFramesContainer[sectionId]:Show()
     end
+
+    Details.options.SetCurrentInstance(instance)
 
     --create frames for sections
-    for i = 1, DETAILS_OPTIONS_AMOUNT_SECTION do
-        local tabFrame = CreateFrame("frame", "$parentTab" .. i, f, "BackdropTemplate")
-        tabFrame:SetAllPoints()
-        tinsert(f.tabContainer, tabFrame)
+    for index, sectionId in ipairs(optionsSectionsOrder) do
 
-        local buildOptionSectionFunc = Details.optionsSection[i]
-        buildOptionSectionFunc()
+        if (type(sectionId) == "number") then
+
+            local sectionFrame = CreateFrame("frame", "$parentTab" .. sectionId, f, "BackdropTemplate")
+            sectionFrame:SetAllPoints()
+            sectionFrame:EnableMouse(false)
+            tinsert(f.sectionFramesContainer, sectionFrame)
+
+            local buildOptionSectionFunc = Details.optionsSection[sectionId]
+            if (buildOptionSectionFunc) then
+                --call the function to create the frame
+                buildOptionSectionFunc(sectionFrame)
+
+                --count sections created
+                _G.DETAILS_OPTIONS_AMOUNT_SECTION = _G.DETAILS_OPTIONS_AMOUNT_SECTION + 1
+
+                --create a button for the section
+                local sectionButton = DF:CreateButton(f, function() Details.options.SelectOptionsSection(sectionId) end, section_menu_button_width, section_menu_button_height, sectionsName[_G.DETAILS_OPTIONS_AMOUNT_SECTION], _G.DETAILS_OPTIONS_AMOUNT_SECTION, nil, nil, nil, "$parentButtonSection" .. _G.DETAILS_OPTIONS_AMOUNT_SECTION, nil, options_button_template, options_text_template)
+                sectionButton:SetPoint("topleft", f, "topleft", 10, buttonYPosition)
+                buttonYPosition = buttonYPosition - (section_menu_button_height + 1)
+            end
+        else
+            buttonYPosition = buttonYPosition - 15
+        end
     end
+
+    function Details.options.GetOptionsSection(sectionId)
+        return f.sectionFramesContainer[sectionId]
+    end
+
+    function f.RefreshWindow()
+		if (not _G.DetailsOptionsWindow.instance) then
+			local lowerInstance = Details:GetLowerInstanceNumber()
+			if (not lowerInstance) then
+				local instance = Details:GetInstance(1)
+				Details.CriarInstancia(_, _, 1)
+				Details:OpenOptionsWindow(instance)
+			else
+				Details:OpenOptionsWindow(Details:GetInstance(lowerInstance))
+			end
+		else
+			Details:OpenOptionsWindow(_G.DetailsOptionsWindow.instance)
+        end
+    end
+    
+    Details.options.SelectOptionsSection(1)
 end
 
 -- ~options
@@ -88,14 +284,14 @@ function Details:OpenOptionsWindow(instance, no_reopen, section)
 
     local window = _G.DetailsOptionsWindow
     if (not window) then
-        Details.options.InitializeOptionsWindow()
+        Details.options.InitializeOptionsWindow(instance)
         window = _G.DetailsOptionsWindow
     end
 
-    Details.options.UpdateCurrentInstanceOnOptionsPanel(instance)
+    Details.options.SetCurrentInstanceAndRefresh(instance)
+    _G.DetailsPluginContainerWindow.OpenPlugin(_G.DetailsOptionsWindow)
+
     if (section) then
         Details.options.SelectOptionsSection(section)
     end
-
-    window:Show()
 end

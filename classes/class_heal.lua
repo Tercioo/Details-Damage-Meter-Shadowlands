@@ -416,8 +416,11 @@ function atributo_heal:RefreshWindow (instancia, tabela_do_combate, forcar, expo
 			local row1 = barras_container [1]
 			row1.minha_tabela = nil
 			row1.lineText1:SetText (Loc ["STRING_TOTAL"])
-			--row1.lineText4:SetText (_detalhes:ToK2 (total) .. " (" .. _detalhes:ToK (total / combat_time) .. ")")
-			Details:SetTextsOnLine(row1, "", _detalhes:ToK2 (total), _detalhes:ToK (total / combat_time))
+			if (instancia.use_multi_fontstrings) then
+				Details:SetTextsOnLine(row1, "", _detalhes:ToK2 (total), _detalhes:ToK (total / combat_time))
+			else
+				row1.lineText4:SetText (_detalhes:ToK2 (total) .. " (" .. _detalhes:ToK (total / combat_time) .. ")")
+			end
 			
 			row1:SetValue (100)
 			local r, g, b = unpack (instancia.total_bar.color)
@@ -482,8 +485,12 @@ function atributo_heal:RefreshWindow (instancia, tabela_do_combate, forcar, expo
 			local row1 = barras_container [1]
 			row1.minha_tabela = nil
 			row1.lineText1:SetText (Loc ["STRING_TOTAL"])
-			--row1.lineText4:SetText (_detalhes:ToK2 (total) .. " (" .. _detalhes:ToK (total / combat_time) .. ")")
-			Details:SetTextsOnLine(row1, "", _detalhes:ToK2(total), _detalhes:ToK(total / combat_time))
+			--
+			if (instancia.use_multi_fontstrings) then
+				Details:SetTextsOnLine(row1, "", _detalhes:ToK2(total), _detalhes:ToK(total / combat_time))
+			else
+				row1.lineText4:SetText (_detalhes:ToK2 (total) .. " (" .. _detalhes:ToK (total / combat_time) .. ")")
+			end
 			
 			row1:SetValue (100)
 			local r, g, b = unpack (instancia.total_bar.color)
@@ -629,11 +636,15 @@ function atributo_heal:RefreshLine(instancia, barras_container, whichRowLine, lu
 	
 	-- >>>>>>>>>>>>>>> texto da direita
 	if (instancia.atributo == 5) then --> custom
-		--thisLine.lineText4:SetText (_detalhes:ToK (self.custom) .. " (" .. porcentagem .. "%)")
-		Details:SetTextsOnLine(thisLine, "", _detalhes:ToK (self.custom), porcentagem .. "%")
+		--
+		if (instancia.use_multi_fontstrings) then
+			Details:SetTextsOnLine(thisLine, "", _detalhes:ToK (self.custom), porcentagem .. "%")
+		else
+			thisLine.lineText4:SetText (_detalhes:ToK (self.custom) .. " (" .. porcentagem .. "%)")
+		end
 		esta_porcentagem = _math_floor ((self.custom/instancia.top) * 100)
 		
-	else	
+	else
 		if (sub_atributo == 1) then --> mostrando healing done
 		
 			hps = _math_floor (hps)
@@ -657,7 +668,11 @@ function atributo_heal:RefreshLine(instancia, barras_container, whichRowLine, lu
 			if (UsingCustomRightText) then
 				thisLine.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_heal, formated_hps, porcentagem, self, instancia.showing, instancia, rightText))
 			else
-				Details:SetTextsOnLine(thisLine, formated_heal, formated_hps, porcentagem)
+				if (instancia.use_multi_fontstrings) then
+					Details:SetTextsOnLine(thisLine, formated_heal, formated_hps, porcentagem)
+				else
+					thisLine.lineText4:SetText(rightText)
+				end
 			end
 			esta_porcentagem = _math_floor ((healing_total/instancia.top) * 100)
 			
@@ -684,7 +699,11 @@ function atributo_heal:RefreshLine(instancia, barras_container, whichRowLine, lu
 			if (UsingCustomRightText) then
 				thisLine.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_hps, formated_heal, porcentagem, self, instancia.showing, instancia, rightText))
 			else
-				Details:SetTextsOnLine(thisLine, formated_hps, formated_heal, porcentagem)
+				if (instancia.use_multi_fontstrings) then
+					Details:SetTextsOnLine(thisLine, formated_hps, formated_heal, porcentagem)
+				else
+					thisLine.lineText4:SetText(rightText)
+				end
 			end
 			
 			esta_porcentagem = _math_floor ((hps/instancia.top) * 100)
@@ -713,7 +732,11 @@ function atributo_heal:RefreshLine(instancia, barras_container, whichRowLine, lu
 			if (UsingCustomRightText) then
 				thisLine.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_overheal, "", overheal_percent, self, instancia.showing, instancia, rightText))
 			else
-				Details:SetTextsOnLine(thisLine, "", formated_overheal, overheal_percent)
+				if (instancia.use_multi_fontstrings) then
+					Details:SetTextsOnLine(thisLine, "", formated_overheal, overheal_percent)
+				else
+					thisLine.lineText4:SetText(rightText)
+				end
 			end
 			
 			esta_porcentagem = _math_floor ((self.totalover/instancia.top) * 100)
@@ -735,7 +758,11 @@ function atributo_heal:RefreshLine(instancia, barras_container, whichRowLine, lu
 			if (UsingCustomRightText) then
 				thisLine.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_healtaken, "", porcentagem, self, instancia.showing, instancia, rightText))
 			else
-				Details:SetTextsOnLine(thisLine, "", formated_healtaken, porcentagem)
+				if (instancia.use_multi_fontstrings) then
+					Details:SetTextsOnLine(thisLine, "", formated_healtaken, porcentagem)
+				else
+					thisLine.lineText4:SetText(rightText)
+				end
 			end
 			
 			esta_porcentagem = _math_floor ((self.healing_taken/instancia.top) * 100)
@@ -757,7 +784,11 @@ function atributo_heal:RefreshLine(instancia, barras_container, whichRowLine, lu
 			if (UsingCustomRightText) then
 				thisLine.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_enemyheal, "", porcentagem, self, instancia.showing, instancia, rightText))
 			else
-				Details:SetTextsOnLine(thisLine, "", formated_enemyheal, porcentagem)
+				if (instancia.use_multi_fontstrings) then
+					Details:SetTextsOnLine(thisLine, "", formated_enemyheal, porcentagem)
+				else
+					thisLine.lineText4:SetText(rightText)
+				end
 			end
 			esta_porcentagem = _math_floor ((self.heal_enemy_amt/instancia.top) * 100)
 			
@@ -778,7 +809,11 @@ function atributo_heal:RefreshLine(instancia, barras_container, whichRowLine, lu
 			if (UsingCustomRightText) then
 				thisLine.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_absorbs, "", porcentagem, self, instancia.showing, instancia, rightText))
 			else
-				Details:SetTextsOnLine(thisLine, "", formated_absorbs, porcentagem)
+				if (instancia.use_multi_fontstrings) then
+					Details:SetTextsOnLine(thisLine, "", formated_absorbs, porcentagem)
+				else
+					thisLine.lineText4:SetText(rightText)
+				end
 			end
 			esta_porcentagem = _math_floor ((self.totalabsorb/instancia.top) * 100)
 			
@@ -799,7 +834,11 @@ function atributo_heal:RefreshLine(instancia, barras_container, whichRowLine, lu
 			if (UsingCustomRightText) then
 				thisLine.lineText4:SetText (_string_replace (instancia.row_info.textR_custom_text, formated_absorbs, "", porcentagem, self, instancia.showing, instancia, rightText))
 			else
-				Details:SetTextsOnLine(thisLine, "", formated_absorbs, porcentagem)
+				if (instancia.use_multi_fontstrings) then
+					Details:SetTextsOnLine(thisLine, "", formated_absorbs, porcentagem)
+				else
+					thisLine.lineText4:SetText(rightText)
+				end
 			end
 			esta_porcentagem = _math_floor ((self.totaldenied/instancia.top) * 100)
 			

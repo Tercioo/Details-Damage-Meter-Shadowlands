@@ -4,8 +4,8 @@
 		_ = nil
 		_detalhes = LibStub("AceAddon-3.0"):NewAddon("_detalhes", "AceTimer-3.0", "AceComm-3.0", "AceSerializer-3.0", "NickTag-1.0")
 		
-		_detalhes.build_counter = 7557
-		_detalhes.alpha_build_counter = 7557 --if this is higher than the regular counter, use it instead
+		_detalhes.build_counter = 7590
+		_detalhes.alpha_build_counter = 7590 --if this is higher than the regular counter, use it instead
 		_detalhes.game_version = "v9.0.1"
 		_detalhes.userversion = "v9.0.1." .. _detalhes.build_counter
 		_detalhes.realversion = 142 --core version, this is used to check API version for scripts and plugins (see alias below)
@@ -28,6 +28,10 @@ do
 	local Loc = _G.LibStub("AceLocale-3.0"):GetLocale( "Details" )
 
 	local news = {
+		{"v9.0.1.7590.142", "July 31th, 2020"},
+		"New options panel in progress",
+		"Added options for the 'Inline' right texts in the window",
+		"General round of fixes",
 		{"v9.0.1.7544.142", "July 25th, 2020"},
 		"Changed texts alignment to be parallel.",
 		"Changed icons to white color.",
@@ -627,6 +631,43 @@ do
 	end
 
 
+------------------------------------------------------------------------------------------
+-->  welcome panel
+	function _detalhes:CreateWelcomePanel (name, parent, width, height, make_movable)
+		local f = CreateFrame ("frame", name, parent or UIParent, "BackdropTemplate")
+		
+		--f:SetBackdrop ({bgFile = [[Interface\AddOns\Details\images\background]], tile = true, tileSize = 128, insets = {left=3, right=3, top=3, bottom=3}, edgeFile = [[Interface\AddOns\Details\images\border_welcome]], edgeSize = 16})
+		f:SetBackdrop ({bgFile = [[Interface\AddOns\Details\images\background]], tile = true, tileSize = 128, insets = {left=0, right=0, top=0, bottom=0}, edgeFile = [[Interface\Buttons\WHITE8X8]], edgeSize = 1})
+		f:SetBackdropColor (1, 1, 1, 0.75)
+		f:SetBackdropBorderColor (0, 0, 0, 1)
+
+		f:SetSize(width or 1, height or 1)
+		
+		if (make_movable) then
+			f:SetScript ("OnMouseDown", function(self, button)
+				if (self.isMoving) then
+					return
+				end
+				if (button == "RightButton") then
+					self:Hide()
+				else
+					self:StartMoving() 
+					self.isMoving = true
+				end
+			end)
+			f:SetScript ("OnMouseUp", function(self, button) 
+				if (self.isMoving and button == "LeftButton") then
+					self:StopMovingOrSizing()
+					self.isMoving = nil
+				end
+			end)
+			f:SetToplevel (true)
+			f:SetMovable (true)
+		end
+		
+		return f
+	end
+
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --> functions
 	
@@ -646,6 +687,8 @@ do
 		SharedMedia:Register ("statusbar", "WorldState Score", [[Interface\WorldStateFrame\WORLDSTATEFINALSCORE-HIGHLIGHT]])
 		SharedMedia:Register ("statusbar", "DGround", [[Interface\AddOns\Details\images\bar_background]])
 		SharedMedia:Register ("statusbar", "Details Flat", [[Interface\AddOns\Details\images\bar_background]])
+
+		SharedMedia:Register ("statusbar", "Details2020", [[Interface\AddOns\Details\images\bar_textures\texture2020]])
 		
 		--window bg and bar border
 		SharedMedia:Register ("background", "Details Ground", [[Interface\AddOns\Details\images\background]])

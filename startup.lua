@@ -1,6 +1,5 @@
 
 
-
 local UnitGroupRolesAssigned = _G.DetailsFramework.UnitGroupRolesAssigned
 local wipe = _G.wipe
 local C_Timer = _G.C_Timer
@@ -43,7 +42,7 @@ function Details:StartMeUp() --I'll never stop!
 			self:CreatePluginWindowContainer()
 			self:InitializeForge() --to install into the container plugin
 			self:InitializeRaidHistoryWindow()
-			self:InitializeOptionsWindow()
+			--self:InitializeOptionsWindow()
 			
 			C_Timer.After(2, function()
 				self:InitializeAuraCreationWindow()
