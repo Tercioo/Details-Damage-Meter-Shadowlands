@@ -74,11 +74,19 @@ local editInstanceSetting = function(instance, funcName, ...)
         end
     else
         local keyName =  funcName
-        local value = ...
-        if (isGroupEditing()) then
-            Details:InstanceGroupEditSetting(instance, keyName, value)
+        local value1, value2 = ...
+        if (value2 == nil) then
+            if (isGroupEditing()) then
+                Details:InstanceGroupEditSetting(instance, keyName, value1)
+            else
+                instance[keyName] = value1
+            end
         else
-            instance[keyName] = value
+            if (isGroupEditing()) then
+                Details:InstanceGroupEditSettingOnTable(instance, keyName, value1, value2)
+            else
+                instance[keyName][value1] = value2
+            end
         end
     end
 end
@@ -979,17 +987,6 @@ do
                 desc = Loc ["STRING_OPTIONS_BAR_HEIGHT_DESC"],
             },
 
-            {--disable highlight
-                type = "toggle",
-                get = function() return _detalhes.instances_disable_bar_highlight end,
-                set = function (self, fixedparam, value)
-                    _detalhes.instances_disable_bar_highlight = value
-                    afterUpdate()
-                end,
-                name = Loc ["STRING_OPTIONS_DISABLE_BARHIGHLIGHT"],
-                desc = Loc ["STRING_OPTIONS_DISABLE_BARHIGHLIGHT_DESC"],
-            },
-
             {--padding
                 type = "range",
                 get = function() return tonumber (currentInstance.row_info.space.between) end,
@@ -1002,6 +999,39 @@ do
                 step = 1,
                 name = Loc ["STRING_OPTIONS_BAR_SPACING"],
                 desc = Loc ["STRING_OPTIONS_BAR_SPACING_DESC"],
+            },            
+
+            {--disable highlight
+                type = "toggle",
+                get = function() return _detalhes.instances_disable_bar_highlight end,
+                set = function (self, fixedparam, value)
+                    _detalhes.instances_disable_bar_highlight = value
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_DISABLE_BARHIGHLIGHT"],
+                desc = Loc ["STRING_OPTIONS_DISABLE_BARHIGHLIGHT_DESC"],
+            },
+
+            {--fast dps updates
+                type = "toggle",
+                get = function() return currentInstance.row_info.fast_ps_update end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "fast_ps_update", value)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_BARUR_ANCHOR"],
+                desc = Loc ["STRING_OPTIONS_BARUR_DESC"],
+            },
+
+            {--always show me
+                type = "toggle",
+                get = function() return currentInstance.following.enabled end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "following", "enabled", value)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_BAR_FOLLOWING"],
+                desc = Loc ["STRING_OPTIONS_BAR_FOLLOWING_DESC"],
             },
 
             {--grow direction
@@ -1136,7 +1166,7 @@ do
                 desc = Loc ["STRING_OPTIONS_BAR_COLORBYCLASS_DESC"],
             },
 
-            {type = "blank"},
+            {type = "breakline"},
             {type = "label", get = function() return Loc ["STRING_OPTIONS_TEXT_ROWICONS_ANCHOR"] end, text_template = subSectionTitleTextTemplate},
 
             {--select icon file
@@ -1196,7 +1226,7 @@ do
                 desc = Loc ["STRING_OPTIONS_BARSTART_DESC"],
             },
 
-            {type = "breakline"},
+            {type = "blank"},
             {type = "label", get = function() return Loc ["STRING_OPTIONS_BAR_BACKDROP_ANCHOR"] end, text_template = subSectionTitleTextTemplate},
 
             {--border enabled
@@ -1247,6 +1277,8 @@ do
                 get = function() return currentInstance.use_multi_fontstrings end,
                 set = function (self, fixedparam, value)
                     editInstanceSetting(currentInstance, "use_multi_fontstrings", value)
+                    editInstanceSetting(currentInstance, "InstanceRefreshRows")
+                    _detalhes:RefreshMainWindow(-1, true)
                     afterUpdate()
                 end,
                 name = Loc ["STRING_ENABLED"],
@@ -1298,6 +1330,42 @@ do
                 desc = "Text 3 Position",
             },
 
+            {type = "blank"},
+            {type = "label", get = function() return Loc ["STRING_OPTIONS_TOTALBAR_ANCHOR"] end, text_template = subSectionTitleTextTemplate},
+
+            {--enabled
+                type = "toggle",
+                get = function() return currentInstance.total_bar.enabled end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "total_bar", "enabled", value)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_ENABLED"],
+                desc = Loc ["STRING_OPTIONS_SHOW_TOTALBAR_DESC"],
+            },
+            {--only in group
+                type = "toggle",
+                get = function() return currentInstance.total_bar.only_in_group end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "total_bar", "only_in_group", value)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_SHOW_TOTALBAR_INGROUP"],
+                desc = Loc ["STRING_OPTIONS_SHOW_TOTALBAR_INGROUP_DESC"],
+            },
+			{--color
+                type = "color",
+                get = function()
+                    local r, g, b = unpack(currentInstance.total_bar.color)
+                    return {r, g, b, 1}
+                end,
+                set = function (self, r, g, b, a)
+                    editInstanceSetting(currentInstance, "total_bar", "color", {r, g, b, 1})
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_COLOR"],
+                desc = Loc ["STRING_OPTIONS_SHOW_TOTALBAR_COLOR_DESC"],
+            },
         }
 
         DF:BuildMenu(sectionFrame, sectionOptions, startX, startY-20, heightSize, true, options_text_template, options_dropdown_template, options_switch_template, true, options_slider_template, options_button_template)
@@ -1661,11 +1729,960 @@ do
         DF:BuildMenu(sectionFrame, sectionOptions, startX, startY-20, heightSize, true, options_text_template, options_dropdown_template, options_switch_template, true, options_slider_template, options_button_template)
     end
 
---[[
+    tinsert(Details.optionsSection, buildSection)
+end
 
-		
 
---]]
+
+-- ~05
+do
+
+    local func = function (menu_button)
+        editInstanceSetting(currentInstance, "menu_icons", menu_button, not currentInstance.menu_icons[menu_button])
+        editInstanceSetting(currentInstance, "ToolbarMenuSetButtons")
+        afterUpdate()
+    end
+
+    --> menu text face
+        local onSelectFont = function (_, _, fontName)
+            _detalhes.font_faces.menus = fontName
+        end
+        
+        local buildFontMenu = function()
+            local fontObjects = SharedMedia:HashTable ("font")
+            local fontTable = {}
+            for name, fontPath in pairs (fontObjects) do 
+                fontTable[#fontTable+1] = {value = name, label = name, icon = font_select_icon, texcoord = font_select_texcoord, onclick = onSelectFont, font = fontPath, descfont = name, desc = Loc ["STRING_MUSIC_DETAILS_ROBERTOCARLOS"]}
+            end
+            table.sort (fontTable, function (t1, t2) return t1.label < t2.label end)
+            return fontTable
+        end
+
+        --> attribute text font
+            local on_select_attribute_font = function (self, instance, fontName)
+                editInstanceSetting(currentInstance, "AttributeMenu", nil, nil, nil, fontName)
+                afterUpdate()
+            end
+            
+            local build_font_menu = function()
+                local fonts = {}
+                for name, fontPath in pairs (SharedMedia:HashTable ("font")) do 
+                    fonts [#fonts+1] = {value = name, label = name, icon = font_select_icon, texcoord = font_select_texcoord, onclick = on_select_attribute_font, font = fontPath, descfont = name, desc = "Our thoughts strayed constantly\nAnd without boundary\nThe ringing of the division bell had began."}
+                end
+                table.sort (fonts, function (t1, t2) return t1.label < t2.label end)
+                return fonts
+            end
+
+    local buttonWidth = 25
+
+    local buildSection = function(sectionFrame)
+        local sectionOptions = {
+            {type = "label", get = function() return Loc ["STRING_OPTIONS_ROW_SETTING_ANCHOR"] end, text_template = subSectionTitleTextTemplate},
+
+            {type = "label", get = function() return Loc ["STRING_OPTIONS_MENU_SHOWBUTTONS"] end, text_template = options_text_template},
+            {--button orange gear
+                type = "execute",
+                get = function() return "" end,
+                func = function(self, fixedparam, value)
+                    func(1)
+                end,
+                width = buttonWidth,
+                height = 20,
+                inline = true,
+                name = "",
+                --desc = "",
+                icontexture = [[Interface\AddOns\Details\images\toolbar_icons]],
+                icontexcoords = {0/256, 32/256, 0, 1},
+            },
+
+            {--button segments
+                type = "execute",
+                get = function() return "" end,
+                func = function(self, fixedparam, value)
+                    func(2)
+                end,
+                width = buttonWidth,
+                height = 20,
+                inline = true,
+                name = "",
+                --desc = "",
+                icontexture = [[Interface\AddOns\Details\images\toolbar_icons]],
+                icontexcoords = {33/256, 64/256, 0, 1},
+            },
+
+            {--button sword
+                type = "execute",
+                get = function() return "" end,
+                func = function(self, fixedparam, value)
+                    func(3)
+                end,
+                width = buttonWidth,
+                height = 20,
+                inline = true,
+                name = "",
+                --desc = "",
+                icontexture = [[Interface\AddOns\Details\images\toolbar_icons]],
+                icontexcoords = {64/256, 96/256, 0, 1},
+            },
+
+            {--button report
+                type = "execute",
+                get = function() return "" end,
+                func = function(self, fixedparam, value)
+                    func(4)
+                end,
+                width = buttonWidth,
+                height = 20,
+                inline = true,
+                name = "",
+                --desc = "",
+                icontexture = [[Interface\AddOns\Details\images\toolbar_icons]],
+                icontexcoords = {96/256, 128/256, 0, 1},
+            },
+
+            {--button clear
+                type = "execute",
+                get = function() return "" end,
+                func = function(self, fixedparam, value)
+                    func(5)
+                end,
+                width = buttonWidth,
+                height = 20,
+                inline = true,
+                name = "",
+                --desc = "",
+                icontexture = [[Interface\AddOns\Details\images\toolbar_icons]],
+                icontexcoords = {128/256, 160/256, 0, 1},
+            },
+
+            {--button clear
+                type = "execute",
+                get = function() return "" end,
+                func = function(self, fixedparam, value)
+                    func(6)
+                end,
+                width = buttonWidth,
+                height = 20,
+                inline = true,
+                name = "",
+                --desc = "",
+                icontexture = [[Interface\AddOns\Details\images\toolbar_icons]],
+                icontexcoords = {160/256, 192/256, 0, 1},
+            },
+
+            {--title bar icons size
+                type = "range",
+                get = function() return currentInstance.menu_icons_size end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "ToolbarMenuButtonsSize", value)
+                    afterUpdate()
+                end,
+                min = 0.4,
+                max = 1.6,
+                step = 0.05,
+                usedecimals = true,
+                name = Loc ["STRING_OPTIONS_SIZE"],
+                desc = Loc ["STRING_OPTIONS_MENU_BUTTONSSIZE_DESC"],
+            },
+
+            {--title bar icons spacing
+                type = "range",
+                get = function() return currentInstance.menu_icons.space end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "ToolbarMenuSetButtonsOptions", value)
+                    afterUpdate()
+                end,
+                min = -5,
+                max = 10,
+                step = 1,
+                name = Loc ["STRING_OPTIONS_MENUS_SPACEMENT"],
+                desc = Loc ["STRING_OPTIONS_MENUS_SPACEMENT_DESC"],
+            },
+
+            {--title bar icons position X
+                type = "range",
+                get = function() return currentInstance.menu_anchor[1] end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "MenuAnchor", value)
+                    afterUpdate()
+                end,
+                min = -200,
+                max = 200,
+                step = 1,
+                name = Loc ["STRING_OPTIONS_MENU_X"],
+                desc = Loc ["STRING_OPTIONS_MENU_X_DESC"],
+            },
+
+            {--title bar icons position Y
+                type = "range",
+                get = function() return currentInstance.menu_anchor[2] end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "MenuAnchor", nil, value)
+                    afterUpdate()
+                end,
+                min = -200,
+                max = 200,
+                step = 1,
+                name = Loc ["STRING_OPTIONS_MENU_Y"],
+                desc = Loc ["STRING_OPTIONS_MENU_X_DESC"],
+            },
+
+            {--icon shadows
+                type = "toggle",
+                get = function() return currentInstance.menu_icons.shadow end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "ToolbarMenuSetButtonsOptions", nil, value)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_MENUS_SHADOW"],
+                desc = Loc ["STRING_OPTIONS_MENUS_SHADOW_DESC"],
+            },
+
+            {--icons desaturated
+                type = "toggle",
+                get = function() return currentInstance.desaturated_menu end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "DesaturateMenu", value)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_DESATURATE_MENU"],
+                desc = Loc ["STRING_OPTIONS_DESATURATE_MENU_DESC"],
+            },
+
+            {--hide main icon
+                type = "toggle",
+                get = function() return currentInstance.hide_icon end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "HideMainIcon", value)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_HIDE_ICON"],
+                desc = Loc ["STRING_OPTIONS_HIDE_ICON_DESC"],
+            },
+
+            {--button attacht to right
+                type = "toggle",
+                get = function() return currentInstance.menu_anchor.side and 2 or 1 end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "LeftMenuAnchorSide", value and 2 or 1)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_MENU_ANCHOR"],
+                desc = Loc ["STRING_OPTIONS_MENU_ANCHOR_DESC"],
+            },
+
+            {--plugins button attacht to right
+                type = "toggle",
+                get = function() return currentInstance.plugins_grow_direction and 2 or 1 end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "plugins_grow_direction", value)
+                    editInstanceSetting(currentInstance, "ToolbarMenuSetButtons")
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_PICONS_DIRECTION"],
+                desc = Loc ["STRING_OPTIONS_PICONS_DIRECTION_DESC"],
+            },
+
+            {type = "blank"},
+            {type = "label", get = function() return Loc ["STRING_OPTIONS_LEFT_MENU_ANCHOR"] end, text_template = subSectionTitleTextTemplate},
+
+            {--menu text size
+                type = "range",
+                get = function() return Details.font_sizes.menus end,
+                set = function (self, fixedparam, value)
+                    Details.font_sizes.menus = value
+                    afterUpdate()
+                end,
+                min = 5,
+                max = 32,
+                step = 1,
+                name = Loc ["STRING_OPTIONS_TEXT_SIZE"],
+                desc = Loc ["STRING_OPTIONS_MENU_FONT_SIZE_DESC"],
+            },
+
+            {--menu text font
+                type = "select",
+                get = function() return Details.font_faces.menus end,
+                values = function()
+                    return buildFontMenu()
+                end,
+                name = Loc ["STRING_OPTIONS_MENU_FONT_FACE"],
+                desc = Loc ["STRING_OPTIONS_MENU_FONT_FACE_DESC"],
+            },
+
+            {--disable reset button
+                type = "toggle",
+                get = function() return _detalhes.disable_reset_button end,
+                set = function (self, fixedparam, value)
+                    _detalhes.disable_reset_button = value
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_DISABLE_RESET"],
+                desc = Loc ["STRING_OPTIONS_DISABLE_RESET_DESC"],
+            },
+
+            {--click to open menus
+                type = "toggle",
+                get = function() return _detalhes.instances_menu_click_to_open end,
+                set = function (self, fixedparam, value)
+                    _detalhes.instances_menu_click_to_open = value
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_CLICK_TO_OPEN_MENUS"],
+                desc = Loc ["STRING_OPTIONS_CLICK_TO_OPEN_MENUS_DESC"],
+            },
+
+            {--auto hide buttons
+                type = "toggle",
+                get = function() return currentInstance.auto_hide_menu.left end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "SetAutoHideMenu", value)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_MENU_AUTOHIDE_LEFT"],
+                desc = Loc ["STRING_OPTIONS_MENU_AUTOHIDE_DESC"],
+            },
+
+            {--disable all displays
+                type = "toggle",
+                get = function() return currentInstance.disable_alldisplays_window end,
+                set = function (self, fixedparam, value)
+                    _detalhes.disable_alldisplays_window = value
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_DISABLE_ALLDISPLAYSWINDOW"],
+                desc = Loc ["STRING_OPTIONS_DISABLE_ALLDISPLAYSWINDOW_DESC"],
+            },
+
+            {type = "breakline"},
+            {type = "label", get = function() return Loc ["STRING_OPTIONS_ATTRIBUTE_TEXT"] end, text_template = subSectionTitleTextTemplate},
+            
+            {--enable text
+                type = "toggle",
+                get = function() return currentInstance.attribute_text.enabled end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "AttributeMenu", value)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_ENABLED"],
+                desc = Loc ["STRING_OPTIONS_MENU_ATTRIBUTE_ENABLED_DESC"],
+            },
+
+            {--encounter time
+                type = "toggle",
+                get = function() return currentInstance.attribute_text.show_timer and true end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "AttributeMenu", nil, nil, nil, nil, nil, nil, nil, nil, value)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_MENU_ATTRIBUTE_ENCOUNTERTIMER"],
+                desc = Loc ["STRING_OPTIONS_MENU_ATTRIBUTE_ENCOUNTERTIMER_DESC"],
+            },
+
+            {--text size
+                type = "range",
+                get = function() return tonumber(currentInstance.attribute_text.text_size) end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "AttributeMenu", nil, nil, nil, nil, value)
+                    afterUpdate()
+                end,
+                min = 5,
+                max = 32,
+                step = 1,
+                name = Loc ["STRING_OPTIONS_TEXT_SIZE"],
+                desc = Loc ["STRING_OPTIONS_MENU_ATTRIBUTE_TEXTSIZE_DESC"],
+            },
+
+            {--text font
+                type = "select",
+                get = function() return currentInstance.attribute_text.text_face end,
+                values = function()
+                    return build_font_menu()
+                end,
+                name = Loc ["STRING_OPTIONS_TEXT_FONT"],
+                desc = Loc ["STRING_OPTIONS_MENU_ATTRIBUTE_FONT_DESC"],
+            },
+
+			{--text color
+                type = "color",
+                get = function()
+                    local r, g, b = unpack (currentInstance.attribute_text.text_color)
+                    return {r, g, b, a}
+                end,
+                set = function (self, r, g, b, a)
+                    editInstanceSetting(currentInstance, "AttributeMenu", nil, nil, nil, nil, nil, {r, g, b, a})
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_MENU_ATTRIBUTE_TEXTCOLOR"],
+                desc = Loc ["STRING_OPTIONS_MENU_ATTRIBUTE_TEXTCOLOR_DESC"],
+            },
+
+            {--text shadow
+                type = "toggle",
+                get = function() return currentInstance.attribute_text.shadow end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "AttributeMenu", nil, nil, nil, nil, nil, nil, nil, value)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_TEXT_LOUTILINE"],
+                desc = Loc ["STRING_OPTIONS_MENU_ATTRIBUTE_SHADOW_DESC"],
+            },
+
+            {--text X
+                type = "range",
+                get = function() return tonumber(currentInstance.attribute_text.anchor[1]) end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "AttributeMenu", nil, value)
+                    afterUpdate()
+                end,
+                min = -30,
+                max = 300,
+                step = 1,
+                name = Loc ["STRING_OPTIONS_MENU_ATTRIBUTE_ANCHORX"],
+                desc = Loc ["STRING_OPTIONS_MENU_ATTRIBUTE_ANCHORX_DESC"],
+            },
+
+            {--text Y
+                type = "range",
+                get = function() return tonumber(currentInstance.attribute_text.anchor[2]) end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "AttributeMenu", nil, nil, value)
+                    afterUpdate()
+                end,
+                min = -100,
+                max = 50,
+                step = 1,
+                name = Loc ["STRING_OPTIONS_MENU_ATTRIBUTE_ANCHORY"],
+                desc = Loc ["STRING_OPTIONS_MENU_ATTRIBUTE_ANCHORY_DESC"],
+            },
+
+            {--anchor to top
+                type = "toggle",
+                get = function() return currentInstance.attribute_text.side == 1 and true or false end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "AttributeMenu", nil, nil, nil, nil, nil, nil, value and 1 or 2)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_MENU_ATTRIBUTE_SIDE"],
+                desc = Loc ["STRING_OPTIONS_MENU_ATTRIBUTE_SIDE_DESC"],
+            },
+
+        }
+
+        DF:BuildMenu(sectionFrame, sectionOptions, startX, startY-20, heightSize, true, options_text_template, options_dropdown_template, options_switch_template, true, options_slider_template, options_button_template)
+    end
 
     tinsert(Details.optionsSection, buildSection)
+end
+
+
+-- ~06
+do
+
+    --> frame strata options
+        local strata = {
+            ["BACKGROUND"] = "Background",
+            ["LOW"] = "Low",
+            ["MEDIUM"] = "Medium",
+            ["HIGH"] = "High",
+            ["DIALOG"] = "Dialog"
+        }
+
+        local onStrataSelect = function (_, instance, strataName)
+            editInstanceSetting(currentInstance, "SetFrameStrata", strataName)
+            afterUpdate()
+        end
+
+        local strataTable = {
+            {value = "BACKGROUND", label = "Background", onclick = onStrataSelect, icon = [[Interface\Buttons\UI-MicroStream-Green]], iconcolor = {0, .5, 0, .8}, texcoord = nil}, --Interface\Buttons\UI-MicroStream-Green UI-MicroStream-Red UI-MicroStream-Yellow
+            {value = "LOW", label = "Low", onclick = onStrataSelect, icon = [[Interface\Buttons\UI-MicroStream-Green]] , texcoord = nil}, --Interface\Buttons\UI-MicroStream-Green UI-MicroStream-Red UI-MicroStream-Yellow
+            {value = "MEDIUM", label = "Medium", onclick = onStrataSelect, icon = [[Interface\Buttons\UI-MicroStream-Yellow]] , texcoord = nil}, --Interface\Buttons\UI-MicroStream-Green UI-MicroStream-Red UI-MicroStream-Yellow
+            {value = "HIGH", label = "High", onclick = onStrataSelect, icon = [[Interface\Buttons\UI-MicroStream-Yellow]] , iconcolor = {1, .7, 0, 1}, texcoord = nil}, --Interface\Buttons\UI-MicroStream-Green UI-MicroStream-Red UI-MicroStream-Yellow
+            {value = "DIALOG", label = "Dialog", onclick = onStrataSelect, icon = [[Interface\Buttons\UI-MicroStream-Red]] , iconcolor = {1, 0, 0, 1},  texcoord = nil}, --Interface\Buttons\UI-MicroStream-Green UI-MicroStream-Red UI-MicroStream-Yellow
+        }
+        local buildStrataMenu = function() return strataTable end
+
+    --> backdrop texture
+        local onBackdropSelect = function (_, instance, backdropName)
+            editInstanceSetting(currentInstance, "SetBackdropTexture", backdropName)
+            afterUpdate()
+        end
+
+        local backdrop_icon_size = {16, 16}
+        local backdrop_icon_color = {.6, .6, .6}
+        
+        local buildBackdropMenu = function()
+            local backdropTable = {}
+            for name, backdropPath in pairs (SharedMedia:HashTable ("background")) do 
+                backdropTable[#backdropTable+1] = {value = name, label = name, onclick = onBackdropSelect, icon = [[Interface\ITEMSOCKETINGFRAME\UI-EMPTYSOCKET]], iconsize = backdrop_icon_size, iconcolor = backdrop_icon_color}
+            end
+            return backdropTable
+        end
+
+    local buildSection = function(sectionFrame)
+        local sectionOptions = {
+
+			{--window color
+                type = "color",
+                get = function()
+                    local r, g, b = unpack (currentInstance.color)
+                    return {r, g, b, 1}
+                end,
+
+                set = function (self, r, g, b, a)
+                    editInstanceSetting(currentInstance, "InstanceColor", r, g, b, a, nil, true)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_INSTANCE_COLOR"],
+                desc = Loc ["STRING_OPTIONS_INSTANCE_COLOR_DESC"],
+            },
+
+			{--background color
+                type = "color",
+                get = function()
+                    return {currentInstance.bg_r, currentInstance.bg_g, currentInstance.bg_b, currentInstance.bg_alpha}
+                end,
+                set = function (self, r, g, b, a)
+                    editInstanceSetting(currentInstance, "SetBackgroundColor", r, g, b)
+                    editInstanceSetting(currentInstance, "SetBackgroundAlpha", a)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_INSTANCE_ALPHA2"],
+                desc = Loc ["STRING_OPTIONS_INSTANCE_ALPHA2_DESC"],
+            },
+
+            {--window scale
+                type = "range",
+                get = function() return tonumber(currentInstance.window_scale) end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "SetWindowScale", value, true)
+                    afterUpdate()
+                end,
+                min = 0.65,
+                max = 1.5,
+                step = 0.02,
+                usedecimals = true,
+                name = Loc ["STRING_OPTIONS_WINDOW_SCALE"],
+                desc = Loc ["STRING_OPTIONS_WINDOW_SCALE_DESC"],
+            },
+
+            {--show borders
+                type = "toggle",
+                get = function() return currentInstance.show_sidebars end,
+                set = function (self, fixedparam, value)
+                    if (value) then
+                        editInstanceSetting(currentInstance, "ShowSideBars")
+                    else
+                        editInstanceSetting(currentInstance, "HideSideBars")
+                    end
+
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_SHOW_SIDEBARS"],
+                desc = Loc ["STRING_OPTIONS_SHOW_SIDEBARS_DESC"],
+            },
+
+            {--ignore on mass hide
+                type = "toggle",
+                get = function() return currentInstance.ignore_mass_showhide end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "ignore_mass_showhide", value)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_WINDOW_IGNOREMASSTOGGLE"],
+                desc = Loc ["STRING_OPTIONS_WINDOW_IGNOREMASSTOGGLE_DESC"],
+            },
+
+            {--frame strata
+                type = "select",
+                get = function() return strata[currentInstance.strata] or "Low" end,
+                values = function()
+                    return buildStrataMenu()
+                end,
+                name = Loc ["STRING_OPTIONS_INSTANCE_STRATA"],
+                desc = Loc ["STRING_OPTIONS_INSTANCE_STRATA_DESC"],
+            },
+
+            {--backdrop texture
+                type = "select",
+                get = function() return currentInstance.backdrop_texture end,
+                values = function()
+                    return buildBackdropMenu()
+                end,
+                name = Loc ["STRING_OPTIONS_INSTANCE_BACKDROP"],
+                desc = Loc ["STRING_OPTIONS_INSTANCE_BACKDROP_DESC"],
+            },
+
+            {type = "blank"},
+
+            {--disable grouping
+                type = "toggle",
+                get = function() return _detalhes.disable_window_groups end,
+                set = function (self, fixedparam, value)
+                    _detalhes.disable_window_groups = value
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_DISABLE_GROUPS"],
+                desc = Loc ["STRING_OPTIONS_DISABLE_GROUPS_DESC"],
+            },
+
+            {--disable resize buttons
+                type = "toggle",
+                get = function() return _detalhes.disable_lock_ungroup_buttons end,
+                set = function (self, fixedparam, value)
+                    _detalhes.disable_lock_ungroup_buttons = value
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_DISABLE_LOCK_RESIZE"],
+                desc = Loc ["STRING_OPTIONS_DISABLE_LOCK_RESIZE_DESC"],
+            },
+
+            {--disable stretch button
+                type = "toggle",
+                get = function() return _detalhes.disable_stretch_button end,
+                set = function (self, fixedparam, value)
+                    _detalhes.disable_stretch_button = value
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_DISABLE_STRETCH_BUTTON"],
+                desc = Loc ["STRING_OPTIONS_DISABLE_STRETCH_BUTTON_DESC"],
+            },
+
+            {type = "blank"},
+
+            {--title bar on top side
+                type = "toggle",
+                get = function() return currentInstance.toolbar_side == 1 and true or false end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "ToolbarSide", value and 1 or 2)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_TOOLBARSIDE"],
+                desc = Loc ["STRING_OPTIONS_TOOLBARSIDE_DESC"],
+            },
+
+            {--stretch button always on top
+                type = "toggle",
+                get = function() return currentInstance.grab_on_top end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "grab_on_top", value)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_STRETCHTOP"],
+                desc = Loc ["STRING_OPTIONS_STRETCHTOP_DESC"],
+            },
+            
+            {--stretch button on top side
+                type = "toggle",
+                get = function() return currentInstance.stretch_button_side and 1 or 2 end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "StretchButtonAnchor", value and 1 or 2)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_STRETCH"],
+                desc = Loc ["STRING_OPTIONS_STRETCH_DESC"],
+            },
+
+
+            
+        }
+        DF:BuildMenu(sectionFrame, sectionOptions, startX, startY-20, heightSize, true, options_text_template, options_dropdown_template, options_switch_template, true, options_slider_template, options_button_template)
+    end
+
+    tinsert(Details.optionsSection, buildSection)
+
+end
+
+-- ~07
+do
+    local buildSection = function(sectionFrame)
+
+    --> update micro displays
+        local updateMicroFrames = function()
+            local instance = currentInstance
+        
+            local hideLeftButton = sectionFrame.MicroDisplayLeftDropdown.hideLeftMicroFrameButton
+            if (instance.StatusBar ["left"].options.isHidden) then
+                hideLeftButton:GetNormalTexture():SetDesaturated (false)
+            else
+                hideLeftButton:GetNormalTexture():SetDesaturated (true)
+            end
+            
+            local hide_center_button = sectionFrame.MicroDisplayCenterDropdown.HideCenterMicroFrameButton
+            if (instance.StatusBar ["center"].options.isHidden) then
+                hide_center_button:GetNormalTexture():SetDesaturated (false)
+            else
+                hide_center_button:GetNormalTexture():SetDesaturated (true)
+            end
+            
+            local hide_right_button = sectionFrame.MicroDisplayRightDropdown.HideRightMicroFrameButton
+            if (instance.StatusBar ["right"].options.isHidden) then
+                hide_right_button:GetNormalTexture():SetDesaturated (false)
+            else
+                hide_right_button:GetNormalTexture():SetDesaturated (true)
+            end
+            
+            local left = instance.StatusBar ["left"].__name
+            local center = instance.StatusBar ["center"].__name
+            local right = instance.StatusBar ["right"].__name
+            
+            _G[sectionFrame:GetName() .. "MicroDisplayLeftDropdown"].MyObject:Select (left)
+            _G[sectionFrame:GetName() .. "MicroDisplayCenterDropdown"].MyObject:Select (center)
+            _G[sectionFrame:GetName() .. "MicroDisplayRightDropdown"].MyObject:Select (right)
+
+            if (not instance.show_statusbar and instance.micro_displays_side == 2) then
+                sectionFrame.MicroDisplayWarningLabel:Show()
+            else
+                sectionFrame.MicroDisplayWarningLabel:Hide()
+            end
+        end
+
+        sectionFrame:GetParent().updateMicroFrames = updateMicroFrames
+
+        local sectionOptions = {
+            {type = "label", get = function() return Loc ["STRING_OPTIONS_INSTANCE_STATUSBAR_ANCHOR"] end, text_template = subSectionTitleTextTemplate},
+
+            {--show statusbar
+                type = "toggle",
+                get = function() return currentInstance.show_statusbar end,
+                set = function (self, fixedparam, value)
+                    if (value) then
+                        editInstanceSetting(currentInstance, "ShowStatusBar")
+                    else
+                        editInstanceSetting(currentInstance, "HideStatusBar")
+                    end
+
+                    --editInstanceSetting(currentInstance, "BaseFrameSnap") --was causing issues 09/Aug/2020
+                    updateMicroFrames()
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_SHOW_STATUSBAR"],
+                desc = Loc ["STRING_OPTIONS_SHOW_STATUSBAR_DESC"],
+            },
+
+			{--color
+                type = "color",
+                get = function()
+                    local r, g, b = unpack (currentInstance.statusbar_info.overlay)
+                    local alpha = currentInstance.statusbar_info.alpha
+                    return {r, g, b, alpha}
+                end,
+                set = function (self, r, g, b, a)
+                    editInstanceSetting(currentInstance, "StatusBarColor", r, g, b, a)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_INSTANCE_STATUSBARCOLOR"],
+                desc = Loc ["STRING_OPTIONS_INSTANCE_STATUSBARCOLOR_DESC"],
+            },
+
+            {--lock micro displays
+                type = "toggle",
+                get = function() return currentInstance.micro_displays_locked end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "MicroDisplaysLock", value)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_MICRODISPLAY_LOCK"],
+                desc = Loc ["STRING_OPTIONS_MICRODISPLAY_LOCK_DESC"],
+            },
+
+            {--anchor on top side
+                type = "toggle",
+                get = function() return currentInstance.micro_displays_side == 1 and true or false end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "MicroDisplaysSide", value and 1 or 2, true)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_MICRODISPLAYSSIDE"],
+                desc = Loc ["STRING_OPTIONS_MICRODISPLAYSSIDE_DESC"],
+            },
+
+        }
+        DF:BuildMenu(sectionFrame, sectionOptions, startX, startY-20, heightSize, true, options_text_template, options_dropdown_template, options_switch_template, true, options_slider_template, options_button_template)
+
+        do --> micro displays
+            
+            --statics texts
+            DF:NewLabel (sectionFrame, _, "$parentMicroDisplaysAnchor", "MicroDisplaysAnchor", Loc ["STRING_OPTIONS_MICRODISPLAY_ANCHOR"], "GameFontNormal")
+            DF:NewLabel (sectionFrame, _, "$parentMicroDisplayLeftLabel", "MicroDisplayLeftLabel", Loc ["STRING_ANCHOR_LEFT"], "GameFontHighlightLeft")
+            DF:NewLabel (sectionFrame, _, "$parentMicroDisplayCenterLabel", "MicroDisplayCenterLabel", Loc ["STRING_CENTER_UPPER"], "GameFontHighlightLeft")
+            DF:NewLabel (sectionFrame, _, "$parentMicroDisplayRightLabel", "MicroDisplayRightLabel", Loc ["STRING_ANCHOR_RIGHT"], "GameFontHighlightLeft")
+            DF:NewLabel (sectionFrame, _, "$parentMicroDisplayWarningLabel", "MicroDisplayWarningLabel", Loc ["STRING_OPTIONS_MICRODISPLAYS_WARNING"], "GameFontHighlightSmall", 10, "orange")
+
+            --dropdown on select option
+            local onMicroDisplaySelect = function (_, _, micro_display)
+                local anchor, index = unpack (micro_display)
+
+                if (index == -1) then
+                    return _detalhes.StatusBar:SetPlugin (currentInstance, -1, anchor)
+                end
+                
+                local absolute_name = _detalhes.StatusBar.Plugins [index].real_name
+                _detalhes.StatusBar:SetPlugin (currentInstance, absolute_name, anchor)
+                
+                updateMicroFrames() -- in development
+                afterUpdate()
+            end
+            
+            --dropdown options
+            local buildLeftMicroMenu = function()
+                local options = {}
+                for index, _name_and_icon in ipairs (_detalhes.StatusBar.Menu) do 
+                    options [#options+1] = {value = {"left", index}, label = _name_and_icon [1], onclick = onMicroDisplaySelect, icon = _name_and_icon [2]}
+                end
+                return options
+            end
+            local buildCenterMicroMenu = function()
+                local options = {}
+                for index, _name_and_icon in ipairs (_detalhes.StatusBar.Menu) do 
+                    options [#options+1] = {value = {"center", index}, label = _name_and_icon [1], onclick = onMicroDisplaySelect, icon = _name_and_icon [2]}
+                end
+                return options
+            end
+            local buildRightMicroMenu = function()
+                local options = {}
+                for index, _name_and_icon in ipairs (_detalhes.StatusBar.Menu) do 
+                    options [#options+1] = {value = {"right", index}, label = _name_and_icon [1], onclick = onMicroDisplaySelect, icon = _name_and_icon [2]}
+                end
+                return options
+            end
+
+            local DROPDOWN_WIDTH = 160
+            local dropdown_height = 18
+
+            --create dropdowns
+            DF:NewDropDown (sectionFrame, _, "$parentMicroDisplayLeftDropdown", "MicroDisplayLeftDropdown", DROPDOWN_WIDTH, dropdown_height, buildLeftMicroMenu, nil, options_dropdown_template)
+            DF:NewDropDown (sectionFrame, _, "$parentMicroDisplayCenterDropdown", "MicroDisplayCenterDropdown", DROPDOWN_WIDTH, dropdown_height, buildCenterMicroMenu, nil, options_dropdown_template)
+            DF:NewDropDown (sectionFrame, _, "$parentMicroDisplayRightDropdown", "MicroDisplayRightDropdown", DROPDOWN_WIDTH, dropdown_height, buildRightMicroMenu, nil, options_dropdown_template)
+            
+            sectionFrame.MicroDisplayLeftDropdown:SetPoint ("left", sectionFrame.MicroDisplayLeftLabel, "right", 2)
+            sectionFrame.MicroDisplayCenterDropdown:SetPoint ("left", sectionFrame.MicroDisplayCenterLabel, "right", 2)
+            sectionFrame.MicroDisplayRightDropdown:SetPoint ("left", sectionFrame.MicroDisplayRightLabel, "right", 2)
+            
+            sectionFrame.MicroDisplayLeftDropdown.tooltip = Loc ["STRING_OPTIONS_MICRODISPLAYS_DROPDOWN_TOOLTIP"]
+            sectionFrame.MicroDisplayCenterDropdown.tooltip = Loc ["STRING_OPTIONS_MICRODISPLAYS_DROPDOWN_TOOLTIP"]
+            sectionFrame.MicroDisplayRightDropdown.tooltip = Loc ["STRING_OPTIONS_MICRODISPLAYS_DROPDOWN_TOOLTIP"]
+            
+
+            local hideLeftMicroFrameButton = DF:NewButton (sectionFrame.MicroDisplayLeftDropdown, _, "$parenthideLeftMicroFrameButton", "hideLeftMicroFrameButton", 22, 22, function (self, button)
+                if (currentInstance.StatusBar ["left"].options.isHidden) then
+                    _detalhes.StatusBar:SetPlugin (currentInstance, currentInstance.StatusBar ["left"].real_name, "left")
+                else
+                    _detalhes.StatusBar:SetPlugin (currentInstance, -1, "left")
+                end
+                if (currentInstance.StatusBar ["left"].options.isHidden) then
+                    self:GetNormalTexture():SetDesaturated (false)
+                else
+                    self:GetNormalTexture():SetDesaturated (true)
+                end
+            end)
+
+            hideLeftMicroFrameButton:SetPoint ("left", sectionFrame.MicroDisplayLeftDropdown, "right", 2, 0)
+            hideLeftMicroFrameButton:SetNormalTexture ([[Interface\Buttons\UI-GroupLoot-Pass-Down]])
+            hideLeftMicroFrameButton:SetPushedTexture ([[Interface\Buttons\UI-GroupLoot-Pass-Up]])
+            hideLeftMicroFrameButton:GetNormalTexture():SetDesaturated (true)
+            hideLeftMicroFrameButton.tooltip = Loc ["STRING_OPTIONS_MICRODISPLAYS_SHOWHIDE_TOOLTIP"]
+            hideLeftMicroFrameButton:SetHook ("OnEnter", function (self, capsule)
+                self:GetNormalTexture():SetBlendMode("ADD")
+            end)
+            hideLeftMicroFrameButton:SetHook ("OnLeave", function (self, capsule)
+                self:GetNormalTexture():SetBlendMode("BLEND")
+            end)
+
+            local HideCenterMicroFrameButton = DF:NewButton (sectionFrame.MicroDisplayCenterDropdown, _, "$parentHideCenterMicroFrameButton", "HideCenterMicroFrameButton", 22, 22, function (self)
+                if (currentInstance.StatusBar ["center"].options.isHidden) then
+                    _detalhes.StatusBar:SetPlugin (currentInstance, currentInstance.StatusBar ["center"].real_name, "center")
+                else
+                    _detalhes.StatusBar:SetPlugin (currentInstance, -1, "center")
+                end
+                
+                if (currentInstance.StatusBar ["center"].options.isHidden) then
+                    self:GetNormalTexture():SetDesaturated (false)
+                else
+                    self:GetNormalTexture():SetDesaturated (true)
+                end
+            end)
+            HideCenterMicroFrameButton:SetPoint ("left", sectionFrame.MicroDisplayCenterDropdown, "right", 2, 0)
+            HideCenterMicroFrameButton:SetNormalTexture ([[Interface\Buttons\UI-GroupLoot-Pass-Down]])
+            HideCenterMicroFrameButton:SetPushedTexture ([[Interface\Buttons\UI-GroupLoot-Pass-Up]])
+            HideCenterMicroFrameButton:GetNormalTexture():SetDesaturated (true)
+            HideCenterMicroFrameButton.tooltip = Loc ["STRING_OPTIONS_MICRODISPLAYS_SHOWHIDE_TOOLTIP"]
+            HideCenterMicroFrameButton:SetHook ("OnEnter", function (self, capsule)
+                self:GetNormalTexture():SetBlendMode("ADD")
+            end)
+            HideCenterMicroFrameButton:SetHook ("OnLeave", function (self, capsule)
+                self:GetNormalTexture():SetBlendMode("BLEND")
+            end)
+            
+            local HideRightMicroFrameButton = DF:NewButton (sectionFrame.MicroDisplayRightDropdown, _, "$parentHideRightMicroFrameButton", "HideRightMicroFrameButton", 20, 20, function (self)
+                if (currentInstance.StatusBar ["right"].options.isHidden) then
+                    _detalhes.StatusBar:SetPlugin (currentInstance, currentInstance.StatusBar ["right"].real_name, "right")
+                else
+                    _detalhes.StatusBar:SetPlugin (currentInstance, -1, "right")
+                end
+                if (currentInstance.StatusBar ["right"].options.isHidden) then
+                    self:GetNormalTexture():SetDesaturated (false)
+                else
+                    self:GetNormalTexture():SetDesaturated (true)
+                end
+            end)
+            HideRightMicroFrameButton:SetPoint ("left", sectionFrame.MicroDisplayRightDropdown, "right", 2, 0)
+            HideRightMicroFrameButton:SetNormalTexture ([[Interface\Buttons\UI-GroupLoot-Pass-Down]])
+            HideRightMicroFrameButton:SetPushedTexture ([[Interface\Buttons\UI-GroupLoot-Pass-Up]])
+            HideRightMicroFrameButton:GetNormalTexture():SetDesaturated (true)
+            HideRightMicroFrameButton.tooltip = Loc ["STRING_OPTIONS_MICRODISPLAYS_SHOWHIDE_TOOLTIP"]
+            HideRightMicroFrameButton:SetHook ("OnEnter", function (self, capsule)
+                self:GetNormalTexture():SetBlendMode("ADD")
+            end)
+            HideRightMicroFrameButton:SetHook ("OnLeave", function (self, capsule)
+                self:GetNormalTexture():SetBlendMode("BLEND")
+            end)
+
+            local configRightMicroFrameButton = DF:NewButton (sectionFrame.MicroDisplayRightDropdown, _, "$parentconfigRightMicroFrameButton", "configRightMicroFrameButton", 18, 18, function (self)
+                currentInstance.StatusBar ["right"]:Setup()
+                currentInstance.StatusBar ["right"]:Setup()
+            end)
+            configRightMicroFrameButton:SetPoint ("left", HideRightMicroFrameButton, "right", 1, -1)
+            configRightMicroFrameButton:SetNormalTexture ([[Interface\Buttons\UI-OptionsButton]])
+            configRightMicroFrameButton:SetHighlightTexture ([[Interface\Buttons\UI-OptionsButton]])
+            configRightMicroFrameButton.tooltip = Loc ["STRING_OPTIONS_MICRODISPLAYS_OPTION_TOOLTIP"]
+            
+            local configCenterMicroFrameButton = DF:NewButton (sectionFrame.MicroDisplayCenterDropdown, _, "$parentconfigCenterMicroFrameButton", "configCenterMicroFrameButton", 18, 18, function (self)
+                currentInstance.StatusBar ["center"]:Setup()
+                currentInstance.StatusBar ["center"]:Setup()
+            end)
+            configCenterMicroFrameButton:SetPoint ("left", HideCenterMicroFrameButton, "right", 1, -1)
+            configCenterMicroFrameButton:SetNormalTexture ([[Interface\Buttons\UI-OptionsButton]])
+            configCenterMicroFrameButton:SetHighlightTexture ([[Interface\Buttons\UI-OptionsButton]])
+            configCenterMicroFrameButton.tooltip = Loc ["STRING_OPTIONS_MICRODISPLAYS_OPTION_TOOLTIP"]
+            
+            local configLeftMicroFrameButton = DF:NewButton (sectionFrame.MicroDisplayLeftDropdown, _, "$parentconfigLeftMicroFrameButton", "configLeftMicroFrameButton", 18, 18, function (self)
+                currentInstance.StatusBar ["left"]:Setup()
+                currentInstance.StatusBar ["left"]:Setup()
+            end)
+            configLeftMicroFrameButton:SetPoint ("left", hideLeftMicroFrameButton, "right", 1, -1)
+            configLeftMicroFrameButton:SetNormalTexture ([[Interface\Buttons\UI-OptionsButton]])
+            configLeftMicroFrameButton:SetHighlightTexture ([[Interface\Buttons\UI-OptionsButton]])
+            configLeftMicroFrameButton.tooltip = Loc ["STRING_OPTIONS_MICRODISPLAYS_OPTION_TOOLTIP"]
+
+            local x = startX
+            local y = startY - 20 - 120
+
+            sectionFrame.MicroDisplaysAnchor:SetPoint(x, y)
+            y = y - 20
+            sectionFrame.MicroDisplayLeftLabel:SetPoint(x, y)
+            y = y - 20
+            sectionFrame.MicroDisplayCenterLabel:SetPoint(x, y)
+            y = y - 20
+            sectionFrame.MicroDisplayRightLabel:SetPoint(x, y)
+            y = y - 20
+			sectionFrame.MicroDisplayWarningLabel:SetPoint(x, y)
+            y = y - 20
+        end
+
+
+    end
+
+    tinsert(Details.optionsSection, buildSection)
+
 end

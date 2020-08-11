@@ -127,6 +127,13 @@ function Details:InstanceGroupEditSetting(instance, keyName, value)
 	end
 end
 
+function Details:InstanceGroupEditSettingOnTable(instance, table1Key, table2Key, value)
+	for _, thisInstance in ipairs (instance:GetInstanceGroup()) do
+		local table1 = thisInstance[table1Key]
+		table1[table2Key] = value
+	end
+end
+
 function _detalhes:GetLowerInstanceNumber()
 	local lower = 999
 	for index, instancia in _ipairs (_detalhes.tabela_instancias) do

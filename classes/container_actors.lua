@@ -1,7 +1,8 @@
 -- actor container file
 
 	local _detalhes = 		_G._detalhes
-	local DF = DetailsFramework
+	local Details = _G.Details
+	local DF = _G.DetailsFramework
 	local _
 
 	local CONST_CLIENT_LANGUAGE = DF.ClientLanguage
@@ -522,7 +523,7 @@
 		end
 		
 		--> pega o index no mapa
-		local index = self._NameIndexTable [nome] 
+		local index = self._NameIndexTable [nome]
 		--> retorna o actor
 		if (index) then
 			return self._ActorTable [index], dono_do_pet, nome
@@ -534,9 +535,28 @@
 			novo_objeto.nome = nome
 			novo_objeto.flag_original = flag
 			novo_objeto.serial = serial
-			
-			--novo_objeto.grupo = true
-			
+
+			--get the aID (actor id)
+			if (serial:match("^C")) then
+				novo_objeto.aID = tostring(Details:GetNpcIdFromGuid(serial))
+				novo_objeto.grupo = Details.Immersion.IsNpcInteresting(novo_objeto.aID)
+
+			elseif (serial:match("^P")) then
+				novo_objeto.aID = serial:gsub("Player%-", "")
+
+			else
+				novo_objeto.aID = ""
+			end
+
+			--check ownership
+			if (dono_do_pet and not Details.ignore_immersion_pets) then
+				if (UnitIsUnit("player", dono_do_pet.nome)) then
+					if (not Details.in_group) then
+						novo_objeto.grupo = true
+					end
+				end
+			end
+
 			--> seta a classe default para desconhecido, assim nenhum objeto fica com classe nil
 			novo_objeto.classe = "UNKNOW"
 

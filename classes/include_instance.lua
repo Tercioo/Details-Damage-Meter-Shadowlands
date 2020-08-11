@@ -174,7 +174,7 @@ _detalhes.instance_defaults = {
 			shadow = false,
 			enable_custom_text = false,
 			custom_text = "{name}",
-			show_timer = {true, true, true}, --raid encounter, battleground, arena
+			show_timer = true,
 		},
 	--auto hide window borders statusbar main menu
 		menu_alpha = {enabled = false, iconstoo = true, onenter = 1, onleave = 1, ignorebars = false},

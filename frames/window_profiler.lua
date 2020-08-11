@@ -40,7 +40,7 @@ function Details:OpenProfiler()
     
     local string_profiler = f:CreateFontString (nil, "artwork", "GameFontNormal")
     string_profiler:SetPoint ("topleft", f, "topleft", 10, -130)
-    string_profiler:SetText (Loc ["STRING_OPTIONS_PROFILE_SELECTEXISTING"])
+    string_profiler:SetText (L["STRING_OPTIONS_PROFILE_SELECTEXISTING"])
     string_profiler:SetWidth (230)
     Details:SetFontSize (string_profiler, 11)
     Details:SetFontColor (string_profiler, "white")

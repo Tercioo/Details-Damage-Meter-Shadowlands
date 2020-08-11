@@ -4,8 +4,8 @@
 		_ = nil
 		_detalhes = LibStub("AceAddon-3.0"):NewAddon("_detalhes", "AceTimer-3.0", "AceComm-3.0", "AceSerializer-3.0", "NickTag-1.0")
 		
-		_detalhes.build_counter = 7590
-		_detalhes.alpha_build_counter = 7590 --if this is higher than the regular counter, use it instead
+		_detalhes.build_counter = 7707
+		_detalhes.alpha_build_counter = 7707 --if this is higher than the regular counter, use it instead
 		_detalhes.game_version = "v9.0.1"
 		_detalhes.userversion = "v9.0.1." .. _detalhes.build_counter
 		_detalhes.realversion = 142 --core version, this is used to check API version for scripts and plugins (see alias below)
@@ -28,6 +28,11 @@ do
 	local Loc = _G.LibStub("AceLocale-3.0"):GetLocale( "Details" )
 
 	local news = {
+		{"v9.0.1.7707.142", "August 11th, 2020"},
+		"While in The Concil of Blood, Details! now deletes the damage done to alive bosses when one of them dies. This condition can be turned off with /run Details.exp90temp.delete_damage_TCOB = false",
+		"Many Important Npcs like Jaina and Thrall shows as group members of your group.",
+		"More progress on the options panel overhaul.",
+		"General bug fixes.",
 		{"v9.0.1.7590.142", "July 31th, 2020"},
 		"New options panel in progress",
 		"Added options for the 'Inline' right texts in the window",

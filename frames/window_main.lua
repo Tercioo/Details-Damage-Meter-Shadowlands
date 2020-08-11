@@ -4612,9 +4612,9 @@ function _detalhes:InstanceRefreshRows (instancia)
 		local no_icon = self.row_info.no_icon
 		local start_after_icon = self.row_info.start_after_icon
 	
-		if (self.row_info.use_spec_icons) then
-			icon_texture = self.row_info.spec_file
-		end
+		--if (self.row_info.use_spec_icons) then
+			--local icon_texture = self.row_info.spec_file --isn't in use
+		--end
 		
 		local icon_force_grayscale = self.row_info.icon_grayscale
 		local icon_offset_x, icon_offset_y = unpack (self.row_info.icon_offset)
@@ -4666,6 +4666,13 @@ function _detalhes:InstanceRefreshRows (instancia)
 			row.lineText2:SetJustifyH("right")
 			row.lineText3:SetJustifyH("right")
 			row.lineText4:SetJustifyH("right")
+
+			if (not self.use_multi_fontstrings) then
+				row.lineText2:SetText("")
+				row.lineText3:SetText("")
+			end
+
+			row.lineText4:SetText("")
 			
 			row.lineText2:SetPoint ("right", row.statusbar, "right", -self.fontstrings_text2_anchor, 0)
 			row.lineText3:SetPoint ("right", row.statusbar, "right", -self.fontstrings_text3_anchor, 0)
@@ -5569,7 +5576,10 @@ function _detalhes:ToolbarMenuSetButtons (_mode, _segment, _attributes, _report,
 	local shadow = self.menu_icons.shadow
 	
 	local toolbar_icon_file = self.toolbar_icon_file
-	
+	if (shadow) then
+		toolbar_icon_file = toolbar_icon_file .. "_shadow"
+	end
+
 	local total_buttons_shown = 0
 	
 	--> normal buttons
@@ -7674,7 +7684,7 @@ function _detalhes:CheckForTextTimeCounter (combat_start)
 			if (lower) then
 				local instance = _detalhes:GetInstance (lower)
 				if (instance.baseframe and instance:IsEnabled()) then
-					if (instance.attribute_text.show_timer [1]) then
+					if (instance.attribute_text.show_timer) then
 						if (_detalhes.instance_title_text_timer [instance.meu_id]) then
 							_detalhes:CancelTimer (_detalhes.instance_title_text_timer [instance.meu_id])
 						end
@@ -7768,13 +7778,7 @@ function _detalhes:AttributeMenu (enabled, pos_x, pos_y, font, size, color, side
 	end
 	
 	if (type (timer_encounter) ~= "boolean") then
-		timer_encounter = self.attribute_text.show_timer [1]
-	end
-	if (type (timer_bg) ~= "boolean") then
-		timer_bg = self.attribute_text.show_timer [2]
-	end
-	if (type (timer_arena) ~= "boolean") then
-		timer_arena = self.attribute_text.show_timer [3]
+		timer_encounter = self.attribute_text.show_timer
 	end
 	
 	self.attribute_text.enabled = enabled
@@ -7785,9 +7789,7 @@ function _detalhes:AttributeMenu (enabled, pos_x, pos_y, font, size, color, side
 	self.attribute_text.text_color = color
 	self.attribute_text.side = side
 	self.attribute_text.shadow = shadow
-	self.attribute_text.show_timer [1] = timer_encounter
-	self.attribute_text.show_timer [2] = timer_bg
-	self.attribute_text.show_timer [3] = timer_arena
+	self.attribute_text.show_timer = timer_encounter
 	
 	--> enabled
 	if (not enabled and self.menu_attribute_string) then
@@ -8173,25 +8175,18 @@ function _detalhes:SetWindowScale (scale, from_options)
 		local group = self:GetInstanceGroup()
 		
 		for _, instance in _ipairs (group) do
-			instance.baseframe:SetScale (scale)
-			instance.rowframe:SetScale (scale)
+			instance.baseframe:SetScale(scale)
+			instance.rowframe:SetScale(scale)
+			instance.windowSwitchButton:SetScale(scale)
+			instance.windowBackgroundDisplay:SetScale(scale)
 			instance.window_scale = scale
 		end
-		
-		for _, instance in _ipairs (group) do
-			_detalhes.move_janela_func (instance.baseframe, true, instance)
-			_detalhes.move_janela_func (instance.baseframe, false, instance)
-		end
-		
-		for _, instance in _ipairs (group) do
-			instance:SaveMainWindowPosition()
-		end
-		
 	else
 		self.window_scale = scale
-		self.baseframe:SetScale (scale)
-		self.rowframe:SetScale (scale)
-		--self:SaveMainWindowPosition() -- skin was replacing window_scale
+		self.baseframe:SetScale(scale)
+		self.rowframe:SetScale(scale)
+		self.windowSwitchButton:SetScale(scale)
+		self.windowBackgroundDisplay:SetScale(scale)
 	end
 end
 
@@ -8491,6 +8486,18 @@ function _detalhes:HideMainIcon (value)
 			self.baseframe.cabecalho.emenda:SetTexCoord (l, r, b, t)
 		end
 	end
+
+	if (_detalhes.skins [self.skin].icon_titletext_position) then
+		if (not value and self.attribute_text.enabled and self.attribute_text.side == self.toolbar_side) then
+			self.attribute_text.anchor [1] = _detalhes.skins [self.skin].icon_titletext_position [1]
+			self.attribute_text.anchor [2] = _detalhes.skins [self.skin].icon_titletext_position [2]
+			self:AttributeMenu()
+		elseif (value and self.attribute_text.enabled and self.attribute_text.side == self.toolbar_side) then
+			self.attribute_text.anchor [1] = _detalhes.skins [self.skin].instance_cprops.attribute_text.anchor [1]
+			self.attribute_text.anchor [2] = _detalhes.skins [self.skin].instance_cprops.attribute_text.anchor [2]
+			self:AttributeMenu()
+		end
+	end
 	
 end
 
@@ -8510,7 +8517,7 @@ function _detalhes:DesaturateMenu (value)
 		self.baseframe.cabecalho.report:GetNormalTexture():SetDesaturated (true)
 		self.baseframe.cabecalho.reset:GetNormalTexture():SetDesaturated (true)
 		self.baseframe.cabecalho.fechar:GetNormalTexture():SetDesaturated (true)
-		
+
 		if (self.meu_id == _detalhes:GetLowerInstanceNumber()) then
 			for _, button in _ipairs (_detalhes.ToolBar.AllButtons) do
 				button:GetNormalTexture():SetDesaturated (true)
@@ -8692,7 +8699,7 @@ function _detalhes:StatusBarColor (r, g, b, a, no_save)
 	
 end
 
-function _detalhes:ShowStatusBar (instancia)
+function _detalhes:ShowStatusBar(instancia)
 	if (instancia) then
 		self = instancia
 	end
@@ -8707,16 +8714,15 @@ function _detalhes:ShowStatusBar (instancia)
 	self.baseframe.DOWNFrame:Show()
 	
 	--debug
-	self.baseframe.rodape.direita_nostatusbar:Hide()
-	self.baseframe.rodape.esquerdo_nostatusbar:Hide()
+	--self.baseframe.rodape.direita_nostatusbar:Hide()
+	--self.baseframe.rodape.esquerdo_nostatusbar:Hide()
 	--
 	
 	self:ToolbarSide()
-	
 	self:StretchButtonAnchor()
 	
 	if (self.micro_displays_side == 2) then --> bottom side
-		_detalhes.StatusBar:Show (self) --> mini displays widgets
+		_detalhes.StatusBar:Show(self) --> mini displays widgets
 	end
 end
 

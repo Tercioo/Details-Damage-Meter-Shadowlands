@@ -1273,6 +1273,9 @@ local default_global_data = {
 		global_plugin_database = {},
 		last_changelog_size = 0,
 		auto_open_news_window = true,
+		ignore_immersion_units = false,
+		ignore_immersion_icons = false,
+		ignore_immersion_pets = false,
 		
 	--> death log
 		show_totalhitdamage_on_overkill = false,
@@ -1400,6 +1403,11 @@ local default_global_data = {
 		npcid_ignored = {},
 	--> store all spellids blacklisted by the user
 		spellid_ignored = {},
+
+	--> 9.0 exp (store data only used for the 9.0 expansion)
+		exp90temp = {
+			delete_damage_TCOB = true, --delete damage on the concil of blood encounter
+		},
 }
 
 _detalhes.default_global_data = default_global_data

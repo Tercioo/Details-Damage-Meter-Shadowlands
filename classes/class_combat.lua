@@ -334,6 +334,66 @@
 		return t
 	end
 
+	local tremove = _G.tremove
+
+	--delete an actor from the combat ~delete ~erase ~remove
+	function combate:DeleteActor(attribute, actorName, removeDamageTaken)
+		local container = self[attribute]
+		if (container) then
+
+			--get the object for the deleted actor
+			local deletedActor = self(attribute, actorName)
+			if (not deletedActor) then
+				print("Details: actor to be erased not found.")
+				return
+			end
+
+			--store the index it was found
+			local indexToDelete
+
+			local actorTable = container._ActorTable
+			for i = #actorTable, 1, -1 do
+				local actor = actorTable[i]
+
+				--is this the actor we want to remove?
+				if (actor.nome == actorName) then
+					indexToDelete = i
+
+				else
+					--get the damage dealt and remove
+					local damageDoneToRemovedActor = (actor.targets[actorName]) or 0
+					actor.targets[actorName] = nil
+					actor.total = actor.total - damageDoneToRemovedActor
+					actor.total_without_pet = actor.total_without_pet - damageDoneToRemovedActor
+
+					--damage taken
+					if (removeDamageTaken) then
+						local hadDamageTaken = actor.damage_from[actorName]
+						if (hadDamageTaken) then
+							--query the deleted actor to know how much damage it applied to this actor
+							local damageDoneToActor = (deletedActor.targets[actor.nome]) or 0
+							actor.damage_taken = actor.damage_taken - damageDoneToActor
+						end
+					end
+
+					--spells
+					local spellsTable = actor.spells._ActorTable
+					for spellId, spellTable in spellsTable do
+						local damageDoneToRemovedActor = (spellTable.targets[actorName]) or 0
+						spellTable.targets[actorName] = nil
+						spellTable.total = spellTable.total - damageDoneToRemovedActor
+					end
+				end
+			end
+
+			if (indexToDelete) then
+				tremove(container._ActorTable, indexToDelete)
+			else
+				print("Details: index of the actor to be erased not found.")
+			end
+		end
+	end
+
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --> internals
 

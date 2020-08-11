@@ -3,6 +3,9 @@ if not L then return end
 
 --------------------------------------------------------------------------------------------------------------------------------------------
 
+L["STRING_OPTIONSMENU_TITLEBAR"] = "Title Bar"
+L["STRING_OPTIONSMENU_WINDOWBODY"] = "Window Body"
+
 L["ABILITY_ID"] = "ability id"
 L["STRING_"] = ""
 L["STRING_ABSORBED"] = "Absorbed"
@@ -508,7 +511,7 @@ L["STRING_OPTIONS_BARSTART"] = "Bar Start After Icon"
 L["STRING_OPTIONS_BARSTART_DESC"] = [=[When disabled the top texture starts at the icon left side instead of the right
 
 This is useful when using an icon pack with transparent areas.]=]
-L["STRING_OPTIONS_BARUR_ANCHOR"] = "Fast Updates:"
+L["STRING_OPTIONS_BARUR_ANCHOR"] = "Fast Updates"
 L["STRING_OPTIONS_BARUR_DESC"] = "When enabled, DPS and HPS values are updated just a little bit faster than usual."
 L["STRING_OPTIONS_BG_ALL_ALLY"] = "Show All"
 L["STRING_OPTIONS_BG_ALL_ALLY_DESC"] = [=[When enabled, enemy players are also shown when the window is in Group Mode.
@@ -746,7 +749,7 @@ L["STRING_OPTIONS_INSTANCE_DELETE_DESC"] = [=[Remove a window permanently.
 Your game screen may reload during the erase process.]=]
 L["STRING_OPTIONS_INSTANCE_SKIN"] = "Skin"
 L["STRING_OPTIONS_INSTANCE_SKIN_DESC"] = "Modify window appearance based on a skin theme."
-L["STRING_OPTIONS_INSTANCE_STATUSBAR_ANCHOR"] = "Statusbar:"
+L["STRING_OPTIONS_INSTANCE_STATUSBAR_ANCHOR"] = "Statusbar"
 L["STRING_OPTIONS_INSTANCE_STATUSBARCOLOR"] = "Color and Transparency"
 L["STRING_OPTIONS_INSTANCE_STATUSBARCOLOR_DESC"] = [=[Select the color used by the statusbar.
 

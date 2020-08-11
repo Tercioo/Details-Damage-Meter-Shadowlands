@@ -2833,9 +2833,20 @@ end
 	
 end 
 
---[[ exported]] function Details:SetClassIcon (texture, instance, classe)
+--[[ exported]] function Details:SetClassIcon (texture, instance, classe) --self is the actorObject
 
-	if (self.spellicon) then
+
+	local customIcon
+	if (not Details.ignore_immersion_icons) then
+		customIcon = Details.Immersion.GetIcon(self.aID)
+	end
+
+	if (customIcon) then
+		texture:SetTexture(customIcon[1])
+		texture:SetTexCoord(unpack(customIcon[2]))
+		texture:SetVertexColor(1, 1, 1)
+
+	elseif (self.spellicon) then
 		texture:SetTexture (self.spellicon)
 		texture:SetTexCoord (0.078125, 0.921875, 0.078125, 0.921875)
 		texture:SetVertexColor (1, 1, 1)
@@ -2843,28 +2854,23 @@ end
 	elseif (classe == "UNKNOW") then
 		texture:SetTexture ([[Interface\AddOns\Details\images\classes_plus]])
 		texture:SetTexCoord (0.50390625, 0.62890625, 0, 0.125)
-		
 		texture:SetVertexColor (1, 1, 1)
 	
 	elseif (classe == "UNGROUPPLAYER") then
 		if (self.enemy) then
 			if (Details.faction_against == "Horde") then
 				texture:SetTexture ("Interface\\ICONS\\Achievement_Character_Troll_Male")
-				--texture:SetTexture ("Interface\\ICONS\\PVPCurrency-Honor-Horde.blp")
 				texture:SetTexCoord (0.05, 0.95, 0.05, 0.95)
 			else
 				texture:SetTexture ("Interface\\ICONS\\Achievement_Character_Nightelf_Female")
-				--texture:SetTexture ("Interface\\ICONS\\PVPCurrency-Honor-Alliance.blp")
 				texture:SetTexCoord (0.05, 0.95, 0.05, 0.95)
 			end
 		else
 			if (Details.faction_against == "Horde") then
 				texture:SetTexture ("Interface\\ICONS\\Achievement_Character_Nightelf_Female")
-				--texture:SetTexture ("Interface\\ICONS\\PVPCurrency-Honor-Alliance.blp")
 				texture:SetTexCoord (0.05, 0.95, 0.05, 0.95)
 			else
 				texture:SetTexture ("Interface\\ICONS\\Achievement_Character_Troll_Male")
-				--texture:SetTexture ("Interface\\ICONS\\PVPCurrency-Honor-Horde.blp")
 				texture:SetTexCoord (0.05, 0.95, 0.05, 0.95)
 			end
 		end

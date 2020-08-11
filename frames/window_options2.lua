@@ -73,6 +73,7 @@ function Details.options.InitializeOptionsWindow(instance)
         end
         
         Details.options.SetCurrentInstance(instance)
+        f.updateMicroFrames()
     end
 
     local buildInstanceMenu = function()
@@ -125,7 +126,7 @@ function Details.options.InitializeOptionsWindow(instance)
         end
         return instanceList
     end
-
+    
     local instanceSelection = DF:NewDropDown (f, _, "$parentInstanceSelectDropdown", "instanceDropdown", 200, 18, buildInstanceMenu) --, nil, options_dropdown_template
     instanceSelection:SetPoint("bottomright", f, "bottomright", -7, 09)
     instanceSelection:SetHook("OnEnter", function()
@@ -184,12 +185,16 @@ function Details.options.InitializeOptionsWindow(instance)
         Loc ["STRING_OPTIONSMENU_ROWSETTINGS"],
         Loc ["STRING_OPTIONSMENU_ROWTEXTS"],
 
-        Loc ["STRING_OPTIONSMENU_PROFILES"],
-        Loc ["STRING_OPTIONSMENU_TOOLTIP"],
+        Loc ["STRING_OPTIONSMENU_TITLEBAR"], --titlebar
+        Loc ["STRING_OPTIONSMENU_WINDOWBODY"], --window body
+        Loc ["STRING_OPTIONS_INSTANCE_STATUSBAR_ANCHOR"], --statusbar
+        
         Loc ["STRING_OPTIONSMENU_DATAFEED"],
         
         Loc ["STRING_OPTIONSMENU_ROWMODELS"],
-        Loc ["STRING_OPTIONSMENU_LEFTMENU"],
+        Loc ["STRING_OPTIONSMENU_PROFILES"],
+        Loc ["STRING_OPTIONSMENU_TOOLTIP"],
+        
         Loc ["STRING_OPTIONSMENU_TITLETEXT"],
         Loc ["STRING_OPTIONSMENU_WINDOW"],
         Loc ["STRING_OPTIONSMENU_AUTOMATIC"],
@@ -203,7 +208,7 @@ function Details.options.InitializeOptionsWindow(instance)
     }
 
     local optionsSectionsOrder = {
-        1, 2, 3, 4, 5, 6, "", 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
+        1, 2, "", 3, 4, "", 5, 6, 7, "", 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
     }
 
     --total amount of sections
@@ -294,4 +299,9 @@ function Details:OpenOptionsWindow(instance, no_reopen, section)
     if (section) then
         Details.options.SelectOptionsSection(section)
     end
+
+    window.instanceDropdown:Refresh()
+    window.instanceDropdown:Select(instance:GetId())
+
+    window.updateMicroFrames()
 end

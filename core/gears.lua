@@ -250,12 +250,6 @@ end
 					window2:SaveMainWindowPosition()
 					
 				--	/dump ChatFrame3Background:GetSize()
---[[
-					_detalhes.move_janela_func (window1.baseframe, true, window1)
-					_detalhes.move_janela_func (window1.baseframe, false, window1)
-					_detalhes.move_janela_func (window2.baseframe, true, window2)
-					_detalhes.move_janela_func (window2.baseframe, false, window2)
---]]
 				end
 			end
 		end

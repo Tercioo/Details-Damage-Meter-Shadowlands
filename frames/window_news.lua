@@ -12,7 +12,7 @@ function Details:OpenNewsWindow(textToShow, dumpValues, keeptext)
 
 	if (dumpValues == "change_log" or textToShow == "LeftButton") then
 		newsFrame:Text (Loc ["STRING_VERSION_LOG"])
-		newsFrame:Icon ([[Interface\AddOns\Details\images\icons2]], {108/512, 189/512, 319/512, 400/512})
+		--newsFrame:Icon ([[Interface\AddOns\Details\images\icons2]], {108/512, 189/512, 319/512, 400/512})
 		newsFrame:Show()
 		return
 	end
