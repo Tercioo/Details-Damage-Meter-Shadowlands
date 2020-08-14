@@ -1775,9 +1775,10 @@ local _
 		
 		icon_on_top = true,
 		icon_ignore_alpha = true,
-		icon_titletext_position = {2, 5},
+		icon_titletext_position = {1, 2},
 		
 		instance_cprops = {
+			["skin"] = "Dark Theme",
 			["hide_in_combat_type"] = 1,
 			["fontstrings_text3_anchor"] = 37,
 			["menu_anchor"] = {
@@ -2031,8 +2032,7 @@ local _
 							0.7, -- [4]
 						},
 						["textFace"] = "Oswald",
-						["textXMod"] = 6,
-						["textAlign"] = 0,
+						["textXMod"] = 0,
 						["timeType"] = 1,
 						["textStyle"] = 2,
 						["textSize"] = 9,
@@ -2044,8 +2044,7 @@ local _
 						["textYMod"] = 0.5605735778808594,
 						["segmentType"] = 2,
 						["textFace"] = "Oswald",
-						["textXMod"] = 0,
-						["textAlign"] = 0,
+						["textXMod"] = -4,
 						["textSize"] = 9,
 						["textColor"] = {
 							1, -- [1]
@@ -2062,12 +2061,11 @@ local _
 							1, -- [3]
 							0.7, -- [4]
 						},
-						["textXMod"] = 0,
+						["textXMod"] = 5,
 						["textFace"] = "Oswald",
 						["textStyle"] = 2,
-						["textAlign"] = 0,
 						["textSize"] = 9,
-						["textYMod"] = 0.747441291809082,
+						["textYMod"] = -1,
 					},
 				},
 				["left"] = "DETAILS_STATUSBAR_PLUGIN_PSEGMENT",

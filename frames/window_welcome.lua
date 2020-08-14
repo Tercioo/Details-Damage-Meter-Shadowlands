@@ -1385,7 +1385,7 @@ local window_openned_at = time()
 			local total_damage = 0
 			local total_heal = 0
 			
-			local joe = current_combat[1]:PegarCombatente (0x0000000000000, "Joe", 0x114, true)
+			local joe = current_combat[1]:PegarCombatente ("0x0000000000001", "Joe", 0x114, true)
 			joe.grupo = true
 			joe.classe = actors_classes [math.random (1, #actors_classes)]
 			joe.total = 7500000

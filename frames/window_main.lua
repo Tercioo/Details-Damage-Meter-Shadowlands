@@ -7726,13 +7726,20 @@ end
 
 function _detalhes:TitleTextTickTimer (instance)
 	if (instance.attribute_text.enabled) then
-		local current_text = instance.menu_attribute_string:GetText()
-		if (not current_text:find ("%[.*%]")) then
-			instance.menu_attribute_string:SetText ("[00:01] " .. current_text)
-		else
+		local currentText = instance.menu_attribute_string.originalText
+		if (currentText) then
 			local timer = format_timer (_detalhes.tabela_vigente:GetCombatTime())
-			current_text = current_text:gsub ("%[.*%]", timer)
-			instance.menu_attribute_string:SetText (current_text)
+			instance.menu_attribute_string:SetText("[" .. timer .. "] " .. currentText)
+
+		else
+			local current_text = instance.menu_attribute_string:GetText()
+			if (not current_text:find ("%[.*%]")) then
+				instance.menu_attribute_string:SetText ("[00:01] " .. current_text)
+			else
+				local timer = format_timer (_detalhes.tabela_vigente:GetCombatTime())
+				current_text = current_text:gsub ("%[.*%]", timer)
+				instance.menu_attribute_string:SetText (current_text)
+			end
 		end
 	end
 end
@@ -7817,6 +7824,7 @@ function _detalhes:AttributeMenu (enabled, pos_x, pos_y, font, size, color, side
 			if (instance == label.owner_instance) then
 				local sName = instance:GetInstanceAttributeText()
 				label.text = sName
+				label.originalText = sName
 			end
 		end
 		
