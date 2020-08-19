@@ -2837,7 +2837,7 @@ end
 
 
 	local customIcon
-	if (not Details.ignore_immersion_icons) then
+	if (Details.immersion_unit_special_icons) then
 		customIcon = Details.Immersion.GetIcon(self.aID)
 	end
 

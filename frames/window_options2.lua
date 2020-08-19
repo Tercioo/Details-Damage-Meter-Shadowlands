@@ -179,20 +179,23 @@ function Details.options.InitializeOptionsWindow(instance)
     changelog:SetTemplate (options_button_template)
 
     local sectionsName = { --section names
-        Loc ["STRING_OPTIONSMENU_DISPLAY"],
-        Loc ["STRING_OPTIONSMENU_SKIN"],
+        [1] = Loc ["STRING_OPTIONSMENU_DISPLAY"],
+        [3] = Loc ["STRING_OPTIONSMENU_ROWSETTINGS"],
+        [4] = Loc ["STRING_OPTIONSMENU_ROWTEXTS"],
 
-        Loc ["STRING_OPTIONSMENU_ROWSETTINGS"],
-        Loc ["STRING_OPTIONSMENU_ROWTEXTS"],
-
-        Loc ["STRING_OPTIONSMENU_TITLEBAR"], --titlebar
-        Loc ["STRING_OPTIONSMENU_WINDOWBODY"], --window body
-        Loc ["STRING_OPTIONS_INSTANCE_STATUSBAR_ANCHOR"], --statusbar
+        [5] = Loc ["STRING_OPTIONSMENU_TITLEBAR"], --titlebar
+        [6] = Loc ["STRING_OPTIONSMENU_WINDOWBODY"], --window body
+        [7] = Loc ["STRING_OPTIONS_INSTANCE_STATUSBAR_ANCHOR"], --statusbar
         
+        [2] = Loc ["STRING_OPTIONSMENU_SKIN"],
+        [9] = Loc ["STRING_OPTIONSMENU_PROFILES"],
+        [8] = Loc ["STRING_OPTIONSMENU_PLUGINS"],
+
+        --[[
         Loc ["STRING_OPTIONSMENU_DATAFEED"],
         
         Loc ["STRING_OPTIONSMENU_ROWMODELS"],
-        Loc ["STRING_OPTIONSMENU_PROFILES"],
+        
         Loc ["STRING_OPTIONSMENU_TOOLTIP"],
         
         Loc ["STRING_OPTIONSMENU_TITLETEXT"],
@@ -202,22 +205,22 @@ function Details.options.InitializeOptionsWindow(instance)
         "Streamer Settings",
         Loc ["STRING_OPTIONSMENU_RAIDTOOLS"],
         Loc ["STRING_OPTIONSMENU_PERFORMANCE"],
-        Loc ["STRING_OPTIONSMENU_PLUGINS"],
+        
         Loc ["STRING_OPTIONSMENU_SPELLS"],
         Loc ["STRING_OPTIONSMENU_DATACHART"],
+        --]]
     }
 
     local optionsSectionsOrder = {
-        1, 2, "", 3, 4, "", 5, 6, 7, "", 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
+        1, "", 3, 4, "", 5, 6, 7, "", 9, 2, 8, "", 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
     }
-
-    --total amount of sections
-    _G.DETAILS_OPTIONS_AMOUNT_SECTION = 0
+    local maxSectionIds = 19
+    Details.options.maxSectionIds = maxSectionIds
 
     local buttonYPosition = -40
 
     function Details.options.SelectOptionsSection(sectionId)
-        for i = 1, DETAILS_OPTIONS_AMOUNT_SECTION do
+        for i = 1, maxSectionIds do
             f.sectionFramesContainer[i]:Hide()
         end
         f.sectionFramesContainer[sectionId]:Show()
@@ -233,18 +236,16 @@ function Details.options.InitializeOptionsWindow(instance)
             local sectionFrame = CreateFrame("frame", "$parentTab" .. sectionId, f, "BackdropTemplate")
             sectionFrame:SetAllPoints()
             sectionFrame:EnableMouse(false)
-            tinsert(f.sectionFramesContainer, sectionFrame)
+            --tinsert(f.sectionFramesContainer, sectionFrame)
+            f.sectionFramesContainer[sectionId] = sectionFrame
 
             local buildOptionSectionFunc = Details.optionsSection[sectionId]
             if (buildOptionSectionFunc) then
                 --call the function to create the frame
                 buildOptionSectionFunc(sectionFrame)
 
-                --count sections created
-                _G.DETAILS_OPTIONS_AMOUNT_SECTION = _G.DETAILS_OPTIONS_AMOUNT_SECTION + 1
-
                 --create a button for the section
-                local sectionButton = DF:CreateButton(f, function() Details.options.SelectOptionsSection(sectionId) end, section_menu_button_width, section_menu_button_height, sectionsName[_G.DETAILS_OPTIONS_AMOUNT_SECTION], _G.DETAILS_OPTIONS_AMOUNT_SECTION, nil, nil, nil, "$parentButtonSection" .. _G.DETAILS_OPTIONS_AMOUNT_SECTION, nil, options_button_template, options_text_template)
+                local sectionButton = DF:CreateButton(f, function() Details.options.SelectOptionsSection(sectionId) end, section_menu_button_width, section_menu_button_height, sectionsName[sectionId], sectionId, nil, nil, nil, "$parentButtonSection" .. sectionId, nil, options_button_template, options_text_template)
                 sectionButton:SetPoint("topleft", f, "topleft", 10, buttonYPosition)
                 buttonYPosition = buttonYPosition - (section_menu_button_height + 1)
             end

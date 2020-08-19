@@ -45,7 +45,7 @@ function Details.options.SetCurrentInstanceAndRefresh(instance)
     _G.DetailsOptionsWindow.instance = instance
 
     --get all the frames created and update the options
-    for i = 1, _G.DETAILS_OPTIONS_AMOUNT_SECTION do
+    for i = 1, Details.options.maxSectionIds do
         local sectionFrame = Details.options.GetOptionsSection(i)
         if (sectionFrame.RefreshOptions) then
             sectionFrame:RefreshOptions()
@@ -91,8 +91,7 @@ local editInstanceSetting = function(instance, funcName, ...)
     end
 end
 
-
--- ~01
+-- ~01 - display
 do
     local buildSection = function(sectionFrame)
 
@@ -491,6 +490,21 @@ do
                 name = "Reset Nickname",
                 desc = "Reset Nickname",
             },
+
+            {type = "blank"},
+
+            {type = "label", get = function() return "Immersion" end, text_template = subSectionTitleTextTemplate}, --localize-me
+            {--show pets when solo
+                type = "toggle",
+                get = function() return Details.immersion_pets_on_solo_play end,
+                set = function (self, fixedparam, value)
+                    Details.immersion_pets_on_solo_play = value
+                    afterUpdate()
+                end,
+                name = "Show pets when solo",
+                desc = "Show pets when solo",
+            },
+
         }
 
         DF:BuildMenu(sectionFrame, sectionOptions, startX, startY-20, heightSize, true, options_text_template, options_dropdown_template, options_switch_template, true, options_slider_template, options_button_template)
@@ -498,7 +512,6 @@ do
 
     tinsert(Details.optionsSection, buildSection) --optionsSection is declared on boot.lua
 end
-
 
 -- ~02 - skins
 do
@@ -853,8 +866,7 @@ do
     tinsert(Details.optionsSection, buildSection)
 end
 
-
--- ~03
+-- ~03 - bars general
 do
 
     --bar grow direction
@@ -1374,8 +1386,7 @@ do
     tinsert(Details.optionsSection, buildSection)
 end
 
-
--- ~04
+-- ~04 bars texts
 do
 
     --> text font selection
@@ -1732,9 +1743,7 @@ do
     tinsert(Details.optionsSection, buildSection)
 end
 
-
-
--- ~05
+-- ~05 - title bar
 do
 
     local func = function (menu_button)
@@ -2175,8 +2184,7 @@ do
     tinsert(Details.optionsSection, buildSection)
 end
 
-
--- ~06
+-- ~06 - body setings
 do
 
     --> frame strata options
@@ -2393,7 +2401,7 @@ do
 
 end
 
--- ~07
+-- ~07 - status bar
 do
     local buildSection = function(sectionFrame)
 
@@ -2685,4 +2693,624 @@ do
 
     tinsert(Details.optionsSection, buildSection)
 
+end
+
+
+-- ~08 - plugins
+do
+    local buildSection = function(sectionFrame)
+
+        local CreateFrame = _G.CreateFrame
+        local button_color_rgb = {1, 0.93, 0.74}
+
+        local anchorFrame = CreateFrame("frame", "$parentAnchorFrame", sectionFrame)
+        anchorFrame:SetPoint("topleft", sectionFrame, "topleft", startX - 10, startY)
+        anchorFrame.plugin_widgets = {}
+        anchorFrame:SetSize(1, 1)
+        
+        local on_enter = function (self)
+        
+            self:SetBackdropColor (.5, .5, .5, .8)
+            
+            if (self ["toolbarPluginsIcon" .. self.id]) then
+                self ["toolbarPluginsIcon" .. self.id]:SetBlendMode ("ADD")
+            elseif (self ["raidPluginsIcon" .. self.id]) then
+                self ["raidPluginsIcon" .. self.id]:SetBlendMode ("ADD")
+            elseif (self ["soloPluginsIcon" .. self.id]) then
+                self ["soloPluginsIcon" .. self.id]:SetBlendMode ("ADD")
+            end
+    
+            if (self.plugin) then
+                local desc = self.plugin:GetPluginDescription()
+                if (desc) then
+                    GameCooltip:Preset (2)
+                    GameCooltip:AddLine (desc)
+                    GameCooltip:SetType ("tooltip")
+                    GameCooltip:SetOwner (self, "bottomleft", "topleft", 150, -2)
+                    GameCooltip:Show()
+                end
+            end
+    
+            if (self.hasDesc) then
+                GameCooltip:Preset (2)
+                GameCooltip:AddLine (self.hasDesc)
+                GameCooltip:SetType ("tooltip")
+                GameCooltip:SetOwner (self, "bottomleft", "topleft", 150, -2)
+                GameCooltip:Show()
+            end
+        end
+        
+        local on_leave = function (self)
+            self:SetBackdropColor (.3, .3, .3, .3)
+            
+            if (self ["toolbarPluginsIcon" .. self.id]) then
+                self ["toolbarPluginsIcon" .. self.id]:SetBlendMode ("BLEND")
+            elseif (self ["raidPluginsIcon" .. self.id]) then
+                self ["raidPluginsIcon" .. self.id]:SetBlendMode ("BLEND")
+            elseif (self ["soloPluginsIcon" .. self.id]) then
+                self ["soloPluginsIcon" .. self.id]:SetBlendMode ("BLEND")
+            end
+    
+            GameCooltip:Hide()
+        end
+        
+        local y = -20
+        
+        --> toolbar
+        DF:NewLabel (anchorFrame, _, "$parentToolbarPluginsLabel", "toolbarLabel", Loc ["STRING_OPTIONS_PLUGINS_TOOLBAR_ANCHOR"], "GameFontNormal", 16)
+        anchorFrame.toolbarLabel:SetPoint ("topleft", anchorFrame, "topleft", 10, y)
+        
+        y = y - 30
+        
+        do
+            local descbar = anchorFrame:CreateTexture (nil, "artwork")
+            descbar:SetTexture (.3, .3, .3, .8)
+            descbar:SetPoint ("topleft", anchorFrame, "topleft", 5, y+3)
+            descbar:SetSize (650, 20)
+            DF:NewLabel (anchorFrame, _, "$parentDescNameLabel", "descNameLabel", Loc ["STRING_OPTIONS_PLUGINS_NAME"], "GameFontNormal", 12)
+            anchorFrame.descNameLabel:SetPoint ("topleft", anchorFrame, "topleft", 15, y)
+            DF:NewLabel (anchorFrame, _, "$parentDescAuthorLabel", "descAuthorLabel", Loc ["STRING_OPTIONS_PLUGINS_AUTHOR"], "GameFontNormal", 12)
+            anchorFrame.descAuthorLabel:SetPoint ("topleft", anchorFrame, "topleft", 180, y)
+            DF:NewLabel (anchorFrame, _, "$parentDescVersionLabel", "descVersionLabel", Loc ["STRING_OPTIONS_PLUGINS_VERSION"], "GameFontNormal", 12)
+            anchorFrame.descVersionLabel:SetPoint ("topleft", anchorFrame, "topleft", 290, y)
+            DF:NewLabel (anchorFrame, _, "$parentDescEnabledLabel", "descEnabledLabel", Loc ["STRING_ENABLED"], "GameFontNormal", 12)
+            anchorFrame.descEnabledLabel:SetPoint ("topleft", anchorFrame, "topleft", 400, y)
+            DF:NewLabel (anchorFrame, _, "$parentDescOptionsLabel", "descOptionsLabel", Loc ["STRING_OPTIONS_PLUGINS_OPTIONS"], "GameFontNormal", 12)
+            anchorFrame.descOptionsLabel:SetPoint ("topleft", anchorFrame, "topleft", 510, y)
+        end
+        
+        y = y - 30
+        
+        --> toolbar plugins loop
+        local i = 1
+        local allplugins_toolbar = _detalhes.ToolBar.NameTable --where is store all plugins for the title bar
+    
+        --first loop and see which plugins isn't installed
+        --then add a 'ghost' plugin so the player can download
+    
+        local allExistentToolbarPlugins = {
+            {"DETAILS_PLUGIN_CHART_VIEWER", "Details_ChartViewer", "Chart Viewer", "View combat data in handsome charts.", "https://www.curseforge.com/wow/addons/details-chart-viewer-plugin"},
+            {"DETAILS_PLUGIN_DEATH_GRAPHICS", "Details_DeathGraphs", "Advanced Death Logs", "Encounter endurance per player (who's dying more), deaths timeline by enemy spells and regular death logs.", "https://www.curseforge.com/wow/addons/details-advanced-death-logs-plug"},
+            --{"Details_RaidPowerBars", "Raid Power Bars", "Alternate power bar in a details! window", "https://www.curseforge.com/wow/addons/details_raidpowerbars/"},
+            --{"Details_TargetCaller", "Target Caller", "Show raid damage done to an entity since you targetted it.", "https://www.curseforge.com/wow/addons/details-target-caller-plugin"},
+            {"DETAILS_PLUGIN_TIME_LINE", "Details_TimeLine", "Time Line", "View raid cooldowns usage, debuff gain, boss casts in a fancy time line.", "https://www.curseforge.com/wow/addons/details_timeline"},
+        }
+    
+        local allExistentRaidPlugins = {
+            --{"DETAILS_PLUGIN_CHART_VIEWER", "Details_ChartViewer", "Chart Viewer", "View combat data in handsome charts.", "https://www.curseforge.com/wow/addons/details-chart-viewer-plugin"},
+            --{"DETAILS_PLUGIN_DEATH_GRAPHICS", "Details_DeathGraphs", "Advanced Death Logs", "Encounter endurance per player (who's dying more), deaths timeline by enemy spells and regular death logs.", "https://www.curseforge.com/wow/addons/details-advanced-death-logs-plug"},
+            {"DETAILS_PLUGIN_RAID_POWER_BARS", "Details_RaidPowerBars", "Raid Power Bars", "Alternate power bar in a details! window", "https://www.curseforge.com/wow/addons/details_raidpowerbars/"},
+            {"DETAILS_PLUGIN_TARGET_CALLER", "Details_TargetCaller", "Target Caller", "Show raid damage done to an entity since you targetted it.", "https://www.curseforge.com/wow/addons/details-target-caller-plugin"},
+            --{"DETAILS_PLUGIN_TIME_LINE", "Details_TimeLine", "Time Line", "View raid cooldowns usage, debuff gain, boss casts in a fancy time line.", "https://www.curseforge.com/wow/addons/details_timeline"},
+        }
+    
+        local installedToolbarPlugins = {}
+        local installedRaidPlugins = {}
+    
+        for absName, pluginObject in pairs (allplugins_toolbar) do
+        
+            local bframe = CreateFrame("frame", "OptionsPluginToolbarBG", anchorFrame, "BackdropTemplate")
+            bframe:SetSize (640, 20)
+            bframe:SetPoint ("topleft", anchorFrame, "topleft", 10, y)
+            bframe:SetBackdrop ({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", tile = true, tileSize = 16, insets = {left = 1, right = 1, top = 0, bottom = 1}})
+            bframe:SetBackdropColor (.3, .3, .3, .3)
+            bframe:SetScript ("OnEnter", on_enter)
+            bframe:SetScript ("OnLeave", on_leave)
+            bframe.plugin = pluginObject
+            bframe.id = i
+            
+            DF:NewImage (bframe, pluginObject.__icon, 18, 18, nil, nil, "toolbarPluginsIcon"..i, "$parentToolbarPluginsIcon"..i)
+            bframe ["toolbarPluginsIcon"..i]:SetPoint ("topleft", anchorFrame, "topleft", 10, y)
+        
+            DF:NewLabel (bframe, _, "$parentToolbarPluginsLabel"..i, "toolbarPluginsLabel"..i, pluginObject.__name)
+            bframe ["toolbarPluginsLabel"..i]:SetPoint ("left", bframe ["toolbarPluginsIcon"..i], "right", 2, 0)
+            
+            DF:NewLabel (bframe, _, "$parentToolbarPluginsLabel2"..i, "toolbarPluginsLabel2"..i, pluginObject.__author)
+            bframe ["toolbarPluginsLabel2"..i]:SetPoint ("topleft", anchorFrame, "topleft", 180, y-4)
+            
+            DF:NewLabel (bframe, _, "$parentToolbarPluginsLabel3"..i, "toolbarPluginsLabel3"..i, pluginObject.__version)
+            bframe ["toolbarPluginsLabel3"..i]:SetPoint ("topleft", anchorFrame, "topleft", 290, y-4)
+            
+            local plugin_stable = _detalhes:GetPluginSavedTable (absName)
+            local plugin = _detalhes:GetPlugin (absName)
+            DF:NewSwitch (bframe, _, "$parentToolbarSlider"..i, "toolbarPluginsSlider"..i, 60, 20, _, _, plugin_stable.enabled, nil, nil, nil, nil, options_switch_template)
+            bframe ["toolbarPluginsSlider"..i].PluginName = absName
+            tinsert (anchorFrame.plugin_widgets, bframe ["toolbarPluginsSlider"..i])
+            bframe ["toolbarPluginsSlider"..i]:SetPoint ("topleft", anchorFrame, "topleft", 415, y)
+            bframe ["toolbarPluginsSlider"..i]:SetAsCheckBox()
+            bframe ["toolbarPluginsSlider"..i].OnSwitch = function (self, _, value)
+                plugin_stable.enabled = value
+                plugin.__enabled = value
+                if (value) then
+                    _detalhes:SendEvent ("PLUGIN_ENABLED", plugin)
+                else
+                    _detalhes:SendEvent ("PLUGIN_DISABLED", plugin)
+                end
+            end
+            
+            if (pluginObject.OpenOptionsPanel) then
+                DF:NewButton (bframe, nil, "$parentOptionsButton"..i, "OptionsButton"..i, 120, 20, pluginObject.OpenOptionsPanel, nil, nil, nil, Loc ["STRING_OPTIONS_PLUGINS_OPTIONS"], nil, options_button_template)
+                bframe ["OptionsButton"..i]:SetPoint ("topleft", anchorFrame, "topleft", 510, y-0)
+                bframe ["OptionsButton"..i]:SetTextColor (button_color_rgb)
+                bframe ["OptionsButton"..i]:SetIcon ([[Interface\Buttons\UI-OptionsButton]], 14, 14, nil, {0, 1, 0, 1}, nil, 3)
+            end
+            
+            i = i + 1
+            y = y - 20
+    
+            --plugins installed, adding their abs name
+            DF.table.addunique (installedToolbarPlugins, absName)
+        
+        end
+    
+        local notInstalledColor = "gray"
+    
+        for o = 1, #allExistentToolbarPlugins do
+            local pluginAbsName = allExistentToolbarPlugins [o] [1]
+            if (not DF.table.find (installedToolbarPlugins, pluginAbsName)) then
+    
+                local absName = pluginAbsName
+                local pluginObject = {
+                    __icon = "",
+                    __name = allExistentToolbarPlugins [o] [3],
+                    __author = "Not Installed",
+                    __version = "",
+                    OpenOptionsPanel = false,
+                }
+    
+                local bframe = CreateFrame ("frame", "OptionsPluginToolbarBG", anchorFrame,"BackdropTemplate")
+                bframe:SetSize (640, 20)
+                bframe:SetPoint ("topleft", anchorFrame, "topleft", 10, y)
+                bframe:SetBackdrop ({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", tile = true, tileSize = 16, insets = {left = 1, right = 1, top = 0, bottom = 1}})
+                bframe:SetBackdropColor (.3, .3, .3, .3)
+                bframe:SetScript ("OnEnter", on_enter)
+                bframe:SetScript ("OnLeave", on_leave)
+
+                bframe.id = i
+                bframe.hasDesc = allExistentToolbarPlugins [o] [4]
+                
+                DF:NewImage (bframe, pluginObject.__icon, 18, 18, nil, nil, "toolbarPluginsIcon"..i, "$parentToolbarPluginsIcon"..i)
+                bframe ["toolbarPluginsIcon"..i]:SetPoint ("topleft", anchorFrame, "topleft", 10, y)
+            
+                DF:NewLabel (bframe, _, "$parentToolbarPluginsLabel"..i, "toolbarPluginsLabel"..i, pluginObject.__name)
+                bframe ["toolbarPluginsLabel"..i]:SetPoint ("left", bframe ["toolbarPluginsIcon"..i], "right", 2, 0)
+                bframe ["toolbarPluginsLabel"..i].color = notInstalledColor
+                
+                DF:NewLabel (bframe, _, "$parentToolbarPluginsLabel2"..i, "toolbarPluginsLabel2"..i, pluginObject.__author)
+                bframe ["toolbarPluginsLabel2"..i]:SetPoint ("topleft", anchorFrame, "topleft", 180, y-4)
+                bframe ["toolbarPluginsLabel2"..i].color = notInstalledColor
+                
+                DF:NewLabel (bframe, _, "$parentToolbarPluginsLabel3"..i, "toolbarPluginsLabel3"..i, pluginObject.__version)
+                bframe ["toolbarPluginsLabel3"..i]:SetPoint ("topleft", anchorFrame, "topleft", 290, y-4)
+                bframe ["toolbarPluginsLabel3"..i].color = notInstalledColor
+    
+                local installButton = DF:CreateButton (bframe, function() Details:CopyPaste (allExistentToolbarPlugins [o] [5]) end, 120, 20, "Install")
+                installButton:SetTemplate (options_button_template)
+                installButton:SetPoint ("topleft", anchorFrame, "topleft", 510, y-0)
+                
+                i = i + 1
+                y = y - 20
+            end
+        end
+        
+        y = y - 10
+        
+        --raid
+        DF:NewLabel (anchorFrame, _, "$parentRaidPluginsLabel", "raidLabel", Loc ["STRING_OPTIONS_PLUGINS_RAID_ANCHOR"], "GameFontNormal", 16)
+        anchorFrame.raidLabel:SetPoint ("topleft", anchorFrame, "topleft", 10, y)
+        
+        y = y - 30
+        
+        do
+            local descbar = anchorFrame:CreateTexture (nil, "artwork")
+            descbar:SetTexture (.3, .3, .3, .8)
+            descbar:SetPoint ("topleft", anchorFrame, "topleft", 5, y+3)
+            descbar:SetSize (650, 20)
+            DF:NewLabel (anchorFrame, _, "$parentDescNameLabel2", "descNameLabel", Loc ["STRING_OPTIONS_PLUGINS_NAME"], "GameFontNormal", 12)
+            anchorFrame.descNameLabel:SetPoint ("topleft", anchorFrame, "topleft", 15, y)
+            DF:NewLabel (anchorFrame, _, "$parentDescAuthorLabel2", "descAuthorLabel", Loc ["STRING_OPTIONS_PLUGINS_AUTHOR"], "GameFontNormal", 12)
+            anchorFrame.descAuthorLabel:SetPoint ("topleft", anchorFrame, "topleft", 180, y)
+            DF:NewLabel (anchorFrame, _, "$parentDescVersionLabel2", "descVersionLabel", Loc ["STRING_OPTIONS_PLUGINS_VERSION"], "GameFontNormal", 12)
+            anchorFrame.descVersionLabel:SetPoint ("topleft", anchorFrame, "topleft", 290, y)
+            DF:NewLabel (anchorFrame, _, "$parentDescEnabledLabel2", "descEnabledLabel", Loc ["STRING_ENABLED"], "GameFontNormal", 12)
+            anchorFrame.descEnabledLabel:SetPoint ("topleft", anchorFrame, "topleft", 400, y)
+            DF:NewLabel (anchorFrame, _, "$parentDescOptionsLabel2", "descOptionsLabel", Loc ["STRING_OPTIONS_PLUGINS_OPTIONS"], "GameFontNormal", 12)
+            anchorFrame.descOptionsLabel:SetPoint ("topleft", anchorFrame, "topleft", 510, y)
+        end
+        
+        y = y - 30
+        
+        local i = 1
+        local allplugins_raid = _detalhes.RaidTables.NameTable
+        for absName, pluginObject in pairs (allplugins_raid) do 
+    
+            local bframe = CreateFrame ("frame", "OptionsPluginRaidBG", anchorFrame, "BackdropTemplate")
+            bframe:SetSize (640, 20)
+            bframe:SetPoint ("topleft", anchorFrame, "topleft", 10, y)
+            bframe:SetBackdrop ({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", tile = true, tileSize = 16, insets = {left = 1, right = 1, top = 0, bottom = 1}})
+            bframe:SetBackdropColor (.3, .3, .3, .3)
+            bframe:SetScript ("OnEnter", on_enter)
+            bframe:SetScript ("OnLeave", on_leave)
+            bframe.plugin = pluginObject
+            bframe.id = i
+            
+            DF:NewImage (bframe, pluginObject.__icon, 18, 18, nil, nil, "raidPluginsIcon"..i, "$parentRaidPluginsIcon"..i)
+            bframe ["raidPluginsIcon"..i]:SetPoint ("topleft", anchorFrame, "topleft", 10, y)
+        
+            DF:NewLabel (bframe, _, "$parentRaidPluginsLabel"..i, "raidPluginsLabel"..i, pluginObject.__name)
+            bframe ["raidPluginsLabel"..i]:SetPoint ("left", bframe ["raidPluginsIcon"..i], "right", 2, 0)
+            
+            DF:NewLabel (bframe, _, "$parentRaidPluginsLabel2"..i, "raidPluginsLabel2"..i, pluginObject.__author)
+            bframe ["raidPluginsLabel2"..i]:SetPoint ("topleft", anchorFrame, "topleft", 180, y-4)
+            
+            DF:NewLabel (bframe, _, "$parentRaidPluginsLabel3"..i, "raidPluginsLabel3"..i, pluginObject.__version)
+            bframe ["raidPluginsLabel3"..i]:SetPoint ("topleft", anchorFrame, "topleft", 290, y-4)
+            
+            local plugin_stable = _detalhes:GetPluginSavedTable (absName)
+            local plugin = _detalhes:GetPlugin (absName)
+            DF:NewSwitch (bframe, _, "$parentRaidSlider"..i, "raidPluginsSlider"..i, 60, 20, _, _, plugin_stable.enabled, nil, nil, nil, nil, options_switch_template)
+            tinsert (anchorFrame.plugin_widgets, bframe ["raidPluginsSlider"..i])
+            bframe ["raidPluginsSlider"..i].PluginName = absName
+            bframe ["raidPluginsSlider"..i]:SetPoint ("topleft", anchorFrame, "topleft", 415, y+1)
+            bframe ["raidPluginsSlider"..i]:SetAsCheckBox()
+            bframe ["raidPluginsSlider"..i].OnSwitch = function (self, _, value)
+                plugin_stable.enabled = value
+                plugin.__enabled = value
+                if (not value) then
+                    for index, instancia in ipairs (_detalhes.tabela_instancias) do
+                        if (instancia.modo == 4) then -- 4 = raid
+                            if (instancia:IsEnabled()) then
+                                _detalhes:TrocaTabela (instancia, 0, 1, 1, nil, 2)
+                            else
+                                instancia.modo = 2 -- group mode
+                            end
+                        end
+                    end
+                end
+            end
+            
+            if (pluginObject.OpenOptionsPanel) then
+                DF:NewButton (bframe, nil, "$parentOptionsButton"..i, "OptionsButton"..i, 86, 18, pluginObject.OpenOptionsPanel, nil, nil, nil, Loc ["STRING_OPTIONS_PLUGINS_OPTIONS"], nil, options_button_template)
+                bframe ["OptionsButton"..i]:SetPoint ("topleft", anchorFrame, "topleft", 510, y-0)
+                bframe ["OptionsButton"..i]:SetTextColor (button_color_rgb)
+                bframe ["OptionsButton"..i]:SetIcon ([[Interface\Buttons\UI-OptionsButton]], 14, 14, nil, {0, 1, 0, 1}, nil, 3)
+            end
+    
+            --plugins installed, adding their abs name
+            DF.table.addunique (installedRaidPlugins, absName)
+            
+            i = i + 1
+            y = y - 20
+        end
+    
+        for o = 1, #allExistentRaidPlugins do
+            local pluginAbsName = allExistentRaidPlugins [o] [1]
+            if (not DF.table.find (installedRaidPlugins, pluginAbsName)) then
+    
+                local absName = pluginAbsName
+                local pluginObject = {
+                    __icon = "",
+                    __name = allExistentRaidPlugins [o] [3],
+                    __author = "Not Installed",
+                    __version = "",
+                    OpenOptionsPanel = false,
+                }
+    
+                local bframe = CreateFrame ("frame", "OptionsPluginToolbarBG", anchorFrame,"BackdropTemplate")
+                bframe:SetSize (640, 20)
+                bframe:SetPoint ("topleft", anchorFrame, "topleft", 10, y)
+                bframe:SetBackdrop ({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", tile = true, tileSize = 16, insets = {left = 1, right = 1, top = 0, bottom = 1}})
+                bframe:SetBackdropColor (.3, .3, .3, .3)
+                bframe:SetScript ("OnEnter", on_enter)
+                bframe:SetScript ("OnLeave", on_leave)
+
+                bframe.id = i
+                bframe.hasDesc = allExistentRaidPlugins [o] [4]
+                
+                DF:NewImage (bframe, pluginObject.__icon, 18, 18, nil, nil, "toolbarPluginsIcon"..i, "$parentToolbarPluginsIcon"..i)
+                bframe ["toolbarPluginsIcon"..i]:SetPoint ("topleft", anchorFrame, "topleft", 10, y)
+            
+                DF:NewLabel (bframe, _, "$parentToolbarPluginsLabel"..i, "toolbarPluginsLabel"..i, pluginObject.__name)
+                bframe ["toolbarPluginsLabel"..i]:SetPoint ("left", bframe ["toolbarPluginsIcon"..i], "right", 2, 0)
+                bframe ["toolbarPluginsLabel"..i].color = notInstalledColor
+                
+                DF:NewLabel (bframe, _, "$parentToolbarPluginsLabel2"..i, "toolbarPluginsLabel2"..i, pluginObject.__author)
+                bframe ["toolbarPluginsLabel2"..i]:SetPoint ("topleft", anchorFrame, "topleft", 180, y-4)
+                bframe ["toolbarPluginsLabel2"..i].color = notInstalledColor
+                
+                DF:NewLabel (bframe, _, "$parentToolbarPluginsLabel3"..i, "toolbarPluginsLabel3"..i, pluginObject.__version)
+                bframe ["toolbarPluginsLabel3"..i]:SetPoint ("topleft", anchorFrame, "topleft", 290, y-4)
+                bframe ["toolbarPluginsLabel3"..i].color = notInstalledColor
+    
+                local installButton = DF:CreateButton (bframe, function() Details:CopyPaste (allExistentRaidPlugins [o] [5]) end, 120, 20, "Install")
+                installButton:SetTemplate (options_button_template)
+                installButton:SetPoint ("topleft", anchorFrame, "topleft", 510, y-0)
+                
+                i = i + 1
+                y = y - 20
+            end
+        end	
+        
+        y = y - 10
+    
+        -- solo
+        DF:NewLabel (anchorFrame, _, "$parentSoloPluginsLabel", "soloLabel", Loc ["STRING_OPTIONS_PLUGINS_SOLO_ANCHOR"], "GameFontNormal", 16)
+        anchorFrame.soloLabel:SetPoint ("topleft", anchorFrame, "topleft", 10, y)
+        
+        y = y - 30
+        
+        do
+            local descbar = anchorFrame:CreateTexture (nil, "artwork")
+            descbar:SetTexture (.3, .3, .3, .8)
+            descbar:SetPoint ("topleft", anchorFrame, "topleft", 5, y+3)
+            descbar:SetSize (650, 20)
+            DF:NewLabel (anchorFrame, _, "$parentDescNameLabel3", "descNameLabel", Loc ["STRING_OPTIONS_PLUGINS_NAME"], "GameFontNormal", 12)
+            anchorFrame.descNameLabel:SetPoint ("topleft", anchorFrame, "topleft", 15, y)
+            DF:NewLabel (anchorFrame, _, "$parentDescAuthorLabel3", "descAuthorLabel", Loc ["STRING_OPTIONS_PLUGINS_AUTHOR"], "GameFontNormal", 12)
+            anchorFrame.descAuthorLabel:SetPoint ("topleft", anchorFrame, "topleft", 180, y)
+            DF:NewLabel (anchorFrame, _, "$parentDescVersionLabel3", "descVersionLabel", Loc ["STRING_OPTIONS_PLUGINS_VERSION"], "GameFontNormal", 12)
+            anchorFrame.descVersionLabel:SetPoint ("topleft", anchorFrame, "topleft", 290, y)
+            DF:NewLabel (anchorFrame, _, "$parentDescEnabledLabel3", "descEnabledLabel", Loc ["STRING_ENABLED"], "GameFontNormal", 12)
+            anchorFrame.descEnabledLabel:SetPoint ("topleft", anchorFrame, "topleft", 400, y)
+            DF:NewLabel (anchorFrame, _, "$parentDescOptionsLabel3", "descOptionsLabel", Loc ["STRING_OPTIONS_PLUGINS_OPTIONS"], "GameFontNormal", 12)
+            anchorFrame.descOptionsLabel:SetPoint ("topleft", anchorFrame, "topleft", 510, y)
+        end
+        
+        y = y - 30
+        
+        local i = 1
+        local allplugins_solo = _detalhes.SoloTables.NameTable
+        for absName, pluginObject in pairs (allplugins_solo) do 
+        
+            local bframe = CreateFrame ("frame", "OptionsPluginSoloBG", anchorFrame,"BackdropTemplate")
+            bframe:SetSize (640, 20)
+            bframe:SetPoint ("topleft", anchorFrame, "topleft", 10, y)
+            bframe:SetBackdrop ({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", tile = true, tileSize = 16, insets = {left = 1, right = 1, top = 0, bottom = 1}})
+            bframe:SetBackdropColor (.3, .3, .3, .3)
+            bframe:SetScript ("OnEnter", on_enter)
+            bframe:SetScript ("OnLeave", on_leave)
+            bframe.plugin = pluginObject
+            bframe.id = i
+            
+            DF:NewImage (bframe, pluginObject.__icon, 18, 18, nil, nil, "soloPluginsIcon"..i, "$parentSoloPluginsIcon"..i)
+            bframe ["soloPluginsIcon"..i]:SetPoint ("topleft", anchorFrame, "topleft", 10, y)
+        
+            DF:NewLabel (bframe, _, "$parentSoloPluginsLabel"..i, "soloPluginsLabel"..i, pluginObject.__name)
+            bframe ["soloPluginsLabel"..i]:SetPoint ("left", bframe ["soloPluginsIcon"..i], "right", 2, 0)
+            
+            DF:NewLabel (bframe, _, "$parentSoloPluginsLabel2"..i, "soloPluginsLabel2"..i, pluginObject.__author)
+            bframe ["soloPluginsLabel2"..i]:SetPoint ("topleft", anchorFrame, "topleft", 180, y-4)
+            
+            DF:NewLabel (bframe, _, "$parentSoloPluginsLabel3"..i, "soloPluginsLabel3"..i, pluginObject.__version)
+            bframe ["soloPluginsLabel3"..i]:SetPoint ("topleft", anchorFrame, "topleft", 290, y-4)
+            
+            local plugin_stable = _detalhes:GetPluginSavedTable (absName)
+            local plugin = _detalhes:GetPlugin (absName)
+            DF:NewSwitch (bframe, _, "$parentSoloSlider"..i, "soloPluginsSlider"..i, 60, 20, _, _, plugin_stable.enabled, nil, nil, nil, nil, options_switch_template)
+            tinsert (anchorFrame.plugin_widgets, bframe ["soloPluginsSlider"..i])
+            bframe ["soloPluginsSlider"..i].PluginName = absName
+            bframe ["soloPluginsSlider"..i]:SetPoint ("topleft", anchorFrame, "topleft", 415, y+1)
+            bframe ["soloPluginsSlider"..i]:SetAsCheckBox()
+            bframe ["soloPluginsSlider"..i].OnSwitch = function (self, _, value)
+                plugin_stable.enabled = value
+                plugin.__enabled = value
+                if (not value) then
+                    for index, instancia in ipairs (_detalhes.tabela_instancias) do
+                        if (instancia.modo == 1 and instancia.baseframe) then -- 1 = solo
+                            _detalhes:TrocaTabela (instancia, 0, 1, 1, nil, 2)
+                        end
+                    end
+                end
+            end
+            
+            if (pluginObject.OpenOptionsPanel) then
+                DF:NewButton (bframe, nil, "$parentOptionsButton"..i, "OptionsButton"..i, 86, 18, pluginObject.OpenOptionsPanel, nil, nil, nil, Loc ["STRING_OPTIONS_PLUGINS_OPTIONS"], nil, options_button_template)
+                bframe ["OptionsButton"..i]:SetPoint ("topleft", anchorFrame, "topleft", 510, y-0)
+                bframe ["OptionsButton"..i]:SetTextColor (button_color_rgb)
+                bframe ["OptionsButton"..i]:SetIcon ([[Interface\Buttons\UI-OptionsButton]], 14, 14, nil, {0, 1, 0, 1}, nil, 3)
+            end
+            
+            i = i + 1
+            y = y - 20
+        end
+
+        local sectionOptions = {
+
+        }
+
+        DF:BuildMenu(sectionFrame, sectionOptions, startX, startY-20, heightSize, true, options_text_template, options_dropdown_template, options_switch_template, true, options_slider_template, options_button_template)
+    end
+
+    tinsert(Details.optionsSection, buildSection)
+end
+
+
+-- ~09 - profiles
+do
+   
+    local buildSection = function(sectionFrame)
+
+        local selectProfile = function (_, instance, profileName)
+			_detalhes:ApplyProfile(profileName)
+            _detalhes:Msg (Loc ["STRING_OPTIONS_PROFILE_LOADED"], profileName)
+            afterUpdate()
+            Details.options.SetCurrentInstanceAndRefresh(instance)
+        end
+        
+		local buildProfileMenu = function(func)
+			local menu = {}
+			for index, profileName in ipairs (_detalhes:GetProfileList()) do
+				menu [#menu+1] = {value = profileName, label = profileName, onclick = selectProfile, icon = "Interface\\MINIMAP\\Vehicle-HammerGold-3"}
+			end
+			return menu
+        end
+        
+		local buildProfileMenuToDelete = function()
+			local menu = {}
+            for index, profileName in ipairs (_detalhes:GetProfileList()) do
+                if (profileName ~= _detalhes:GetCurrentProfileName()) then
+                    menu [#menu+1] = {value = profileName, label = profileName, onclick = function()end, icon = [[Interface\Glues\LOGIN\Glues-CheckBox-Check]], color = {1, 1, 1}, iconcolor = {1, .9, .9, 0.8}}
+                end
+			end
+			return menu
+		end
+
+        local sectionOptions = {
+            {type = "label", get = function() return Loc["STRING_OPTIONS_PROFILES_CURRENT"] .. " |cFFFFFFFF" .. _detalhes_database.active_profile end, text_template = options_text_template},
+
+            {--select profile
+                type = "select",
+                get = function() return _detalhes:GetCurrentProfileName() end,
+                values = function() return buildProfileMenu() end,
+                name = Loc ["STRING_OPTIONS_PROFILES_SELECT"],
+                desc = Loc ["STRING_OPTIONS_PROFILES_SELECT"],
+            },
+
+            {type = "blank"},
+
+            {--save size and positioning
+                type = "toggle",
+                get = function() return _detalhes.profile_save_pos end,
+                set = function (self, fixedparam, value)
+                    _detalhes.profile_save_pos = value
+                    _detalhes:SetProfileCProp (nil, "profile_save_pos", value)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_PROFILE_POSSIZE"],
+                desc = Loc ["STRING_OPTIONS_PROFILE_POSSIZE_DESC"],
+            },
+
+            {type = "blank"},
+
+            {--profile name
+                type = "textentry",
+                get = function() return "profile name" end,
+                func = function(self, _, text) end,
+                name = Loc ["STRING_OPTIONS_PROFILES_CREATE"],
+                --desc = Loc ["STRING_OPTIONS_NICKNAME"],
+            },
+
+            {--create new profile
+                type = "execute",
+                func = function(self)
+                    local profileNameString = sectionFrame.widget_list_by_type.textentry[1]
+                    local profileName = profileNameString:GetText()
+
+                    if (profileName == "") then
+                        return _detalhes:Msg (Loc ["STRING_OPTIONS_PROFILE_FIELDEMPTY"])
+                    end
+                    
+                    profileNameString:SetText ("")
+                    profileNameString:ClearFocus()
+
+                    local new_profile = _detalhes:CreateProfile(profileName)
+                    if (new_profile) then
+                        _detalhes:ApplyProfile(profileName)
+                        afterUpdate()
+                        Details.options.SetCurrentInstanceAndRefresh(currentInstance)
+                    else
+                        return _detalhes:Msg (Loc ["STRING_OPTIONS_PROFILE_NOTCREATED"])
+                    end
+                end,
+                --icontexture = [[Interface\PetBattles\PetBattle-LockIcon]],
+                --icontexcoords = {0.0703125, 0.9453125, 0.0546875, 0.9453125},
+                name = Loc ["STRING_OPTIONS_PROFILES_CREATE"],
+            },
+
+            {type = "blank"},
+
+            {--delete profile
+                type = "select",
+                get = function() return "" end,
+                values = function() return buildProfileMenuToDelete() end,
+                name = Loc ["STRING_OPTIONS_PROFILES_ERASE"],
+                desc = Loc ["STRING_OPTIONS_PROFILES_ERASE"],
+            },
+
+            {--delete profile
+                type = "execute",
+                func = function(self)
+                    local profileDropdown = sectionFrame.widget_list_by_type.dropdown[2]
+                    local profileName = profileDropdown:GetValue()
+
+                    if (profileName == "") then
+                        return _detalhes:Msg (Loc ["STRING_OPTIONS_PROFILE_FIELDEMPTY"])
+                    end
+
+                    if (#_detalhes:GetProfileList() == 1) then
+                        return Details:Msg("There's only one profile.")
+                    end
+
+                    if (profileName == _detalhes:GetCurrentProfileName()) then
+                        return Details:Msg("Can't delete current profile.")
+                    end
+
+                    _detalhes:EraseProfile(profileName)
+
+                    Details.options.SetCurrentInstanceAndRefresh(currentInstance)
+                    afterUpdate()
+                    _detalhes:Msg (Loc ["STRING_OPTIONS_PROFILE_REMOVEOKEY"])
+                end,
+                name = Loc ["STRING_OPTIONS_PROFILES_ERASE"],
+            },
+
+            {type = "blank"},
+
+            {--export profile
+                type = "execute",
+                func = function(self)
+                    local str = Details:ExportCurrentProfile()
+                    if (str) then
+                        _detalhes:ShowImportWindow (str, nil, "Details! Export Profile")
+                    end
+                end,
+                name = "Export Profile", --localize-me
+                icontexture = [[Interface\Buttons\UI-GuildButton-MOTD-Up]],
+                icontexcoords = {1, 0, 0, 1},
+            },
+            {--import profile
+                type = "execute",
+                func = function(self)
+                    _detalhes:ShowImportWindow("", function (profileString)
+                        if (type (profileString) ~= "string" or string.len (profileString) < 2) then
+                            return
+                        end
+                        
+                        --prompt text panel returns what the user inserted in the text field in the first argument
+                        DF:ShowTextPromptPanel("Insert a Name for the New Profile:", function (newProfileName) --localize-me
+                            Details:ImportProfile (profileString, newProfileName)
+                        end)
+                    end, "Details! Import Profile (paste string)") --localize-me
+                end,
+                name = "Import Profile", --localize-me
+                icontexture = [[Interface\BUTTONS\UI-GuildButton-OfficerNote-Up]],
+                icontexcoords = {0, 1, 0, 1},
+            },
+
+        }
+
+        DF:BuildMenu(sectionFrame, sectionOptions, startX, startY-20, heightSize, true, options_text_template, options_dropdown_template, options_switch_template, true, options_slider_template, options_button_template)
+    end
+
+    tinsert(Details.optionsSection, buildSection)
 end

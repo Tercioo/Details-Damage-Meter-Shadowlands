@@ -539,7 +539,10 @@
 			--get the aID (actor id)
 			if (serial:match("^C")) then
 				novo_objeto.aID = tostring(Details:GetNpcIdFromGuid(serial))
-				novo_objeto.grupo = Details.Immersion.IsNpcInteresting(novo_objeto.aID)
+				
+				if (Details.immersion_special_units) then
+					novo_objeto.grupo = Details.Immersion.IsNpcInteresting(novo_objeto.aID)
+				end
 
 			elseif (serial:match("^P")) then
 				novo_objeto.aID = serial:gsub("Player%-", "")
@@ -549,7 +552,7 @@
 			end
 
 			--check ownership
-			if (dono_do_pet and not Details.ignore_immersion_pets) then
+			if (dono_do_pet and Details.immersion_pets_on_solo_play) then
 				if (UnitIsUnit("player", dono_do_pet.nome)) then
 					if (not Details.in_group) then
 						novo_objeto.grupo = true

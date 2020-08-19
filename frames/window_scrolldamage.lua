@@ -6,17 +6,17 @@ local DF = _G.DetailsFramework
 
 function Details:ScrollDamage()
 	if (not DetailsScrollDamage) then
-		DetailsScrollDamage = DetailsFramework:CreateSimplePanel (UIParent)
-		DetailsScrollDamage:SetSize (427, 505)
+		DetailsScrollDamage = DetailsFramework:CreateSimplePanel(UIParent)
+		DetailsScrollDamage:SetSize (427 - 40 - 20 - 20, 505 - 150 + 20)
 		DetailsScrollDamage:SetTitle ("Details! Scroll Damage (/details scroll)")
 		DetailsScrollDamage.Data = {}
 		DetailsScrollDamage:ClearAllPoints()
 		DetailsScrollDamage:SetPoint ("left", UIParent, "left", 10, 0)
 		DetailsScrollDamage:Hide()
 		
-		local scroll_width = 395
-		local scroll_height = 450
-		local scroll_lines = 21
+		local scroll_width = 395 - 40 - 20 - 20
+		local scroll_height = 300
+		local scroll_lines = 14
 		local scroll_line_height = 20
 		
 		local backdrop_color = {.2, .2, .2, 0.2}
@@ -27,12 +27,19 @@ function Details:ScrollDamage()
 		local y = -15
 		local headerY = y - 15
 		local scrollY = headerY - 20
+
+		local LibWindow = _G.LibStub("LibWindow-1.1")
+		DetailsScrollDamage:SetScript("OnMouseDown", nil)
+		DetailsScrollDamage:SetScript("OnMouseUp", nil)
+		LibWindow.RegisterConfig(DetailsScrollDamage, Details.damage_scroll_position)
+		LibWindow.MakeDraggable(DetailsScrollDamage)
+		LibWindow.RestorePosition(DetailsScrollDamage)
 	
 		--header
 		local headerTable = {
 			{text = "Icon", width = 32},
-			{text = "Spell Name", width = 160},
-			{text = "Amount", width = 80},
+			{text = "Spell Name", width = 100},
+			{text = "Amount", width = 60},
 			
 			{text = "Time", width = 60},
 			--{text = "Token", width = 80},
@@ -85,13 +92,15 @@ function Details:ScrollDamage()
 						--line.TokenText.text = token:gsub ("SPELL_", "")
 						--line.SchoolText.text = _detalhes:GetSpellSchoolFormatedName (school)
 						line.SpellIDText.text = spellID
+
+						DF:TruncateText(line.SpellNameText, 90)
 						line.SpellNameText.text = spellName
 					else
 						line:Hide()
 					end
 				end
 			end
-		end		
+		end
 		
 		local lineOnEnter = function (self)
 			if (self.IsCritical) then
@@ -101,10 +110,11 @@ function Details:ScrollDamage()
 			end
 			
 			if (self.SpellID) then
-				GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT")
-				GameTooltip:SetSpellByID(self.SpellID)
-				GameTooltip:AddLine(" ")
-				GameTooltip:Show()
+				--spell tooltip removed, it's to much annoying
+				--GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT")
+				--GameTooltip:SetSpellByID(self.SpellID)
+				--GameTooltip:AddLine(" ")
+				--GameTooltip:Show()
 			end
 		end
 		
@@ -214,6 +224,24 @@ function Details:ScrollDamage()
 		DetailsScrollDamage:SetScript ("OnHide", function()
 			combatLogReader:UnregisterEvent ("COMBAT_LOG_EVENT_UNFILTERED")
 		end)
+
+		--statusbar and auto open checkbox
+		local statusBar = CreateFrame("frame", nil, DetailsScrollDamage, "BackdropTemplate")
+		statusBar:SetPoint("bottomleft", DetailsScrollDamage, "bottomleft")
+		statusBar:SetPoint("bottomright", DetailsScrollDamage, "bottomright")
+		statusBar:SetHeight(20)
+		statusBar:SetAlpha (0.8)
+		DF:ApplyStandardBackdrop(statusBar)
+
+		local onToggleAutoOpen = function(_, _, state)
+			Details.damage_scroll_auto_open = state
+		end
+		local autoOpenCheckbox = DetailsFramework:CreateSwitch(statusBar, onToggleAutoOpen, Details.auto_open_news_window, _, _, _, _, "AutoOpenCheckbox", _, _, _, _, _, DetailsFramework:GetTemplate ("switch", "OPTIONS_CHECKBOX_BRIGHT_TEMPLATE"))
+		autoOpenCheckbox:SetAsCheckBox()
+		autoOpenCheckbox:SetPoint("left", statusBar, "left", 5, 0)
+
+		local autoOpenText = DetailsFramework:CreateLabel(statusBar, "Auto Open on Training Dummy")
+		autoOpenText:SetPoint("left", autoOpenCheckbox, "right", 2, 0)
 	end
 
 	DetailsScrollDamage:Show()
@@ -225,6 +253,9 @@ local targetDummiesIds = {
 }
 
 targetDummieHandle:SetScript("OnEvent", function(_, _, unit)
+	if (not Details.damage_scroll_auto_open) then
+		return
+	end
     if (UnitExists("target")) then
         local serial = UnitGUID("target")
         if (serial) then

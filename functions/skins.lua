@@ -1778,7 +1778,6 @@ local _
 		icon_titletext_position = {1, 2},
 		
 		instance_cprops = {
-			["skin"] = "Dark Theme",
 			["hide_in_combat_type"] = 1,
 			["fontstrings_text3_anchor"] = 37,
 			["menu_anchor"] = {
@@ -2203,6 +2202,7 @@ local _
 				["options"] = {
 				},
 			},
+			["skin"] = "Dark Theme",
 		},
 		
 		skin_options = {

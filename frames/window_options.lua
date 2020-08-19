@@ -9,20 +9,20 @@
 --[[
 	search for "~number" without the quotes to quick access the page:
 	
-	1 - general
-	2 - combat / pvp pve
-	3 - skin
-	4 - row settings
-	5 - row texts
-	6 - window settings
-	7 - title bar buttons
-	8 - row advanced
+	-1 - general
+	-2 - combat / pvp pve (removed)
+	-3 - skin
+	-4 - row settings
+	-5 - row texts
+	-6 - window settings
+	-7 - title bar buttons
+	-8 - row advanced (removed)
 	9 - wallpaper
 	10 - performance teaks
 	11 - raid tools
-	12 - plugins
-	13 - profiles
-	14 - title bar text
+	-12 - plugins
+	-13 - profiles
+	-14 - title bar text (removed)
 	15 - custom spells
 	16 - data for charts
 	17 - automatization settings
