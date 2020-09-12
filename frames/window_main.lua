@@ -7734,7 +7734,7 @@ function _detalhes:TitleTextTickTimer (instance)
 		local currentText = instance.menu_attribute_string.originalText
 		if (currentText) then
 			local timer = format_timer (_detalhes.tabela_vigente:GetCombatTime())
-			instance.menu_attribute_string:SetText("[" .. timer .. "] " .. currentText)
+			instance.menu_attribute_string:SetText(timer .. " " .. currentText)
 
 		else
 			local current_text = instance.menu_attribute_string:GetText()

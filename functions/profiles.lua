@@ -990,7 +990,7 @@ local default_profile = {
 	
 	--> skins
 		standard_skin = false,
-		skin = "WoW Interface",
+		skin = "Dark Theme",
 		profile_save_pos = true,
 		options_group_edit = true,
 		
@@ -1220,7 +1220,7 @@ local default_global_data = {
 		lastUpdateWarning = 0,
 		update_warning_timeout = 10,
 		report_where = "SAY",
-		realm_sync = true,
+		realm_sync = true, --deprecated
 		spell_school_cache = {},
 		global_plugin_database = {},
 		last_changelog_size = 0,

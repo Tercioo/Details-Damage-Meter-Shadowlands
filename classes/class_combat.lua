@@ -341,24 +341,31 @@
 		local container = self[attribute]
 		if (container) then
 
+			local actorTable = container._ActorTable
+
 			--get the object for the deleted actor
 			local deletedActor = self(attribute, actorName)
 			if (not deletedActor) then
-				print("Details: actor to be erased not found.")
 				return
+			else
+				for i = 1, #actorTable do
+					local actor = actorTable[i]
+					if (actor.nome == actorName) then
+						print ("Details: found the actor: ", actorName, actor.nome, i)
+						break
+					end
+				end
 			end
 
 			--store the index it was found
 			local indexToDelete
 
-			local actorTable = container._ActorTable
-			for i = #actorTable, 1, -1 do
+			for i = 1, #actorTable do
 				local actor = actorTable[i]
 
 				--is this the actor we want to remove?
-				if (actor.nome == actorName) then
+				if (actor.nome == actorName or actor == deletedActor) then
 					indexToDelete = i
-
 				else
 					--get the damage dealt and remove
 					local damageDoneToRemovedActor = (actor.targets[actorName]) or 0
@@ -378,7 +385,7 @@
 
 					--spells
 					local spellsTable = actor.spells._ActorTable
-					for spellId, spellTable in spellsTable do
+					for spellId, spellTable in pairs(spellsTable) do
 						local damageDoneToRemovedActor = (spellTable.targets[actorName]) or 0
 						spellTable.targets[actorName] = nil
 						spellTable.total = spellTable.total - damageDoneToRemovedActor
@@ -388,8 +395,9 @@
 
 			if (indexToDelete) then
 				tremove(container._ActorTable, indexToDelete)
+				print("Details: damage done to ".. actorName .." removed.")
 			else
-				print("Details: index of the actor to be erased not found.")
+				print("Details: index of the " .. actorName .. " not found on map index.")
 			end
 		end
 	end

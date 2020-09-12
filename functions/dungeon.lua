@@ -297,7 +297,7 @@ function mythicDungeonCharts.ShowReadyPanel()
 		f:SetBackdropColor (0, 0, 0, 0.9)
 		f:SetBackdropBorderColor (0, 0, 0, 1)
 		DetailsFramework:ApplyStandardBackdrop (f)
-		DetailsFramework:CreateTitleBar (f, "Details! Dungeon Chart is Ready!")
+		DetailsFramework:CreateTitleBar (f, "Details! Damage Graphic for M+")
 
 		f:Hide()
 		

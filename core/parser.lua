@@ -222,6 +222,7 @@
 
 		[32175] = 17364, -- shaman Stormstrike (from Turkar on github)
 		[32176] = 17364, -- shaman Stormstrike
+		[45284] = 188196, --shaman lightining bolt overloaded
 		
 	}
 	
@@ -696,6 +697,12 @@
 		elseif (meu_dono) then
 			--> � um pet
 			who_name = who_name .. " <" .. meu_dono.nome .. ">"
+		end
+
+		if (not este_jogador) then
+			print ("no ente_jogador")
+			print (token, time, who_serial, who_name, who_flags, alvo_serial, alvo_name, alvo_flags, alvo_flags2, spellid, spellname, spelltype, amount)
+			return
 		end
 		
 		--> his target
@@ -3414,12 +3421,38 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 				if (not este_jogador) then
 					este_jogador = _current_damage_container:PegarCombatente (who_serial, who_name, who_flags, true)
 				end
-				--> actor spells table
-				local spell = este_jogador.spells._ActorTable [spellid]
-				if (not spell) then
-					spell = este_jogador.spells:PegaHabilidade (spellid, true, token)
+
+--[[
+Message: Interface\AddOns\Details\core\parser.lua:3418: attempt to index local 'este_jogador' (a nil value)
+Time: Sun Aug 30 15:43:58 2020
+Count: 39
+Stack: Interface\AddOns\Details\core\parser.lua:3418: attempt to index local 'este_jogador' (a nil value)
+[string "@Interface\AddOns\Details\core\parser.lua"]:3418: in function <Interface\AddOns\Details\core\parser.lua:3335>
+[string "=(tail call)"]: ?
+
+Locals: self = nil
+token = "SPELL_CAST_SUCCESS"
+time = 1598813037.261000
+who_serial = "Vehicle-0-2085-2296-4034-168406-000B4BF36E"
+who_name = "Waltzing Venthyr"
+who_flags = 2632
+alvo_serial = ""
+alvo_name = nil
+alvo_flags = -2147483648
+alvo_flags2 = -2147483648
+spellid = 335773
+spellname = "Waltzing Venthyr"
+spelltype = 1
+--]]
+
+				if (este_jogador) then 
+					--> actor spells table
+					local spell = este_jogador.spells._ActorTable [spellid] --line where the actor was nil
+					if (not spell) then
+						spell = este_jogador.spells:PegaHabilidade (spellid, true, token)
+					end
+					spell.successful_casted = spell.successful_casted + 1
 				end
-				spell.successful_casted = spell.successful_casted + 1
 			end
 			return
 		end
@@ -3722,13 +3755,13 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 
 	------------------------------------------------------------------------------------------------
 	--> build dead
-
+		--print("dead", alvo_flags, _bit_band (alvo_flags, 0x00000008) ~= 0, _current_encounter_id)
 		
 		if (_in_combat and alvo_flags and _bit_band (alvo_flags, 0x00000008) ~= 0) then -- and _in_combat --byte 1 = 8 (AFFILIATION_OUTSIDER)
 			--> outsider death while in combat
 			
 				--rules for specific encounters
-				if (_current_encounter_id == 2296) then --> The Council of Blood
+				if (_current_encounter_id == 2412) then --> The Council of Blood
 
 					if (not Details.exp90temp.delete_damage_TCOB) then
 						return
@@ -3737,11 +3770,10 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 					--what boss died
 					local bossDeadNpcId = Details:GetNpcIdFromGuid(alvo_serial)
 
-					--check if is actually the boss
-					if (not bossDeadNpcId == 166969 and
-						not bossDeadNpcId == 166970 and
-						not bossDeadNpcId == 166971) then
-							return
+					print("Details: boss died:", bossDeadNpcId, alvo_name, alvo_serial)
+
+					if (bossDeadNpcId ~= 166969 and bossDeadNpcId ~= 166970 and bossDeadNpcId ~= 166971) then
+						return
 					end
 
 				--[[
@@ -3755,17 +3787,20 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 						for i = 1, 5 do
 							local unitId = "boss" .. i
 
-							--this boss is alive?
-							local bossHealth = _G.UnitHealth(unitId)
-							if (bossHealth and bossHealth > 1000) then 
+							if (_G.UnitExists(unitId)) then
+								local bossHealth = _G.UnitHealth(unitId)
+								local bossName = _G.UnitName(unitId)
 								local bossSerial = _G.UnitGUID(unitId)
-								if (bossSerial) then
-									local bossNpcId = Details:GetNpcIdFromGuid(bossSerial)
-									if (bossNpcId and bossNpcId ~= bossDeadNpcId) then
-										--remove the damage done
-										local currentCombat = Details:GetCurrentCombat()
-										currentCombat:DeleteActor(DETAILS_ATTRIBUTE_DAMAGE, _G.UnitName(unitId), false)
-										Details:Msg("TEST: deleting damage done to " .. _G.UnitName(unitId))
+
+								if (bossHealth and bossHealth > 100000) then 
+									if (bossSerial) then
+										local bossNpcId = Details:GetNpcIdFromGuid(bossSerial)
+										if (bossNpcId and bossNpcId ~= bossDeadNpcId) then
+											print("Details: deleting boss:", bossName)
+											--remove the damage done
+											local currentCombat = Details:GetCurrentCombat()
+											currentCombat:DeleteActor(DETAILS_ATTRIBUTE_DAMAGE, bossName, false)
+										end
 									end
 								end
 							end
@@ -4719,13 +4754,22 @@ local SPELL_POWER_PAIN = SPELL_POWER_PAIN or (PowerEnum and PowerEnum.Pain) or 1
 		--store a boss encounter when out of combat since it might need to load the storage
 		if (_detalhes.schedule_store_boss_encounter) then
 			if (not _detalhes.logoff_saving_data) then
-				--_detalhes.StoreEncounter()
-				local successful, errortext = pcall (_detalhes.StoreEncounter)
+				local successful, errortext = pcall (Details.Database.StoreEncounter)
 				if (not successful) then
-					_detalhes:Msg ("error occurred on StoreEncounter():", errortext)
+					_detalhes:Msg ("error occurred on Details.Database.StoreEncounter():", errortext)
 				end
 			end
 			_detalhes.schedule_store_boss_encounter = nil
+		end
+
+		if (Details.schedule_store_boss_encounter_wipe) then
+			if (not _detalhes.logoff_saving_data) then
+				local successful, errortext = pcall (Details.Database.StoreWipe)
+				if (not successful) then
+					_detalhes:Msg ("error occurred on Details.Database.StoreWipe():", errortext)
+				end
+			end
+			Details.schedule_store_boss_encounter_wipe = nil
 		end
 		
 		--when a large amount of data has been removed and the player is in combat, schedule to run the hard garbage collector (the blizzard one, not the details! internal)

@@ -54,9 +54,24 @@ function Details:BossModsLink()
                 end
             end
             
-            local phase = mod and mod.vb and mod.vb.phase
+            local newPhase
+
+            if (msg == "stage") then
+                local ID, pahseChange, n1, n2, n3 = ...
+                if (pahseChange == "stagechange") then
+                    msg = msg:gsub("%a", "")
+                    msg = msg:gsub("%s+", "")
+                    newPhase = tonumber(msg)
+                end
+            end
+
+            --local phase = mod and mod.vb and mod.vb.phase
+            local phase = newPhase
+
+           -- print ("DBM 1", phase, Details.encounter_table.phase, Details.encounter_table.phase ~= phase)
+
             if (phase and Details.encounter_table.phase ~= phase) then
-                --Details:Msg ("Current phase:", phase)
+                Details:Msg ("Current phase is now:", phase)
                 
                 Details:OnCombatPhaseChanged()
                 

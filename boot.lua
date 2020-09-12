@@ -114,6 +114,8 @@ do
 				[2164] = true, --Eternal Palace
 
 				[2217] = true, --8.3
+
+				[2296] = true, --castle narnia
 			}
 			
 			--must fail in map and encounter id to not store data
@@ -329,7 +331,7 @@ do
 		--> player detail skin
 			_detalhes.playerdetailwindow_skins = {}
 
-		_detalhes.BitfieldSwapDebuffsIDs = {265646, 272407, 269691, 273401, 269131, 260900, 260926, 284995, 292826, 311367, 310567, 308996, 307832}
+		_detalhes.BitfieldSwapDebuffsIDs = {265646, 272407, 269691, 273401, 269131, 260900, 260926, 284995, 292826, 311367, 310567, 308996, 307832, 327414}
 		
 		--> auto run code
 		_detalhes.RunCodeTypes = {

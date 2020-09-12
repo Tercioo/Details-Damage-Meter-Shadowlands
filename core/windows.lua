@@ -1554,7 +1554,10 @@ end
 
 function _detalhes.OpenAPI()
 	DetailsAPI2Frame:Show()
-	DetailsAPI2Frame.Refresh()
+
+	print("it's broken atm")
+	DetailsAPI2Frame.Refresh() --doesn't exists?
+
 	DetailsPluginContainerWindow.OpenPlugin(DetailsAPI2Frame)
 end
 

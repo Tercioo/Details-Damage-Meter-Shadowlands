@@ -660,10 +660,9 @@
 					
 					--> add to storage
 					if (not InCombatLockdown() and not UnitAffectingCombat ("player") and not Details.logoff_saving_data) then
-						--Details.StoreEncounter()
-						local successful, errortext = pcall (Details.StoreEncounter)
+						local successful, errortext = pcall (Details.Database.StoreEncounter)
 						if (not successful) then
-							Details:Msg ("error occurred on StoreEncounter():", errortext)
+							Details:Msg ("error occurred on Details.Database.StoreEncounter():", errortext)
 						end
 					else
 						Details.schedule_store_boss_encounter = true
@@ -674,6 +673,17 @@
 					Details:CheckFor_TrashSuppressionOnEncounterEnd()
 				else
 					Details:SendEvent ("COMBAT_BOSS_WIPE", nil, Details.tabela_vigente)
+
+					--> add to storage
+					if (not InCombatLockdown() and not UnitAffectingCombat ("player") and not Details.logoff_saving_data) then
+						local successful, errortext = pcall (Details.Database.StoreWipe)
+						if (not successful) then
+							Details:Msg ("error occurred on Details.Database.StoreWipe():", errortext)
+						end
+					else
+						Details.schedule_store_boss_encounter_wipe = true
+					end
+					
 				end
 
 				--if (Details:GetBossDetails (Details.tabela_vigente.is_boss.mapid, Details.tabela_vigente.is_boss.index) or ) then

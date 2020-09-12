@@ -1,5 +1,5 @@
 
-local dversion = 202
+local dversion = 205
 
 local major, minor = "DetailsFramework-1.0", dversion
 local DF, oldminor = LibStub:NewLibrary (major, minor)
@@ -1238,6 +1238,7 @@ end
 					else
 						slider.slider:SetValueStep (widget_table.step)
 					end
+					slider.useDecimals = widget_table.usedecimals
 
 					slider.slider:SetMinMaxValues (widget_table.min, widget_table.max)
 					slider.slider:SetValue (widget_table.get())
