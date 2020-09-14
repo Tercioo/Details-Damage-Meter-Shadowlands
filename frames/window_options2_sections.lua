@@ -53,6 +53,16 @@ function Details.options.SetCurrentInstanceAndRefresh(instance)
     end
 end
 
+function Details.options.RefreshInstances(instance)
+    if (instance) then
+        Details:InstanceGroupCall(instance, "InstanceRefreshRows")
+        instance:InstanceReset()
+    else
+        Details:InstanceGroupCall(instance, "InstanceRefreshRows")
+        Details:InstanceGroupCall(instance, "InstanceReset")
+    end
+end
+
 function Details.options.GetCurrentInstanceInOptionsPanel()
     return currentInstance
 end
@@ -159,7 +169,7 @@ do
                 return timetypeOptions
             end
 
-        --> auto erase
+        --> auto erase | erase data
             local onSelectEraseData = function (_, _, eraseType)
                 _detalhes.segments_auto_erase = eraseType
                 afterUpdate()
@@ -254,7 +264,7 @@ do
                 type = "toggle",
                 get = function() return currentInstance.clickthrough_window end,
                 set = function (self, fixedparam, value)
-                    Details:InstanceGroupCall(currentInstance, "UpdateClickThroughSettings", nil, value)
+                    Details:InstanceGroupCall(currentInstance, "UpdateClickThroughSettings", nil, value, value, value)
                     afterUpdate()
                 end,
                 name = "Click Through",
@@ -294,7 +304,9 @@ do
                 desc = Loc ["STRING_OPTIONS_TIMEMEASURE_DESC"],
             },
 
-            {--auto erase settings
+            {type = "blank"},
+
+            {--auto erase settings | erase data
                 type = "select",
                 get = function() return _detalhes.segments_auto_erase end,
                 values = function()
@@ -365,7 +377,7 @@ do
                 desc = Loc ["STRING_OPTIONS_BG_UNIQUE_SEGMENT_DESC"],
             },
 
-            {type = "blank"},
+            {type = "breakline"},
             {type = "label", get = function() return Loc ["STRING_OPTIONS_OVERALL_ANCHOR"] end, text_template = subSectionTitleTextTemplate},
 
             {--erase overall data on new boss
@@ -399,7 +411,8 @@ do
                 desc = Loc ["STRING_OPTIONS_OVERALL_LOGOFF_DESC"],
             },
 
-            {type = "breakline"},
+            {type = "blank"},
+
             {type = "label", get = function() return "Window Control:" end, text_template = DF:GetTemplate("font", "ORANGE_FONT_TEMPLATE")},
             {--lock instance
                 type = "execute",
@@ -501,7 +514,7 @@ do
                     Details.immersion_pets_on_solo_play = value
                     afterUpdate()
                 end,
-                name = "Show pets when solo",
+                name = "Show pets when solo", --localize-me
                 desc = "Show pets when solo",
             },
 
@@ -1351,6 +1364,7 @@ do
                 set = function (self, fixedparam, value)
                     editInstanceSetting(currentInstance, "total_bar", "enabled", value)
                     afterUpdate()
+                    Details.options.RefreshInstances(currentInstance)
                 end,
                 name = Loc ["STRING_ENABLED"],
                 desc = Loc ["STRING_OPTIONS_SHOW_TOTALBAR_DESC"],
@@ -3150,11 +3164,13 @@ do
    
     local buildSection = function(sectionFrame)
 
-        local selectProfile = function (_, instance, profileName)
-			_detalhes:ApplyProfile(profileName)
+        local selectProfile = function (_, _, profileName)
+            _detalhes:ApplyProfile(profileName)
             _detalhes:Msg (Loc ["STRING_OPTIONS_PROFILE_LOADED"], profileName)
-            afterUpdate()
-            Details.options.SetCurrentInstanceAndRefresh(instance)
+            --Details.options.SetCurrentInstanceAndRefresh(currentInstance)
+            --afterUpdate()
+            _G.DetailsOptionsWindow:Hide()
+            Details:OpenOptionsWindow(currentInstance, false, 9)
         end
         
 		local buildProfileMenu = function(func)
@@ -3314,3 +3330,396 @@ do
 
     tinsert(Details.optionsSection, buildSection)
 end
+
+
+-- ~10 tooltips
+do
+    local buildSection = function(sectionFrame)
+
+        --button for anchor toggle
+        local refreshToggleAnchor = function()
+            local buttonToggleAnchor = sectionFrame.widget_list_by_type.button[1]
+            if (_detalhes.tooltip.anchored_to == 1) then
+                buttonToggleAnchor:Disable()
+            else
+                buttonToggleAnchor:Enable()
+            end
+        end
+
+		--text face
+            local on_select_tooltip_font = function (self, _, fontName)
+                _detalhes.tooltip.fontface = fontName
+                _detalhes:SendOptionsModifiedEvent (DetailsOptionsWindow.instance)
+            end
+            
+            local buildTooltipFontOptions = function()
+                local fonts = {}
+                for name, fontPath in pairs (SharedMedia:HashTable ("font")) do 
+                
+                    fonts [#fonts+1] = {value = name, icon = font_select_icon, texcoord = font_select_texcoord, label = name, onclick = on_select_tooltip_font, font = fontPath, descfont = name, desc = "Our thoughts strayed constantly\nAnd without boundary\nThe ringing of the division bell had began."}
+                end
+                table.sort (fonts, function (t1, t2) return t1.label < t2.label end)
+                return fonts
+            end
+        
+        --number format
+            local icon = [[Interface\COMMON\mini-hourglass]]
+            local iconcolor = {1, 1, 1, .5}
+            local iconsize = {14, 14}
+        
+            local onSelectTimeAbbreviation = function (_, _, abbreviationtype)
+                _detalhes.tooltip.abbreviation = abbreviationtype
+                
+                _detalhes.atributo_damage:UpdateSelectedToKFunction()
+                _detalhes.atributo_heal:UpdateSelectedToKFunction()
+                _detalhes.atributo_energy:UpdateSelectedToKFunction()
+                _detalhes.atributo_misc:UpdateSelectedToKFunction()
+                _detalhes.atributo_custom:UpdateSelectedToKFunction()
+                
+                afterUpdate()
+            end
+
+            local abbreviationOptions = {
+                {value = 1, label = Loc ["STRING_OPTIONS_PS_ABBREVIATE_NONE"], desc = "Example: 305.500 -> 305500", onclick = onSelectTimeAbbreviation, icon = icon, iconcolor = iconcolor, iconsize = iconsize}, --, desc = ""
+                {value = 2, label = Loc ["STRING_OPTIONS_PS_ABBREVIATE_TOK"], desc = "Example: 305.500 -> 305.5K", onclick = onSelectTimeAbbreviation, icon = icon, iconcolor = iconcolor, iconsize = iconsize}, --, desc = ""
+                {value = 3, label = Loc ["STRING_OPTIONS_PS_ABBREVIATE_TOK2"], desc = "Example: 305.500 -> 305K", onclick = onSelectTimeAbbreviation, icon = icon, iconcolor = iconcolor, iconsize = iconsize}, --, desc = ""
+                {value = 4, label = Loc ["STRING_OPTIONS_PS_ABBREVIATE_TOK0"], desc = "Example: 25.305.500 -> 25M", onclick = onSelectTimeAbbreviation, icon = icon, iconcolor = iconcolor, iconsize = iconsize}, --, desc = ""
+                {value = 5, label = Loc ["STRING_OPTIONS_PS_ABBREVIATE_TOKMIN"], desc = "Example: 305.500 -> 305.5k", onclick = onSelectTimeAbbreviation, icon = icon, iconcolor = iconcolor, iconsize = iconsize}, --, desc = ""
+                {value = 6, label = Loc ["STRING_OPTIONS_PS_ABBREVIATE_TOK2MIN"], desc = "Example: 305.500 -> 305k", onclick = onSelectTimeAbbreviation, icon = icon, iconcolor = iconcolor, iconsize = iconsize}, --, desc = ""
+                {value = 7, label = Loc ["STRING_OPTIONS_PS_ABBREVIATE_TOK0MIN"], desc = "Example: 25.305.500 -> 25m", onclick = onSelectTimeAbbreviation, icon = icon, iconcolor = iconcolor, iconsize = iconsize}, --, desc = ""
+                {value = 8, label = Loc ["STRING_OPTIONS_PS_ABBREVIATE_COMMA"], desc = "Example: 25305500 -> 25.305.500", onclick = onSelectTimeAbbreviation, icon = icon, iconcolor = iconcolor, iconsize = iconsize} --, desc = ""
+            }
+            local buildAbbreviationMenu = function()
+                return abbreviationOptions
+            end
+
+        --maximize method
+            local onSelectMaximize = function (_, _, maximizeType)
+                _detalhes.tooltip.maximize_method = maximizeType
+                _detalhes.atributo_damage:UpdateSelectedToKFunction()
+                _detalhes.atributo_heal:UpdateSelectedToKFunction()
+                _detalhes.atributo_energy:UpdateSelectedToKFunction()
+                _detalhes.atributo_misc:UpdateSelectedToKFunction()
+                _detalhes.atributo_custom:UpdateSelectedToKFunction()
+                
+                afterUpdate()
+            end
+            
+            local icon = [[Interface\Buttons\UI-Panel-BiggerButton-Up]]
+            local iconcolor = {1, 1, 1, 1}
+            local iconcord = {0.1875, 0.78125+0.109375, 0.78125+0.109375+0.03, 0.21875-0.109375-0.03}
+            
+            local maximizeOptions = {
+                {value = 1, label = Loc ["STRING_OPTIONS_TOOLTIPS_MAXIMIZE1"], onclick = onSelectMaximize, icon = icon, iconcolor = iconcolor, texcoord = iconcord}, --, desc = ""
+                {value = 2, label = Loc ["STRING_OPTIONS_TOOLTIPS_MAXIMIZE2"], onclick = onSelectMaximize, icon = icon, iconcolor = iconcolor, texcoord = iconcord}, --, desc = ""
+                {value = 3, label = Loc ["STRING_OPTIONS_TOOLTIPS_MAXIMIZE3"], onclick = onSelectMaximize, icon = icon, iconcolor = iconcolor, texcoord = iconcord}, --, desc = ""
+                {value = 4, label = Loc ["STRING_OPTIONS_TOOLTIPS_MAXIMIZE4"], onclick = onSelectMaximize, icon = icon, iconcolor = iconcolor, texcoord = iconcord}, --, desc = ""
+                {value = 5, label = Loc ["STRING_OPTIONS_TOOLTIPS_MAXIMIZE5"], onclick = onSelectMaximize, icon = icon, iconcolor = iconcolor, texcoord = iconcord}, --, desc = ""
+            }
+            local buildMaximizeMenu = function()
+                return maximizeOptions
+            end
+
+        --tooltip side
+            local onSelectAnchorPoint = function (_, _, selected_anchor)
+                _detalhes.tooltip.anchor_point = selected_anchor
+                afterUpdate()
+            end
+            
+            local anchorPointOptions = {
+                {value = "top", label = Loc ["STRING_ANCHOR_TOP"], onclick = onSelectAnchorPoint, icon = [[Interface\Buttons\Arrow-Up-Up]], texcoord = {0, 0.8125, 0.1875, 0.875}},
+                {value = "bottom", label = Loc ["STRING_ANCHOR_BOTTOM"], onclick = onSelectAnchorPoint, icon = [[Interface\Buttons\Arrow-Up-Up]], texcoord = {0, 0.875, 1, 0.1875}},
+                {value = "left", label = Loc ["STRING_ANCHOR_LEFT"], onclick = onSelectAnchorPoint, icon = [[Interface\CHATFRAME\UI-InChatFriendsArrow]], texcoord = {0.5, 0, 0, 0.8125}},
+                {value = "right", label = Loc ["STRING_ANCHOR_RIGHT"], onclick = onSelectAnchorPoint, icon = [[Interface\CHATFRAME\UI-InChatFriendsArrow]], texcoord = {0, 0.5, 0, 0.8125}},
+                {value = "topleft", label = Loc ["STRING_ANCHOR_TOPLEFT"], onclick = onSelectAnchorPoint, icon = [[Interface\Buttons\UI-AutoCastableOverlay]], texcoord = {0.796875, 0.609375, 0.1875, 0.375}},
+                {value = "bottomleft", label = Loc ["STRING_ANCHOR_BOTTOMLEFT"], onclick = onSelectAnchorPoint, icon = [[Interface\Buttons\UI-AutoCastableOverlay]], texcoord = {0.796875, 0.609375, 0.375, 0.1875}},
+                {value = "topright", label = Loc ["STRING_ANCHOR_TOPRIGHT"], onclick = onSelectAnchorPoint, icon = [[Interface\Buttons\UI-AutoCastableOverlay]], texcoord = {0.609375, 0.796875, 0.1875, 0.375}},
+                {value = "bottomright", label = Loc ["STRING_ANCHOR_BOTTOMRIGHT"], onclick = onSelectAnchorPoint, icon = [[Interface\Buttons\UI-AutoCastableOverlay]], texcoord = {0.609375, 0.796875, 0.375, 0.1875}},
+            }
+            
+            local buildAnchorPointMenu = function()
+                return anchorPointOptions
+            end
+
+        --tooltip relative side
+			local onSelectAnchorRelative = function (_, _, selected_anchor)
+				_detalhes.tooltip.anchor_relative = selected_anchor
+                afterUpdate()
+			end
+			
+			local anchorRelativeOptions = {
+				{value = "top", label = Loc ["STRING_ANCHOR_TOP"], onclick = onSelectAnchorRelative, icon = [[Interface\Buttons\Arrow-Up-Up]], texcoord = {0, 0.8125, 0.1875, 0.875}},
+				{value = "bottom", label = Loc ["STRING_ANCHOR_BOTTOM"], onclick = onSelectAnchorRelative, icon = [[Interface\Buttons\Arrow-Up-Up]], texcoord = {0, 0.875, 1, 0.1875}},
+				{value = "left", label = Loc ["STRING_ANCHOR_LEFT"], onclick = onSelectAnchorRelative, icon = [[Interface\CHATFRAME\UI-InChatFriendsArrow]], texcoord = {0.5, 0, 0, 0.8125}},
+				{value = "right", label = Loc ["STRING_ANCHOR_RIGHT"], onclick = onSelectAnchorRelative, icon = [[Interface\CHATFRAME\UI-InChatFriendsArrow]], texcoord = {0, 0.5, 0, 0.8125}},
+				{value = "topleft", label = Loc ["STRING_ANCHOR_TOPLEFT"], onclick = onSelectAnchorRelative, icon = [[Interface\Buttons\UI-AutoCastableOverlay]], texcoord = {0.796875, 0.609375, 0.1875, 0.375}},
+				{value = "bottomleft", label = Loc ["STRING_ANCHOR_BOTTOMLEFT"], onclick = onSelectAnchorRelative, icon = [[Interface\Buttons\UI-AutoCastableOverlay]], texcoord = {0.796875, 0.609375, 0.375, 0.1875}},
+				{value = "topright", label = Loc ["STRING_ANCHOR_TOPRIGHT"], onclick = onSelectAnchorRelative, icon = [[Interface\Buttons\UI-AutoCastableOverlay]], texcoord = {0.609375, 0.796875, 0.1875, 0.375}},
+				{value = "bottomright", label = Loc ["STRING_ANCHOR_BOTTOMRIGHT"], onclick = onSelectAnchorRelative, icon = [[Interface\Buttons\UI-AutoCastableOverlay]], texcoord = {0.609375, 0.796875, 0.375, 0.1875}},
+			}
+			
+			local buildAnchorRelativeMenu = function()
+				return anchorRelativeOptions
+			end            
+
+        --anchor
+            local onSelectAnchor = function (_, _, selected_anchor)
+                _detalhes.tooltip.anchored_to = selected_anchor
+                refreshToggleAnchor()
+                afterUpdate()
+            end
+            
+            local anchorOptions = {
+                {value = 1, label = Loc ["STRING_OPTIONS_TOOLTIPS_ANCHOR_TO1"], onclick = onSelectAnchor, icon = [[Interface\Buttons\UI-GuildButton-OfficerNote-Disabled]]},
+                {value = 2, label = Loc ["STRING_OPTIONS_TOOLTIPS_ANCHOR_TO2"], onclick = onSelectAnchor, icon = [[Interface\Buttons\UI-GuildButton-OfficerNote-Disabled]]},
+            }
+            local buildAnchorMenu = function()
+                return anchorOptions
+            end
+
+        local sectionOptions = {
+            {type = "label", get = function() return Loc["STRING_OPTIONS_TOOLTIP_ANCHORTEXTS"] end, text_template = subSectionTitleTextTemplate},
+
+            {--text shadow
+                type = "toggle",
+                get = function() return _detalhes.tooltip.fontshadow end,
+                set = function (self, fixedparam, value)
+                    _detalhes.tooltip.fontshadow = value
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_TEXT_LOUTILINE"],
+                desc = Loc ["STRING_OPTIONS_TOOLTIPS_FONTSHADOW_DESC"],
+            },
+
+            {type = "label", get = function() return Loc["STRING_OPTIONS_TOOLTIPS_FONTCOLOR"] end},
+
+			{--text color left
+                type = "color",
+                get = function()
+                    local r, g, b, a = unpack(_detalhes.tooltip.fontcolor)
+                    return {r, g, b, a}
+                end,
+                set = function (self, r, g, b, a)
+                    local color = _detalhes.tooltip.fontcolor
+                    color[1] = r
+                    color[2] = g
+                    color[3] = b
+                    color[4] = a
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_LEFT"],
+                desc = Loc ["STRING_LEFT"],
+            },
+
+			{--text color right
+                type = "color",
+                get = function()
+                    local r, g, b, a = unpack(_detalhes.tooltip.fontcolor_right)
+                    return {r, g, b, a}
+                end,
+                set = function (self, r, g, b, a)
+                    local color = _detalhes.tooltip.fontcolor_right
+                    color[1] = r
+                    color[2] = g
+                    color[3] = b
+                    color[4] = a
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_RIGHT"],
+                desc = Loc ["STRING_RIGHT"],
+            },
+
+			{--text color header
+                type = "color",
+                get = function()
+                    local r, g, b, a = unpack(_detalhes.tooltip.header_text_color)
+                    return {r, g, b, a}
+                end,
+                set = function (self, r, g, b, a)
+                    local color = _detalhes.tooltip.header_text_color
+                    color[1] = r
+                    color[2] = g
+                    color[3] = b
+                    color[4] = a
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_TOOLTIPS_ANCHORCOLOR"],
+                desc = Loc ["STRING_OPTIONS_TOOLTIPS_ANCHORCOLOR"],
+            },
+
+            {--text size
+                type = "range",
+                get = function() return _detalhes.tooltip.fontsize end,
+                set = function (self, fixedparam, value)
+                    _detalhes.tooltip.fontsize = value
+                    afterUpdate()
+                end,
+                min = 5,
+                max = 32,
+                step = 1,
+                name = Loc ["STRING_OPTIONS_TEXT_SIZE"],
+                desc = Loc ["STRING_OPTIONS_TEXT_SIZE_DESC"],
+            },
+
+            {--text font
+                type = "select",
+                get = function() return _detalhes.tooltip.fontface end,
+                values = function()
+                    return buildTooltipFontOptions()
+                end,
+                name = Loc ["STRING_OPTIONS_TEXT_FONT"],
+                desc = Loc ["STRING_OPTIONS_TEXT_FONT_DESC"],
+            },
+
+            {type = "blank"},
+            {type = "label", get = function() return Loc ["STRING_OPTIONS_MENU_ATTRIBUTESETTINGS_ANCHOR"] end, text_template = subSectionTitleTextTemplate},
+
+			{--background color
+                type = "color",
+                get = function()
+                    local r, g, b, a = unpack(_detalhes.tooltip.background)
+                    return {r, g, b, a}
+                end,
+                set = function (self, r, g, b, a)
+                    local color = _detalhes.tooltip.background
+                    color[1] = r
+                    color[2] = g
+                    color[3] = b
+                    color[4] = a
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_TOOLTIPS_BACKGROUNDCOLOR"],
+                desc = Loc ["STRING_OPTIONS_TOOLTIPS_BACKGROUNDCOLOR"],
+            },
+
+            {--show amount
+                type = "toggle",
+                get = function() return _detalhes.tooltip.show_amount end,
+                set = function (self, fixedparam, value)
+                    _detalhes.tooltip.show_amount = value
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_TOOLTIPS_SHOWAMT"],
+                desc = Loc ["STRING_OPTIONS_TOOLTIPS_SHOWAMT_DESC"],
+            },
+
+            {--number system
+                type = "select",
+                get = function() return _detalhes.numerical_system end,
+                values = function()
+                    return buildAbbreviationMenu()
+                end,
+                name = Loc ["STRING_NUMERALSYSTEM"],
+                desc = Loc ["STRING_NUMERALSYSTEM_DESC"],
+            },
+
+            {--maximize method
+                type = "select",
+                get = function() return _detalhes.tooltip.maximize_method end,
+                values = function()
+                    return buildMaximizeMenu()
+                end,
+                name = Loc ["STRING_OPTIONS_TOOLTIPS_MAXIMIZE"],
+                desc = Loc ["STRING_OPTIONS_TOOLTIPS_MAXIMIZE_DESC"],
+            },
+
+            {type = "breakline"},
+            {type = "label", get = function() return Loc ["STRING_OPTIONS_TOOLTIPS_ANCHOR_POINT"] end, text_template = subSectionTitleTextTemplate},
+
+            {--anchor
+                type = "select",
+                get = function() return _detalhes.tooltip.anchored_to end,
+                values = function()
+                    return buildAnchorMenu()
+                end,
+                name = Loc ["STRING_OPTIONS_TOOLTIPS_ANCHOR_TO"],
+                desc = Loc ["STRING_OPTIONS_TOOLTIPS_ANCHOR_TO_DESC"],
+            },
+
+            {--toggle anchor point
+                type = "execute",
+                func = function(self)
+                    _G.DetailsTooltipAnchor:MoveAnchor()
+                end,
+                icontexture = [[Interface\PetBattles\PetBattle-LockIcon]],
+                icontexcoords = {0.0703125, 0.9453125, 0.0546875, 0.9453125},
+                name = Loc ["STRING_OPTIONS_TOOLTIPS_ANCHOR_TO_CHOOSE"],
+                desc = Loc ["STRING_OPTIONS_TOOLTIPS_ANCHOR_TO_CHOOSE_DESC"],
+            },
+
+            {type = "blank"},
+
+            {--tooltip anchor side
+                type = "select",
+                get = function() return _detalhes.tooltip.anchor_point end,
+                values = function()
+                    return buildAnchorPointMenu()
+                end,
+                name = Loc ["STRING_OPTIONS_TOOLTIPS_ANCHOR_ATTACH"],
+                desc = Loc ["STRING_OPTIONS_TOOLTIPS_ANCHOR_ATTACH_DESC"],
+            },
+
+            {--tooltip anchor side
+                type = "select",
+                get = function() return _detalhes.tooltip.anchor_relative end,
+                values = function()
+                    return buildAnchorRelativeMenu()
+                end,
+                name = Loc ["STRING_OPTIONS_TOOLTIPS_ANCHOR_RELATIVE"],
+                desc = Loc ["STRING_OPTIONS_TOOLTIPS_ANCHOR_RELATIVE_DESC"],
+            },
+
+            {--anchor offset x
+                type = "range",
+                get = function() return _detalhes.tooltip.anchor_offset[1] end,
+                set = function (self, fixedparam, value)
+                    _detalhes.tooltip.anchor_offset[1] = value
+                    afterUpdate()
+                end,
+                min = -100,
+                max = 100,
+                step = 1,
+                name = Loc ["STRING_OPTIONS_TOOLTIPS_OFFSETX"],
+                desc = Loc ["STRING_OPTIONS_TOOLTIPS_OFFSETX_DESC"],
+            },
+
+            {--anchor offset y
+                type = "range",
+                get = function() return _detalhes.tooltip.anchor_offset[2] end,
+                set = function (self, fixedparam, value)
+                    _detalhes.tooltip.anchor_offset[2] = value
+                    afterUpdate()
+                end,
+                min = -100,
+                max = 100,
+                step = 1,
+                name = Loc ["STRING_OPTIONS_TOOLTIPS_OFFSETY"],
+                desc = Loc ["STRING_OPTIONS_TOOLTIPS_OFFSETY_DESC"],
+            },
+
+            
+        }
+        
+        DF:BuildMenu(sectionFrame, sectionOptions, startX, startY-20, heightSize, true, options_text_template, options_dropdown_template, options_switch_template, true, options_slider_template, options_button_template)
+        refreshToggleAnchor()
+    end
+
+    tinsert(Details.optionsSection, buildSection)
+end
+
+
+
+--[[
+do
+    local buildSection = function(sectionFrame)
+
+        local sectionOptions = {
+
+        }
+
+        DF:BuildMenu(sectionFrame, sectionOptions, startX, startY-20, heightSize, true, options_text_template, options_dropdown_template, options_switch_template, true, options_slider_template, options_button_template)
+    end
+
+    tinsert(Details.optionsSection, buildSection)
+end
+--]]

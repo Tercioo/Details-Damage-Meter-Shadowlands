@@ -48,19 +48,24 @@ function Details.options.InitializeOptionsWindow(instance)
     _G.DetailsPluginContainerWindow.EmbedPlugin (f, f, true)
     f.sectionFramesContainer = {}
     Details:FormatBackground(f)
+
+    DF:ApplyStandardBackdrop (f)
+    local titleBar = DF:CreateTitleBar (f, "Options Panel")
+    titleBar.Text:Hide()
+
+    local titleText = DF:NewLabel(titleBar, nil, "$parentTitleLabel", "title", "Details! " .. Loc ["STRING_OPTIONS_WINDOW"], "GameFontHighlightLeft", 12, {227/255, 186/255, 4/255})
+    titleText:SetPoint("center", titleBar, "center")
+    --titleText:SetPoint("top", f, "top", 0, -8)
+
     f:Hide()
 
     DF:CreateScaleBar(DetailsOptionsWindow, Details.options_window)
     DetailsOptionsWindow:SetScale (Details.options_window.scale)
 
-    local titleText = DF:NewLabel(f, nil, "$parentTitleLabel", "title", "Details! " .. Loc ["STRING_OPTIONS_WINDOW"], "GameFontHighlightLeft", 12, {227/255, 186/255, 4/255})
-    titleText:SetPoint("center", f, "center")
-    titleText:SetPoint("top", f, "top", 0, -8)
-
-    local closeButton = CreateFrame("button", "DetailsOptionsWindowCloseButton", f.widget, "UIPanelCloseButton")
+    local closeButton = CreateFrame("button", "DetailsOptionsWindowCloseButton", DetailsOptionsWindow.widget, "UIPanelCloseButton")
     closeButton:SetWidth(32)
     closeButton:SetHeight(32)
-    closeButton:SetPoint("TOPRIGHT", f.widget, "TOPRIGHT", 0, -19)
+    --closeButton:SetPoint("TOPRIGHT", DetailsOptionsWindow.widget, "TOPRIGHT", 0, 0)
     closeButton:SetText("X")
     closeButton:SetFrameLevel(closeButton:GetFrameLevel()+2)
 
@@ -190,13 +195,12 @@ function Details.options.InitializeOptionsWindow(instance)
         [2] = Loc ["STRING_OPTIONSMENU_SKIN"],
         [9] = Loc ["STRING_OPTIONSMENU_PROFILES"],
         [8] = Loc ["STRING_OPTIONSMENU_PLUGINS"],
+        [10] = Loc ["STRING_OPTIONSMENU_TOOLTIP"],
 
         --[[
         Loc ["STRING_OPTIONSMENU_DATAFEED"],
         
         Loc ["STRING_OPTIONSMENU_ROWMODELS"],
-        
-        Loc ["STRING_OPTIONSMENU_TOOLTIP"],
         
         Loc ["STRING_OPTIONSMENU_TITLETEXT"],
         Loc ["STRING_OPTIONSMENU_WINDOW"],
@@ -212,7 +216,7 @@ function Details.options.InitializeOptionsWindow(instance)
     }
 
     local optionsSectionsOrder = {
-        1, "", 3, 4, "", 5, 6, 7, "", 9, 2, 8, "", 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
+        1, "", 3, 4, "", 5, 6, 7, "", 9, 2, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
     }
     local maxSectionIds = 19
     Details.options.maxSectionIds = maxSectionIds

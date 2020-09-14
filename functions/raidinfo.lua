@@ -2,7 +2,9 @@
 
 --> install data for raiding tiers
 
-
+local C_Timer = _G.C_Timer
+local DetailsFramework = _G.DetailsFramework
+local tinsert = _G.tinsert
 
 do
 	--> data for Ny'alotha the Waking City (BFA tier 4)
@@ -88,6 +90,7 @@ do
 		end
 
 		_detalhes:InstallEncounter ({
+			raidTier = 25,
 			id = INSTANCE_MAPID, --map id
 			ej_id = INSTANCE_EJID, --encounter journal id
 			name = InstanceName,
@@ -102,7 +105,7 @@ do
 			boss_names = BOSSNAMES,
 			encounters = ENCOUNTERS,
 			
-			boss_ids = { 
+			boss_ids = {
 				--npc ids
 			},
 		})
@@ -183,6 +186,7 @@ do
 		end
 		
 		_detalhes:InstallEncounter ({
+			raidTier = 24,
 			id = INSTANCE_MAPID, --map id
 			ej_id = INSTANCE_EJID, --encounter journal id
 			name = InstanceName,
@@ -260,6 +264,7 @@ do
 		end
 		
 		_detalhes:InstallEncounter ({
+			raidTier = 23.5,
 			id = INSTANCE_MAPID, --map id
 			ej_id = INSTANCE_EJID, --encounter journal id
 			name = InstanceName,
@@ -361,6 +366,7 @@ do
 		end
 		
 		_detalhes:InstallEncounter ({
+			raidTier = 23,
 			id = INSTANCE_MAPID, --map id
 			ej_id = INSTANCE_EJID, --encounter journal id
 			name = InstanceName,
@@ -469,6 +475,7 @@ do
 		end
 		
 		_detalhes:InstallEncounter ({
+			raidTier = 22,
 			id = INSTANCE_MAPID, --map id
 			ej_id = INSTANCE_EJID, --encounter journal id
 			name = InstanceName,
@@ -577,7 +584,7 @@ do
 		end
 		
 		_detalhes:InstallEncounter ({
-		
+			raidTier = 21,
 			id = INSTANCE_MAPID, --map id
 			ej_id = INSTANCE_EJID, --encounter journal id
 			name = InstanceName,
@@ -592,7 +599,7 @@ do
 			boss_names = BOSSNAMES,
 			encounters = ENCOUNTERS,
 			
-			boss_ids = { 
+			boss_ids = {
 				--npc ids
 			},
 		})

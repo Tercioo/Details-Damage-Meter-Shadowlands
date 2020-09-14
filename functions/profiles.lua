@@ -331,7 +331,7 @@ function _detalhes:ApplyProfile (profile_name, nosave, is_copy)
 				end
 			end
 			
-		else	
+		else
 		
 			--> load skins
 			local instances_loaded = 0
@@ -1227,7 +1227,7 @@ local default_global_data = {
 		auto_open_news_window = true,
 		immersion_special_units = true, --show a special unit as member of your group
 		immersion_unit_special_icons = true, --custom icons for specific units
-		immersion_pets_on_solo_play = true, --pets showing when solo play
+		immersion_pets_on_solo_play = false, --pets showing when solo play
 		damage_scroll_auto_open = true,
 		damage_scroll_position = {},
 		

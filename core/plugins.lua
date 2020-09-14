@@ -560,9 +560,9 @@
 					return
 				end
 			end
-			
+
 			--> hide or show plugin windows
-			for index, plugin in ipairs (f.EmbedPlugins) do 
+			for index, plugin in ipairs (f.EmbedPlugins) do
 				if (plugin ~= pluginObject) then
 					--> hide this plugin
 					if (plugin.Frame:IsShown()) then
@@ -570,18 +570,18 @@
 					end
 				end
 			end
-			
+
 			--> re set the point of the frame within the main plugin window
 			f.RefreshFrame (pluginObject.__var_Frame)
 			C_Timer.After (0.016, function ()
 				f.RefreshFrame (pluginObject.__var_Frame)
 			end)
-			
+
 			--> show the plugin window
 			if (pluginObject.RefreshWindow and callRefresh) then
 				DetailsFramework:QuickDispatch (pluginObject.RefreshWindow)
 			end
-			
+
 			--> highlight the plugin button on the menu
 			for index, button in ipairs (f.MenuButtons) do
 				button:Show()
@@ -594,7 +594,7 @@
 					button:SetTemplate (_detalhes.gump:GetTemplate ("button", "DETAILS_PLUGINPANEL_BUTTON_TEMPLATE"))
 				end
 			end
-			
+
 			--> show the container
 			f:Show()
 			

@@ -1533,7 +1533,7 @@
 			)
 		end
 	end
-	
+
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- ~API
 
@@ -1553,11 +1553,11 @@ function _detalhes:InitializeAPIWindow()
 end
 
 function _detalhes.OpenAPI()
+	--create the window if not loaded yet
+	Details:CreateAPI2Frame()
+
 	DetailsAPI2Frame:Show()
-
-	print("it's broken atm")
 	DetailsAPI2Frame.Refresh() --doesn't exists?
-
 	DetailsPluginContainerWindow.OpenPlugin(DetailsAPI2Frame)
 end
 

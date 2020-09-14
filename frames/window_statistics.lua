@@ -1,5 +1,7 @@
 
 
+--todo: need to fix this file after pre-patch
+
 local Details = _G.Details
 local DF = _G.DetailsFramework
 local Loc = _G.LibStub("AceLocale-3.0"):GetLocale("Details")
@@ -19,6 +21,9 @@ function Details:InitializeRaidHistoryWindow()
 
     function DetailsRaidHistoryWindow.RefreshWindow()
         Details:OpenRaidHistoryWindow()
+        C_Timer.After(3, function()
+            Details:OpenRaidHistoryWindow()
+        end)
     end
 end
 
@@ -100,34 +105,24 @@ function Details:OpenRaidHistoryWindow (_raid, _boss, _difficulty, _role, _guild
             tutorialFrame.Desc = DF:CreateLabel (tutorialFrame, Loc ["STRING_GUILDDAMAGERANK_TUTORIAL_DESC"], 12)
             tutorialFrame.Desc.width = 370
             tutorialFrame.Desc:SetPoint ("topleft", tutorialFrame, "topleft", 10, -45)
-
-            --[[
-            tutorialFrame.Example:SetPoint ("topleft", tutorialFrame, "topleft", 10, -110)
-            tutorialFrame.Example = DF:CreateLabel (tutorialFrame, Loc ["STRING_FORGE_TUTORIAL_VIDEO"], 12)
-            
-            local editBox = DF:CreateTextEntry (tutorialFrame, function()end, 375, 20, nil, nil, nil, entry_template, label_template)
-            editBox:SetPoint ("topleft", tutorialFrame.Example, "bottomleft", 0, -10) 
-            editBox:SetText ()
-            editBox:SetTemplate (DF:GetTemplate ("button", "OPTIONS_BUTTON_TEMPLATE"))
-            --]]
             
             local closeButton = DF:CreateButton (tutorialFrame, function() Details:SetTutorialCVar ("HISTORYPANEL_TUTORIAL", true); tutorialFrame:Hide() end, 80, 20, Loc ["STRING_OPTIONS_CHART_CLOSE"])
             closeButton:SetPoint ("bottom", tutorialFrame, "bottom", 0, 10)
             closeButton:SetTemplate (DF:GetTemplate ("button", "OPTIONS_BUTTON_TEMPLATE"))
-        end			
+        end
         
         --wallpaper
-        local background = f:CreateTexture ("$parentBackgroundImage", "border")
-        background:SetAlpha (0.3)
-        background:SetPoint ("topleft", f, "topleft", 6, -65)
-        background:SetPoint ("bottomright", f, "bottomright", -10, 28)
+            local background = f:CreateTexture ("$parentBackgroundImage", "border")
+            background:SetAlpha (0.3)
+            background:SetPoint ("topleft", f, "topleft", 6, -65)
+            background:SetPoint ("bottomright", f, "bottomright", -10, 28)
 
         --separate menu and main list
-        local div = f:CreateTexture (nil, "artwork")
-        div:SetTexture ([[Interface\ACHIEVEMENTFRAME\UI-Achievement-MetalBorder-Left]])
-        div:SetAlpha (0.1)
-        div:SetPoint ("topleft", f, "topleft", 180, -64)
-        div:SetHeight (574)
+            local div = f:CreateTexture (nil, "artwork")
+            div:SetTexture ([[Interface\ACHIEVEMENTFRAME\UI-Achievement-MetalBorder-Left]])
+            div:SetAlpha (0.1)
+            div:SetPoint ("topleft", f, "topleft", 180, -64)
+            div:SetHeight (574)
         
         --select history or guild rank
         local options_switch_template = DF:GetTemplate ("switch", "OPTIONS_CHECKBOX_TEMPLATE")
@@ -141,6 +136,7 @@ function Details:OpenRaidHistoryWindow (_raid, _boss, _difficulty, _role, _guild
             _G.DetailsRaidHistoryWindow:Refresh()
             f.ReportButton:Hide()
         end
+        
         local select_guildrank = function()
             f.HistoryCheckBox:SetValue (false)
             f.GuildRankCheckBox:SetValue (true)
@@ -310,9 +306,18 @@ function Details:OpenRaidHistoryWindow (_raid, _boss, _difficulty, _role, _guild
             local instanceId = Details:GetInstanceIdFromEncounterId (encounterId)
             if (instanceId) then
                 local file, L, R, T, B = Details:GetRaidBackground (instanceId)
-                
-                background:SetTexture (file)
-                background:SetTexCoord (L, R, T, B)
+                --print ("file:", file)
+                --can't get the image, looks to be restricted
+                --[[
+                if (file) then
+                    background:SetTexture(file)
+                    background:SetTexCoord(L, R, T, B)
+                else
+                    background:SetColorTexture(0.2, 0.2, 0.2, 0.8)
+                end
+                --]]
+
+                background:SetColorTexture(0.2, 0.2, 0.2, 0.8)
             end
         end
         
@@ -345,12 +350,6 @@ function Details:OpenRaidHistoryWindow (_raid, _boss, _difficulty, _role, _guild
             f.LatestSelection.PlayerBase = DetailsRaidHistoryWindow.select_player.value
             f.LatestSelection.PlayerName = DetailsRaidHistoryWindow.select_player2.value
         end)
-        
-        --f.TitleText:SetText ("Details! Raid Ranking")
-        --f.portrait:SetTexture ([[Interface\AddOns\Details\images\icons2]])
-        --f.portrait:SetTexture ([[Interface\PVPFrame\PvPPrestigeIcons]])
-        --f.portrait:SetTexCoord (270/1024, 384/1024, 128/512, 256/512)
-        --f.portrait:SetTexCoord (192/512, 258/512, 322/512, 388/512)
         
         local dropdown_size = 160
         local icon = [[Interface\FriendsFrame\battlenet-status-offline]]
@@ -915,6 +914,7 @@ function Details:OpenRaidHistoryWindow (_raid, _boss, _difficulty, _role, _guild
                         player2_string:Hide()
                         player2_dropdown:Hide()
                         f:BuildRaidTable (encounters, guild, role)
+
                     elseif (player == 2) then --> only one player
                         fillpanel:Hide()
                         if (f.gframe) then
@@ -944,6 +944,7 @@ function Details:OpenRaidHistoryWindow (_raid, _boss, _difficulty, _role, _guild
                         player2_string:Hide()
                         player2_dropdown:Hide()
                         f:BuildRaidTable ({}, guild, role)
+
                     elseif (player == 2) then --> only one player
                         fillpanel:Hide()
                         if (f.gframe) then
@@ -961,7 +962,6 @@ function Details:OpenRaidHistoryWindow (_raid, _boss, _difficulty, _role, _guild
         end
         
         f.FirstRun = true
-        
     end
     
     --> table means some button send the request - nil for other ways

@@ -201,92 +201,32 @@ do
 
 	
 	-- Balance Druid:
-	[202430] = 102, -- Nature's Balance
-	[202425] = 102, -- Warrior of Elune
-	[205636] = 102, -- Force of Nature
-	[279709] = 102, -- Starlord -- proc
-	[202345] = 102, -- Starlord
-	[102560] = 102, -- Incarnation: Chosen of Elune
-	[202354] = 102, -- Stellar Drift
-	[279620] = 102, -- Twin Moons
-	[202347] = 102, -- Stellar Flare
-	[343647] = 102, -- Solstice
-	[202770] = 102, -- Fury of Elune
-	[274281] = 102, -- New Moon
-	[274282] = 102, -- Half Moon
-	[274283] = 102, -- Full Moon
-	[194223] = 102, -- Celestial Alignment
-	[78675] = 102, -- Solar Beam
-	[191034] = 102, -- Starfall
-	[326085] = 102, -- Mastery: Total Eclipse
-	[202497] = 102, -- Shooting Stars -- proc
-	[202342] = 102, -- Shooting Stars -- spell
+	[236168] 		= 	102, -- Starfall
+	[136060] 		= 	102, -- Celestial Alignment
+	[252188] 		= 	102, -- Solar Beam
+	[631519] 		= 	102, -- Shooting Stars
+	[132123] 		= 	102, -- Fury of Elune
 
-	-- Feral Druid:
-	[202021] = 103, -- Predator
-	[202031] = 103, -- Sabertooth
-	[155580] = 103, -- Lunar Inspiration
-	[52610] = 103, -- Savage Roar
-	[102543] = 103, -- Incarnation: King of the Jungle
-	[285646] = 103, -- Scent of Blood
-	[202028] = 103, -- Brutal Slash
-	[285381] = 103, -- Primal Wrath
-	[145152] = 103, -- Bloodtalons
-	[274837] = 103, -- Feral Frenzy
-	[5217] = 103, -- Tiger's Fury
-	[300349] = 103, -- Feline Adept
-	[16949] = 103,-- Feral Instinct
-	[48484] = 103, -- Infected Wounds
-	[77493] = 103, -- Mastery: Razor Claws
-	[16974] = 103, -- Predatory Swiftness
-	[159286] = 103, -- Primal Fury
-	
+	-- Feral 		Druid:
+	[132185] 		= 	103, -- Predatory Swiftness
+	[571586] 		= 	103, -- Incarnation: King of the Jungle
+	[132242] 		= 	103, -- Tiger's Fury
+	[132278] 		= 	103, -- Primal Fury
+	[132141] 		= 	103, -- Brutal Slash
+
 	-- Guardian Druid:
-	[155835] = 104, -- Bristling Fur
-	[203953] = 104, -- Brambles
-	[203962] = 104, -- Blood Frenzy
-	[213708] = 104, -- Galactic Guardian
-	[102558] = 104, -- Incarnation: Guardian of Ursoc -- buff
-	[50334] = 104, -- Incarnation: Guardian of Ursoc -- spell
-	[203974] = 104, -- Earthwarden -- spell
-	[203974] = 104, -- Earthwarden -- buff
-	[203965] = 104, -- Survival of the Fittest
-	[155578] = 104, -- Guardian of Elune -- spell
-	[213680] = 104, -- Guardian of Elune -- proc
-	[204053] = 104, -- Rend and Tear
-	[204066] = 104, -- Lunar Bean
-	[80313] = 104, -- Pulverize
-	[6807] = 104, -- Maul
-	[93622] = 104, -- Gore
-	[231065] = 104, -- Lightning Reflexes
-	[155783] = 104, -- Mastery: Nature's Guardian
-	[300346] = 104, -- Ursine Adept
+	[571585] 		= 	104, -- Gore
+	[1033479] 		= 	104, -- Guardian of Elune
+	[1033490] 		= 	104, -- Pulverize
+	[132139] 		= 	104, -- Blood Frenzy
+	[571586] 		= 	104, -- Incarnation: Guardian of Ursoc
 	
 	-- Restoration Druid:
-	[207640] = 105, -- Abundance
-	[207383] = 105, -- Abundance
-	[50464] = 105, -- Nourish
-	[102351] = 105, -- Cenarion Ward
-	[200389] = 105, -- Cultivation -- hot
-	[200390] = 105, -- Cultivation -- spell
-	[33891] = 105, -- Incarnation: Tree of Life -- spell
-	[117679] = 105, -- Incarnation: Tree of Life -- buff
-	[197073] = 105, -- Inner Peace
-	[207385] = 105, -- Spring Blossoms -- spell
-	[207386] = 105, -- Spring Blossoms -- hot
-	[203651] = 105, -- Overgrowth
-	[274902] = 105, -- Photosynthesis
-	[155777] = 105, -- Rejuvenation (Germination)
-	[155675] = 105, -- Rejuvenation (Germination)
-	[197721] = 105, -- Flourish
-	[145205] = 105, -- Efflorescence
-	[102342] = 105, -- Ironbark
-	[33763] = 105, -- Lifebloom
-	[88423] = 105, -- Nature's Cure
-	[212040] = 105, -- Revitalize
-	[132158] = 105, -- Nature's Swiftness
-	[740] = 105, -- Tranquility
-	[77495] = 105, -- Mastery: Harmony
+	[740] 		= 		105, -- Tranquility
+	[102342] 		= 	105, -- Ironbark
+	[33763] 		= 	105, -- Lifebloom
+	[88423] 		= 	105, -- Nature's Cure
+	[145205] 		= 	105, --Efflorescence
 
 	-- Beast Mastery Hunter:
 	[267116]        =       253,    --      Animal Companion

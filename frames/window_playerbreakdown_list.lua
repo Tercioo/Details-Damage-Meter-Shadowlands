@@ -95,10 +95,10 @@
 			self.roleIcon:SetTexture(nil)
 			
 			--set the player name
-			self.playerName:SetText(Details:GetOnlyName(self.playerObject:GetName()))
+			self.playerName:SetText(Details:GetOnlyName(self.playerObject.nome))
 			
 			--set the player class name
-			self.className:SetText(string.lower(_G.UnitClass(self.playerObject:GetName()) or self.playerObject:Class()))
+			self.className:SetText(string.lower(_G.UnitClass(self.playerObject.nome) or self.playerObject:Class()))
 		end
 		
 		local createPlayerLine = function(self, index)

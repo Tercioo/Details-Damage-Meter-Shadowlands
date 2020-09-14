@@ -1207,12 +1207,14 @@ local function instancias_verticais (instancia, altura, esquerda, direita)
 		for lado, esta_instancia in _pairs (instancia.snap) do 
 			if (lado == 1) then --> movendo para esquerda
 				local instancia = _detalhes.tabela_instancias [esta_instancia]
-				instancia.baseframe:SetHeight (altura)
-				instancia.auto_resize = true
-				instancia:ReajustaGump()
-				instancia.auto_resize = false
-				instancias_verticais (instancia, altura, true, false)
-				_detalhes:SendEvent ("DETAILS_INSTANCE_SIZECHANGED", nil, instancia)
+				if (instancia:IsEnabled()) then
+					instancia.baseframe:SetHeight (altura)
+					instancia.auto_resize = true
+					instancia:ReajustaGump()
+					instancia.auto_resize = false
+					instancias_verticais (instancia, altura, true, false)
+					_detalhes:SendEvent ("DETAILS_INSTANCE_SIZECHANGED", nil, instancia)
+				end
 			end
 		end
 	end
@@ -1221,12 +1223,14 @@ local function instancias_verticais (instancia, altura, esquerda, direita)
 		for lado, esta_instancia in _pairs (instancia.snap) do 
 			if (lado == 3) then --> movendo para esquerda
 				local instancia = _detalhes.tabela_instancias [esta_instancia]
-				instancia.baseframe:SetHeight (altura)
-				instancia.auto_resize = true
-				instancia:ReajustaGump()
-				instancia.auto_resize = false
-				instancias_verticais (instancia, altura, false, true)
-				_detalhes:SendEvent ("DETAILS_INSTANCE_SIZECHANGED", nil, instancia)
+				if (instancia:IsEnabled()) then
+					instancia.baseframe:SetHeight (altura)
+					instancia.auto_resize = true
+					instancia:ReajustaGump()
+					instancia.auto_resize = false
+					instancias_verticais (instancia, altura, false, true)
+					_detalhes:SendEvent ("DETAILS_INSTANCE_SIZECHANGED", nil, instancia)
+				end
 			end
 		end
 	end
@@ -1359,7 +1363,7 @@ function _detalhes:InstanciasHorizontais (instancia)
 	local checking = instancia
 	
 	local check_index_anterior = _detalhes.tabela_instancias [instancia.meu_id-1]
-	if (check_index_anterior) then --> possiu uma inst�ncia antes de mim
+	if (check_index_anterior and check_index_anterior:IsEnabled()) then --> possiu uma inst�ncia antes de mim
 		if (check_index_anterior.snap[3] and check_index_anterior.snap[3] == instancia.meu_id) then --> o index negativo vai para a esquerda
 			for i = instancia.meu_id-1, 1, -1 do 
 				local esta_instancia = _detalhes.tabela_instancias [i]
@@ -1392,7 +1396,7 @@ function _detalhes:InstanciasHorizontais (instancia)
 	checking = instancia
 	
 	local check_index_posterior = _detalhes.tabela_instancias [instancia.meu_id+1]
-	if (check_index_posterior) then
+	if (check_index_posterior and check_index_posterior:IsEnabled()) then
 		if (check_index_posterior.snap[3] and check_index_posterior.snap[3] == instancia.meu_id) then --> o index posterior vai para a esquerda
 			for i = instancia.meu_id+1, #_detalhes.tabela_instancias do 
 				local esta_instancia = _detalhes.tabela_instancias [i]
@@ -4671,7 +4675,7 @@ function _detalhes:InstanceRefreshRows (instancia)
 				row.lineText2:SetText("")
 				row.lineText3:SetText("")
 			end
-
+			
 			row.lineText4:SetText("")
 			
 			row.lineText2:SetPoint ("right", row.statusbar, "right", -self.fontstrings_text2_anchor, 0)
@@ -7327,11 +7331,13 @@ function _detalhes:UpdateClickThrough()
 			--player bars
 			if (barsClickThrough) then
 				for barIndex, barObject in _ipairs (self.barras) do 
-					barObject:EnableMouse (false)
+					barObject:EnableMouse(false)
+					barObject.icon_frame:EnableMouse(false)
 				end
 			else
 				for barIndex, barObject in _ipairs (self.barras) do 
-					barObject:EnableMouse (true)
+					barObject:EnableMouse(true)
+					barObject.icon_frame:EnableMouse(true)
 				end
 			end
 			
@@ -7344,7 +7350,9 @@ function _detalhes:UpdateClickThrough()
 				self.windowSwitchButton:EnableMouse (false)
 				self.windowBackgroundDisplay:EnableMouse (false)
 				self.baseframe.UPFrame:EnableMouse (false)
+				self.baseframe.DOWNFrame:EnableMouse(false)
 
+				
 			else
 				self.baseframe:EnableMouse (true)
 				self.bgframe:EnableMouse (true)
@@ -7353,6 +7361,7 @@ function _detalhes:UpdateClickThrough()
 				self.windowSwitchButton:EnableMouse (true)
 				self.windowBackgroundDisplay:EnableMouse (true)
 				self.baseframe.UPFrame:EnableMouse (true)
+				self.baseframe.DOWNFrame:EnableMouse(true)
 			end
 			
 			--titlebar icons
@@ -7372,6 +7381,7 @@ function _detalhes:UpdateClickThrough()
 			--player bars
 			for barIndex, barObject in _ipairs (self.barras) do
 				barObject:EnableMouse (true)
+				barObject.icon_frame:EnableMouse(true)
 			end
 			
 			--window frames
@@ -7382,6 +7392,7 @@ function _detalhes:UpdateClickThrough()
 			self.windowSwitchButton:EnableMouse (true)
 			self.windowBackgroundDisplay:EnableMouse (true)
 			self.baseframe.UPFrame:EnableMouse (true)
+			self.baseframe.DOWNFrame:EnableMouse(true)
 			
 			--titlebar icons, forcing true because the player isn't in combat and the inCombat setting is enabled
 			local toolbar_buttons = {}
@@ -7402,6 +7413,7 @@ function _detalhes:UpdateClickThrough()
 		if (barsClickThrough) then
 			for barIndex, barObject in _ipairs (self.barras) do 
 				barObject:EnableMouse (false)
+				barObject.icon_frame:EnableMouse(false)
 			end
 		else
 			for barIndex, barObject in _ipairs (self.barras) do 
@@ -7418,7 +7430,7 @@ function _detalhes:UpdateClickThrough()
 			self.windowSwitchButton:EnableMouse (false)
 			self.windowBackgroundDisplay:EnableMouse (false)
 			self.baseframe.UPFrame:EnableMouse (false)
-
+			self.baseframe.DOWNFrame:EnableMouse(false)
 		else
 			self.baseframe:EnableMouse (true)
 			self.bgframe:EnableMouse (true)
@@ -7427,6 +7439,7 @@ function _detalhes:UpdateClickThrough()
 			self.windowSwitchButton:EnableMouse (true)
 			self.windowBackgroundDisplay:EnableMouse (true)
 			self.baseframe.UPFrame:EnableMouse (true)
+			self.baseframe.DOWNFrame:EnableMouse(true)
 		end
 		
 		--titlebar icons
