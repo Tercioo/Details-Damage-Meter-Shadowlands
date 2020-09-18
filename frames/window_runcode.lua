@@ -158,62 +158,14 @@ function Details.OpenRunCodeWindow()
         cancel_script_button:SetPoint ("topleft", code_editor, "bottomleft", 0, button_y)
         
         --> create run now button
-        
-        --from weakauras, list of functions to block on scripts
-        --source https://github.com/WeakAuras/WeakAuras2/blob/520951a4b49b64cb49d88c1a8542d02bbcdbe412/WeakAuras/AuraEnvironment.lua#L66
-        local blockedFunctions = {
-            -- Lua functions that may allow breaking out of the environment
-            getfenv = true,
-            getfenv = true,
-            loadstring = true,
-            pcall = true,
-            xpcall = true,
-            getglobal = true,
-            
-            -- blocked WoW API
-            SendMail = true,
-            SetTradeMoney = true,
-            AddTradeMoney = true,
-            PickupTradeMoney = true,
-            PickupPlayerMoney = true,
-            TradeFrame = true,
-            MailFrame = true,
-            EnumerateFrames = true,
-            RunScript = true,
-            AcceptTrade = true,
-            SetSendMailMoney = true,
-            EditMacro = true,
-            SlashCmdList = true,
-            DevTools_DumpCommand = true,
-            hash_SlashCmdList = true,
-            CreateMacro = true,
-            SetBindingMacro = true,
-            GuildDisband = true,
-            GuildUninvite = true,
-            securecall = true,
-            
-            --additional
-            setmetatable = true,
-        }
-        
-        local functionFilter = setmetatable ({}, {__index = function (env, key)
-            if (key == "_G") then
-                return env
-                
-            elseif (blockedFunctions [key]) then
-                return nil
-                
-            else	
-                return _G [key]
-            end
-        end})
-        
+       
         local execute_script = function()
             local script = code_editor:GetText()
             local func, errortext = loadstring (script, "Q")
             
             if (func) then
-                setfenv (func, functionFilter)
+                --setfenv (func, functionFilter)
+                DF:SetEnvironment(func)
                 DF:QuickDispatch (func)
             else
                 errortext_frame:Flash (0.2, 0.2, 0.4, true, nil, nil, "NONE")
