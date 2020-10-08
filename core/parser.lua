@@ -122,6 +122,7 @@
 			[216890] = true, --warrior spell reflection (pvp talent)
 			[213915] = true, --warrior mass spell reflection
 			[212295] = true, --warlock nether ward
+			--check pally legendary
 		}
 		local reflection_dispelid = {
 			--> some dispels also reflect, and we can track them

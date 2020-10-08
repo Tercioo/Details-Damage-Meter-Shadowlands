@@ -191,21 +191,24 @@ function Details.options.InitializeOptionsWindow(instance)
         [5] = Loc ["STRING_OPTIONSMENU_TITLEBAR"], --titlebar
         [6] = Loc ["STRING_OPTIONSMENU_WINDOWBODY"], --window body
         [7] = Loc ["STRING_OPTIONS_INSTANCE_STATUSBAR_ANCHOR"], --statusbar
-        
-        [2] = Loc ["STRING_OPTIONSMENU_SKIN"],
+        [12] = Loc ["STRING_OPTIONSMENU_WALLPAPER"],
+        [13] = Loc ["STRING_OPTIONSMENU_AUTOMATIC"],
+
         [9] = Loc ["STRING_OPTIONSMENU_PROFILES"],
+        [2] = Loc ["STRING_OPTIONSMENU_SKIN"],
         [8] = Loc ["STRING_OPTIONSMENU_PLUGINS"],
         [10] = Loc ["STRING_OPTIONSMENU_TOOLTIP"],
+        [11] = Loc ["STRING_OPTIONSMENU_DATAFEED"],
+        
 
         --[[
-        Loc ["STRING_OPTIONSMENU_DATAFEED"],
+        
         
         Loc ["STRING_OPTIONSMENU_ROWMODELS"],
         
         Loc ["STRING_OPTIONSMENU_TITLETEXT"],
         Loc ["STRING_OPTIONSMENU_WINDOW"],
-        Loc ["STRING_OPTIONSMENU_AUTOMATIC"],
-        Loc ["STRING_OPTIONSMENU_WALLPAPER"],
+        
         "Streamer Settings",
         Loc ["STRING_OPTIONSMENU_RAIDTOOLS"],
         Loc ["STRING_OPTIONSMENU_PERFORMANCE"],
@@ -216,7 +219,7 @@ function Details.options.InitializeOptionsWindow(instance)
     }
 
     local optionsSectionsOrder = {
-        1, "", 3, 4, "", 5, 6, 7, "", 9, 2, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
+        1, "", 3, 4, "", 5, 6, 7, 12, 13, "", 9, 2, 8, 10, 11, 14, 15, 16, 17, 18, 19
     }
     local maxSectionIds = 19
     Details.options.maxSectionIds = maxSectionIds

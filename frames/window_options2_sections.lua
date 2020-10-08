@@ -84,7 +84,7 @@ local editInstanceSetting = function(instance, funcName, ...)
         end
     else
         local keyName =  funcName
-        local value1, value2 = ...
+        local value1, value2, value3 = ...
         if (value2 == nil) then
             if (isGroupEditing()) then
                 Details:InstanceGroupEditSetting(instance, keyName, value1)
@@ -92,10 +92,18 @@ local editInstanceSetting = function(instance, funcName, ...)
                 instance[keyName] = value1
             end
         else
-            if (isGroupEditing()) then
-                Details:InstanceGroupEditSettingOnTable(instance, keyName, value1, value2)
+            if (value3 == nil) then
+                if (isGroupEditing()) then
+                    Details:InstanceGroupEditSettingOnTable(instance, keyName, value1, value2)
+                else
+                    instance[keyName][value1] = value2
+                end
             else
-                instance[keyName][value1] = value2
+                if (isGroupEditing()) then
+                    Details:InstanceGroupEditSettingOnTable(instance, keyName, value1, value2, value3)
+                else
+                    instance[keyName][value1][value2] = value3
+                end
             end
         end
     end
@@ -260,26 +268,6 @@ do
                 name = Loc ["STRING_OPTIONS_ANIMATEBARS"],
                 desc = Loc ["STRING_OPTIONS_ANIMATEBARS_DESC"],
             },
-            {--click through
-                type = "toggle",
-                get = function() return currentInstance.clickthrough_window end,
-                set = function (self, fixedparam, value)
-                    Details:InstanceGroupCall(currentInstance, "UpdateClickThroughSettings", nil, value, value, value)
-                    afterUpdate()
-                end,
-                name = "Click Through",
-                desc = "Click Through",
-            },
-            {--click only in combat
-                type = "toggle",
-                get = function() return currentInstance.clickthrough_incombatonly end,
-                set = function (self, fixedparam, value)
-                    Details:InstanceGroupCall(currentInstance, "UpdateClickThroughSettings", value)
-                    afterUpdate()
-                end,
-                name = "Click Through Only in Combat",
-                desc = "Click Through Only in Combat",
-            },
             {--update speed
                 type = "range",
                 get = function() return _detalhes.update_speed end,
@@ -315,6 +303,77 @@ do
                 name = Loc ["STRING_OPTIONS_ED"],
                 desc = Loc ["STRING_OPTIONS_ED_DESC"],
             },
+            {--auto erase trash segments
+                type = "toggle",
+                get = function() return _detalhes.overall_clear_logout end,
+                set = function (self, fixedparam, value)
+                    _detalhes:SetOverallResetOptions(nil, nil, value)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_CLEANUP"],
+                desc = Loc ["STRING_OPTIONS_CLEANUP_DESC"],
+            },
+            {--auto erase world segments
+                type = "toggle",
+                get = function() return _detalhes.world_combat_is_trash end,
+                set = function (self, fixedparam, value)
+                    _detalhes.world_combat_is_trash = value
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_PERFORMANCE_ERASEWORLD"],
+                desc = Loc ["STRING_OPTIONS_PERFORMANCE_ERASEWORLD_DESC"],
+            },
+            {--erase chart data
+                type = "toggle",
+                get = function() return _detalhes.clear_graphic end,
+                set = function (self, fixedparam, value)
+                    _detalhes.clear_graphic = value
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_ERASECHARTDATA"],
+                desc = Loc ["STRING_OPTIONS_ERASECHARTDATA_DESC"],
+            },
+
+            {--max segments
+                type = "range",
+                get = function() return _detalhes.segments_amount end,
+                set = function (self, fixedparam, value)
+                    _detalhes.segments_amount = value
+                    afterUpdate()
+                end,
+                min = 1,
+                max = 30,
+                step = 1,
+                name = Loc ["STRING_OPTIONS_MAXSEGMENTS"],
+                desc = Loc ["STRING_OPTIONS_MAXSEGMENTS_DESC"],
+            },
+
+            {--max segments saved
+                type = "range",
+                get = function() return _detalhes.segments_amount_to_save end,
+                set = function (self, fixedparam, value)
+                    _detalhes.segments_amount_to_save = value
+                    afterUpdate()
+                end,
+                min = 1,
+                max = 30,
+                step = 1,
+                name = Loc ["STRING_OPTIONS_SEGMENTSSAVE"],
+                desc = Loc ["STRING_OPTIONS_SEGMENTSSAVE_DESC"],
+            },
+
+            {--battleground remote parser
+                type = "toggle",
+                get = function() return _detalhes.use_battleground_server_parser end,
+                set = function (self, fixedparam, value)
+                    _detalhes.use_battleground_server_parser = value
+                 end,
+                name = Loc ["STRING_OPTIONS_BG_UNIQUE_SEGMENT"],
+                desc = Loc ["STRING_OPTIONS_BG_UNIQUE_SEGMENT_DESC"],
+            },
+
+            {type = "blank"},
+
             {--pvp frags
                 type = "toggle",
                 get = function() return _detalhes.only_pvp_frags end,
@@ -325,6 +384,7 @@ do
                 name = Loc ["STRING_OPTIONS_PVPFRAGS"],
                 desc = Loc ["STRING_OPTIONS_PVPFRAGS_DESC"],
             },
+
             {--death log size
                 type = "select",
                 get = function() return _detalhes.deadlog_events end,
@@ -333,16 +393,6 @@ do
                 end,
                 name = Loc ["STRING_OPTIONS_DEATHLIMIT"],
                 desc = Loc ["STRING_OPTIONS_DEATHLIMIT_DESC"],
-            },
-            {--pvp frags
-                type = "toggle",
-                get = function() return _detalhes.damage_taken_everything end,
-                set = function (self, fixedparam, value)
-                    _detalhes.damage_taken_everything = value
-                    afterUpdate()
-                end,
-                name = Loc ["STRING_OPTIONS_DTAKEN_EVERYTHING"],
-                desc = Loc ["STRING_OPTIONS_DTAKEN_EVERYTHING_DESC"],
             },
             {--death log min healing
                 type = "range",
@@ -357,24 +407,16 @@ do
                 name = Loc ["STRING_OPTIONS_DEATHLOG_MINHEALING"],
                 desc = Loc ["STRING_OPTIONS_DEATHLOG_MINHEALING_DESC"],
             },
-            {--always show players even on stardard mode
+
+            {--pvp frags
                 type = "toggle",
-                get = function() return _detalhes.all_players_are_group end,
+                get = function() return _detalhes.damage_taken_everything end,
                 set = function (self, fixedparam, value)
-                    _detalhes.all_players_are_group = value
+                    _detalhes.damage_taken_everything = value
                     afterUpdate()
                 end,
-                name = Loc ["STRING_OPTIONS_ALWAYSSHOWPLAYERS"],
-                desc = Loc ["STRING_OPTIONS_ALWAYSSHOWPLAYERS_DESC"],
-            },
-            {--battleground remote parser
-                type = "toggle",
-                get = function() return _detalhes.use_battleground_server_parser end,
-                set = function (self, fixedparam, value)
-                    _detalhes.use_battleground_server_parser = value
-                 end,
-                name = Loc ["STRING_OPTIONS_BG_UNIQUE_SEGMENT"],
-                desc = Loc ["STRING_OPTIONS_BG_UNIQUE_SEGMENT_DESC"],
+                name = Loc ["STRING_OPTIONS_DTAKEN_EVERYTHING"],
+                desc = Loc ["STRING_OPTIONS_DTAKEN_EVERYTHING_DESC"],
             },
 
             {type = "breakline"},
@@ -413,7 +455,7 @@ do
 
             {type = "blank"},
 
-            {type = "label", get = function() return "Window Control:" end, text_template = DF:GetTemplate("font", "ORANGE_FONT_TEMPLATE")},
+            {type = "label", get = function() return "Window Control:" end, text_template = DF:GetTemplate("font", "ORANGE_FONT_TEMPLATE")}, --localize-me
             {--lock instance
                 type = "execute",
                 func = function(self)
@@ -476,6 +518,27 @@ do
                 desc = Loc ["STRING_OPTIONS_WC_BOOKMARK_DESC"],
             },
 
+            {--click through
+                type = "toggle",
+                get = function() return currentInstance.clickthrough_window end,
+                set = function (self, fixedparam, value)
+                    Details:InstanceGroupCall(currentInstance, "UpdateClickThroughSettings", nil, value, value, value)
+                    afterUpdate()
+                end,
+                name = "Click Through",
+                desc = "Click Through",
+            },
+            {--click only in combat
+                type = "toggle",
+                get = function() return currentInstance.clickthrough_incombatonly end,
+                set = function (self, fixedparam, value)
+                    Details:InstanceGroupCall(currentInstance, "UpdateClickThroughSettings", value)
+                    afterUpdate()
+                end,
+                name = "Click Through Only in Combat",
+                desc = "Click Through Only in Combat",
+            },
+
             {type = "blank"},
             {type = "label", get = function() return Loc ["STRING_OPTIONS_SOCIAL"] end, text_template = subSectionTitleTextTemplate},
             {--nickname
@@ -516,6 +579,17 @@ do
                 end,
                 name = "Show pets when solo", --localize-me
                 desc = "Show pets when solo",
+            },
+
+            {--always show players even on stardard mode
+                type = "toggle",
+                get = function() return _detalhes.all_players_are_group end,
+                set = function (self, fixedparam, value)
+                    _detalhes.all_players_are_group = value
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_ALWAYSSHOWPLAYERS"],
+                desc = Loc ["STRING_OPTIONS_ALWAYSSHOWPLAYERS_DESC"],
             },
 
         }
@@ -618,7 +692,7 @@ do
                 instance:LoadSkinFromOptionsPanel(skinObject)
             end
         end
-        
+
         --> import skin string
             local importSaved = function()
                 --when clicking in the okay button in the import window, it send the text in the first argument
@@ -2241,6 +2315,61 @@ do
             return backdropTable
         end
 
+    --> instance selector selection
+        local onSelectInstance = function() end
+
+        local buildInstanceMenu = function()
+            local instanceList = {}
+            for index = 1, math.min (#_detalhes.tabela_instancias, _detalhes.instances_amount) do
+                local instance = _detalhes.tabela_instancias[index]
+
+                --what the window is showing
+                local atributo = instance.atributo
+                local sub_atributo = instance.sub_atributo
+                
+                if (atributo == 5) then --custom
+                    local CustomObject = _detalhes.custom [sub_atributo]
+                    if (not CustomObject) then
+                        instance:ResetAttribute()
+                        atributo = instance.atributo
+                        sub_atributo = instance.sub_atributo
+                        instanceList [#instanceList+1] = {value = index, label = "#".. index .. " " .. _detalhes.atributos.lista [atributo] .. " - " .. _detalhes.sub_atributos [atributo].lista [sub_atributo], onclick = onSelectInstance, icon = _detalhes.sub_atributos [atributo].icones[sub_atributo] [1], texcoord = _detalhes.sub_atributos [atributo].icones[sub_atributo] [2]}
+                    else
+                        instanceList [#instanceList+1] = {value = index, label = "#".. index .. " " .. CustomObject.name, onclick = onSelectInstance, icon = CustomObject.icon}
+                    end
+                else
+                    local modo = instance.modo
+                    
+                    if (modo == 1) then --solo plugin
+                        atributo = _detalhes.SoloTables.Mode or 1
+                        local SoloInfo = _detalhes.SoloTables.Menu [atributo]
+                        if (SoloInfo) then
+                            instanceList [#instanceList+1] = {value = index, label = "#".. index .. " " .. SoloInfo [1], onclick = onSelectInstance, icon = SoloInfo [2]}
+                        else
+                            instanceList [#instanceList+1] = {value = index, label = "#".. index .. " unknown", onclick = onSelectInstance, icon = ""}
+                        end
+                        
+                    elseif (modo == 4) then --raid plugin
+                        local plugin_name = instance.current_raid_plugin or instance.last_raid_plugin
+                        if (plugin_name) then
+                            local plugin_object = _detalhes:GetPlugin (plugin_name)
+                            if (plugin_object) then
+                                instanceList [#instanceList+1] = {value = index, label = "#".. index .. " " .. plugin_object.__name, onclick = onSelectInstance, icon = plugin_object.__icon}
+                            else
+                                instanceList [#instanceList+1] = {value = index, label = "#".. index .. " unknown", onclick = onSelectInstance, icon = ""}
+                            end
+                        else
+                            instanceList [#instanceList+1] = {value = index, label = "#".. index .. " unknown", onclick = onSelectInstance, icon = ""}
+                        end
+                    else
+                        instanceList [#instanceList+1] = {value = index, label = "#".. index .. " " .. _detalhes.atributos.lista [atributo] .. " - " .. _detalhes.sub_atributos [atributo].lista [sub_atributo], onclick = onSelectInstance, icon = _detalhes.sub_atributos [atributo].icones[sub_atributo] [1], texcoord = _detalhes.sub_atributos [atributo].icones[sub_atributo] [2]}
+                    end
+                end
+            end
+            return instanceList
+        end
+
+
     local buildSection = function(sectionFrame)
         local sectionOptions = {
 
@@ -2405,7 +2534,33 @@ do
                 desc = Loc ["STRING_OPTIONS_STRETCH_DESC"],
             },
 
+            {type = "blank"},
 
+            {--delete window
+                type = "select",
+                get = function() return 0 end,
+                values = function()
+                    return buildInstanceMenu()
+                end,
+                name = Loc ["STRING_OPTIONS_INSTANCE_DELETE"],
+                desc = Loc ["STRING_OPTIONS_INSTANCE_DELETE_DESC"],
+            },
+
+            {--delete window
+                type = "execute",
+                func = function(self)
+                    local profileDropdown = sectionFrame.widget_list_by_type.dropdown[3]
+                    local selectedWindow = profileDropdown:GetValue()
+
+                    if (selectedWindow) then
+                        _detalhes:DeleteInstance(selectedWindow)
+                        ReloadUI()
+                    end
+                end,
+                name = Loc ["STRING_OPTIONS_INSTANCE_DELETE"],
+                --icontexture = [[Interface\Buttons\UI-GuildButton-MOTD-Up]],
+                --icontexcoords = {1, 0, 0, 1},
+            },
             
         }
         DF:BuildMenu(sectionFrame, sectionOptions, startX, startY-20, heightSize, true, options_text_template, options_dropdown_template, options_switch_template, true, options_slider_template, options_button_template)
@@ -3708,8 +3863,982 @@ do
 end
 
 
+do
+    local buildSection = function(sectionFrame)
 
---[[
+        local onSelectMinimapAction = function (_, _, option)
+            _detalhes.minimap.onclick_what_todo = option
+            afterUpdate()
+        end
+        local menu = {
+                {value = 1, label = Loc ["STRING_OPTIONS_MINIMAP_ACTION1"], onclick = onSelectMinimapAction, icon = [[Interface\FriendsFrame\FriendsFrameScrollIcon]]},
+                {value = 2, label = Loc ["STRING_OPTIONS_MINIMAP_ACTION2"], onclick = onSelectMinimapAction, icon = [[Interface\Buttons\UI-GuildButton-PublicNote-Up]], iconcolor = {1, .8, 0, 1}},
+                {value = 3, label = Loc ["STRING_OPTIONS_MINIMAP_ACTION3"], onclick = onSelectMinimapAction, icon = [[Interface\Buttons\UI-CheckBox-Up]], texcoord = {0.1, 0.9, 0.1, 0.9}},
+            }
+        local buildMiniMapButtonAction = function()
+            return menu
+        end
+
+		local onSelectTimeAbbreviation = function (_, _, abbreviationtype)
+			_detalhes.minimap.text_format = abbreviationtype
+			_detalhes:BrokerTick()
+			afterUpdate()
+		end
+		local icon = [[Interface\COMMON\mini-hourglass]]
+		local iconcolor = {1, 1, 1, .5}
+		local iconsize = {14, 14}
+		local abbreviationOptions = {
+			{value = 1, label = Loc ["STRING_OPTIONS_PS_ABBREVIATE_NONE"], desc = Loc ["STRING_EXAMPLE"] .. ": 305.500 -> 305500", onclick = onSelectTimeAbbreviation, icon = icon, iconcolor = iconcolor, iconsize = iconsize}, --, desc = ""
+			{value = 2, label = Loc ["STRING_OPTIONS_PS_ABBREVIATE_TOK"], desc = Loc ["STRING_EXAMPLE"] .. ": 305.500 -> 305.5K", onclick = onSelectTimeAbbreviation, icon = icon, iconcolor = iconcolor, iconsize = iconsize}, --, desc = ""
+			{value = 3, label = Loc ["STRING_OPTIONS_PS_ABBREVIATE_TOK2"], desc = Loc ["STRING_EXAMPLE"] .. ": 305.500 -> 305K", onclick = onSelectTimeAbbreviation, icon = icon, iconcolor = iconcolor, iconsize = iconsize}, --, desc = ""
+			{value = 4, label = Loc ["STRING_OPTIONS_PS_ABBREVIATE_TOK0"], desc = Loc ["STRING_EXAMPLE"] .. ": 25.305.500 -> 25M", onclick = onSelectTimeAbbreviation, icon = icon, iconcolor = iconcolor, iconsize = iconsize}, --, desc = ""
+			{value = 5, label = Loc ["STRING_OPTIONS_PS_ABBREVIATE_TOKMIN"], desc = Loc ["STRING_EXAMPLE"] .. ": 305.500 -> 305.5k", onclick = onSelectTimeAbbreviation, icon = icon, iconcolor = iconcolor, iconsize = iconsize}, --, desc = ""
+			{value = 6, label = Loc ["STRING_OPTIONS_PS_ABBREVIATE_TOK2MIN"], desc = Loc ["STRING_EXAMPLE"] .. ": 305.500 -> 305k", onclick = onSelectTimeAbbreviation, icon = icon, iconcolor = iconcolor, iconsize = iconsize}, --, desc = ""
+			{value = 7, label = Loc ["STRING_OPTIONS_PS_ABBREVIATE_TOK0MIN"], desc = Loc ["STRING_EXAMPLE"] .. ": 25.305.500 -> 25m", onclick = onSelectTimeAbbreviation, icon = icon, iconcolor = iconcolor, iconsize = iconsize}, --, desc = ""
+			{value = 8, label = Loc ["STRING_OPTIONS_PS_ABBREVIATE_COMMA"], desc = Loc ["STRING_EXAMPLE"] .. ": 25305500 -> 25.305.500", onclick = onSelectTimeAbbreviation, icon = icon, iconcolor = iconcolor, iconsize = iconsize} --, desc = ""
+		}
+		local buildAbbreviationMenu = function()
+			return abbreviationOptions
+		end
+
+        local sectionOptions = {
+            {type = "blank"},
+            {type = "label", get = function() return Loc ["STRING_OPTIONS_MINIMAP_ANCHOR"] end, text_template = subSectionTitleTextTemplate},
+
+            {--minimap icon enabled
+                type = "toggle",
+                get = function() return not _detalhes.minimap.hide end,
+                set = function (self, fixedparam, value)
+                    _detalhes.minimap.hide = not value
+
+                    local LDBIcon = LDB and LibStub("LibDBIcon-1.0", true)
+
+                    LDBIcon:Refresh("Details", _detalhes.minimap)
+                    if (_detalhes.minimap.hide) then
+                        LDBIcon:Hide("Details")
+                    else
+                        LDBIcon:Show("Details")
+                    end
+                    
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_MINIMAP"],
+                desc = Loc ["STRING_OPTIONS_MINIMAP_DESC"],
+            },
+
+            {--minimap button on click
+                type = "select",
+                get = function() return _detalhes.minimap.onclick_what_todo end,
+                values = function()
+                    return buildMiniMapButtonAction()
+                end,
+                name = Loc ["STRING_OPTIONS_MINIMAP_ACTION"],
+                desc = Loc ["STRING_OPTIONS_MINIMAP_ACTION_DESC"],
+            },
+
+            {type = "blank"},
+            {type = "label", get = function() return Loc ["STRING_OPTIONS_DATABROKER"] end, text_template = subSectionTitleTextTemplate},
+
+            {--broker text
+                type = "textentry",
+                get = function() return _detalhes.data_broker_text or "" end,
+                func = function(self, _, text)
+                    local brokerText = text or ""
+                    _detalhes:SetDataBrokerText (brokerText)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_DATABROKER_TEXT"],
+                desc = Loc ["STRING_OPTIONS_DATABROKER_TEXT1_DESC"],
+            },
+
+            {--open broker text editor
+                type = "execute",
+                func = function(self)
+                    _detalhes:OpenBrokerTextEditor()
+                end,
+                icontexture = [[Interface\HELPFRAME\OpenTicketIcon]],
+                icontexcoords = {.1, .9, .1, .9},
+                name = "Open Broker Text Editor", --localize-me
+                desc = Loc ["STRING_OPTIONS_OPEN_ROWTEXT_EDITOR"],
+            },
+
+            {--broker text format
+                type = "select",
+                get = function() return _detalhes.minimap.text_format end,
+                values = function()
+                    return buildAbbreviationMenu()
+                end,
+                name = Loc ["STRING_OPTIONS_PS_ABBREVIATE"],
+                desc = Loc ["STRING_OPTIONS_PS_ABBREVIATE_DESC"],
+            },
+
+            {type = "blank"},
+            {type = "label", get = function() return Loc ["STRING_OPTIONS_ILVL_TRACKER"] end, text_template = subSectionTitleTextTemplate},
+
+            {--item level tracker enabled
+                type = "toggle",
+                get = function() return _detalhes.ilevel:IsTrackerEnabled() end,
+                set = function (self, fixedparam, value)
+                    _detalhes.ilevel:TrackItemLevel(value)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_ENABLED"],
+                desc = Loc ["STRING_OPTIONS_ILVL_TRACKER_DESC"],
+            },
+
+            {type = "blank"},
+            {type = "label", get = function() return Loc ["STRING_OPTIONS_REPORT_ANCHOR"] end, text_template = subSectionTitleTextTemplate},
+
+            {--enabled heal spell links
+                type = "toggle",
+                get = function() return _detalhes.report_heal_links end,
+                set = function (self, fixedparam, value)
+                    _detalhes.report_heal_links = value
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_REPORT_HEALLINKS"],
+                desc = Loc ["STRING_OPTIONS_REPORT_HEALLINKS_DESC"],
+            },
+        }
+
+        DF:BuildMenu(sectionFrame, sectionOptions, startX, startY-20, heightSize, true, options_text_template, options_dropdown_template, options_switch_template, true, options_slider_template, options_button_template)
+    end
+
+    tinsert(Details.optionsSection, buildSection)
+end
+
+
+do
+    local buildSection = function(sectionFrame)
+
+		--> callback from the image editor
+			local callmeback = function (width, height, overlayColor, alpha, texCoords)
+                editInstanceSetting(currentInstance, "InstanceWallpaper", nil, nil, alpha, texCoords, width, height, overlayColor)
+				sectionFrame:UpdateWallpaperInfo()
+				afterUpdate()
+			end
+ 
+        --> select wallpaper
+            local onSelectSecTexture = function (self, instance, texturePath)
+                    
+                local textureOptions = sectionFrame.wallpaperOptions
+                local selectedTextureOption = texturePath
+                
+                if (texturePath:find ("TALENTFRAME")) then
+                    editInstanceSetting(currentInstance, "InstanceWallpaper", texturePath, nil, nil, {0, 1, 0, 0.703125}, nil, nil, {1, 1, 1, 1})
+                    afterUpdate()
+                    
+                    if (_G.DetailsImageEdit and _G.DetailsImageEdit:IsShown()) then
+                        local wp = currentInstance.wallpaper
+                        if (wp.anchor == "all") then
+                            DF:ImageEditor (callmeback, wp.texture, wp.texcoord, wp.overlay, currentInstance.baseframe.wallpaper:GetWidth(), currentInstance.baseframe.wallpaper:GetHeight(), nil, wp.alpha, true)
+                        else
+                            DF:ImageEditor (callmeback, wp.texture, wp.texcoord, wp.overlay, currentInstance.baseframe.wallpaper:GetWidth(), currentInstance.baseframe.wallpaper:GetHeight(), nil, wp.alpha)
+                        end
+                    end
+                
+                elseif (texturePath:find("EncounterJournal")) then
+                
+                    editInstanceSetting(currentInstance, "InstanceWallpaper", texturePath, nil, nil, {0.06, 0.68, 0.1, 0.57}, nil, nil, {1, 1, 1, 1})
+                    afterUpdate()
+                    
+                    if (_G.DetailsImageEdit and _G.DetailsImageEdit:IsShown()) then
+                        local wp = currentInstance.wallpaper
+                        if (wp.anchor == "all") then
+                            DF:ImageEditor (callmeback, wp.texture, wp.texcoord, wp.overlay, currentInstance.baseframe.wallpaper:GetWidth(), currentInstance.baseframe.wallpaper:GetHeight(), nil, wp.alpha, true)
+                        else
+                            DF:ImageEditor (callmeback, wp.texture, wp.texcoord, wp.overlay, currentInstance.baseframe.wallpaper:GetWidth(), currentInstance.baseframe.wallpaper:GetHeight(), nil, wp.alpha)
+                        end
+                    end
+                
+                else
+                    local texCoords = selectedTextureOption and selectedTextureOption.texcoord
+                    editInstanceSetting(currentInstance, "InstanceWallpaper", texturePath, nil, nil, texCoords or {0, 1, 0, 1}, nil, nil, {1, 1, 1, 1})
+                    afterUpdate()
+
+                    if (_G.DetailsImageEdit and _G.DetailsImageEdit:IsShown()) then
+                        local wp = currentInstance.wallpaper
+                        if (wp.anchor == "all") then
+                            DF:ImageEditor (callmeback, wp.texture, wp.texcoord, wp.overlay, currentInstance.baseframe.wallpaper:GetWidth(), currentInstance.baseframe.wallpaper:GetHeight(), nil, wp.alpha, true)
+                        else
+                            DF:ImageEditor (callmeback, wp.texture, wp.texcoord, wp.overlay, currentInstance.baseframe.wallpaper:GetWidth(), currentInstance.baseframe.wallpaper:GetHeight(), nil, wp.alpha)
+                        end
+                    end
+                end
+                
+                sectionFrame:UpdateWallpaperInfo()
+            end
+
+            sectionFrame.wallpaperOptions = {
+                {value = [[Interface\ACHIEVEMENTFRAME\UI-Achievement-HorizontalShadow]], label = "Horizontal Gradient", onclick = onSelectSecTexture, icon = [[Interface\ACHIEVEMENTFRAME\UI-Achievement-HorizontalShadow]], texcoord = nil},
+                {value = [[Interface\ACHIEVEMENTFRAME\UI-Achievement-Parchment-Highlight]], label = "Golden Highlight", onclick = onSelectSecTexture, icon = [[Interface\ACHIEVEMENTFRAME\UI-Achievement-Parchment-Highlight]], texcoord = {0.35, 0.655, 0.0390625, 0.859375}},
+                {value = [[Interface\ACHIEVEMENTFRAME\UI-Achievement-Stat-Buttons]], label = "Gray Gradient", onclick = onSelectSecTexture, icon = [[Interface\ACHIEVEMENTFRAME\UI-Achievement-Stat-Buttons]], texcoord = {0, 1, 97/128, 1}},
+                {value = [[Interface\ACHIEVEMENTFRAME\UI-Achievement-Borders]], label = "Orange Gradient", onclick = onSelectSecTexture, icon = [[Interface\ACHIEVEMENTFRAME\UI-Achievement-Borders]], texcoord = {160/512, 345/512, 80/256, 130/256}},
+                {value = [[Interface\ARCHEOLOGY\Arch-BookCompletedLeft]], label = "Book Wallpaper", onclick = onSelectSecTexture, icon = [[Interface\ARCHEOLOGY\Arch-BookCompletedLeft]], texcoord = nil},
+                {value = [[Interface\ARCHEOLOGY\Arch-BookItemLeft]], label = "Book Wallpaper 2", onclick = onSelectSecTexture, icon = [[Interface\ARCHEOLOGY\Arch-BookItemLeft]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-deathknight-blood]], label = "Blood", onclick = onSelectSecTexture, icon = [[Interface\ICONS\Spell_Deathknight_BloodPresence]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-deathknight-frost]], label = "Frost", onclick = onSelectSecTexture, icon = [[Interface\ICONS\Spell_Deathknight_FrostPresence]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-deathknight-unholy]], label = "Unholy", onclick = onSelectSecTexture, icon = [[Interface\ICONS\Spell_Deathknight_UnholyPresence]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-druid-bear]], label = "Guardian", onclick = onSelectSecTexture, icon = [[Interface\ICONS\ability_racial_bearform]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-druid-restoration]], label = "Restoration", onclick = onSelectSecTexture, icon = [[Interface\ICONS\spell_nature_healingtouch]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-druid-cat]], label = "Feral", onclick = onSelectSecTexture, icon = [[Interface\ICONS\spell_shadow_vampiricaura]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-druid-balance]], label = "Balance", onclick = onSelectSecTexture, icon = [[Interface\ICONS\spell_nature_starfall]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-hunter-beastmaster]], label = "Beast Mastery", onclick = onSelectSecTexture, icon = [[Interface\ICONS\ability_hunter_bestialdiscipline]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-hunter-marksman]], label = "Marksmanship", onclick = onSelectSecTexture, icon = [[Interface\ICONS\ability_hunter_focusedaim]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-hunter-survival]], label = "Survival", onclick = onSelectSecTexture, icon = [[Interface\ICONS\ability_hunter_camouflage]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-mage-arcane]], label = "Arcane", onclick = onSelectSecTexture, icon = [[Interface\ICONS\spell_holy_magicalsentry]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-mage-fire]], label = "Fire", onclick = onSelectSecTexture, icon = [[Interface\ICONS\spell_fire_firebolt02]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-mage-frost]], label = "Frost", onclick = onSelectSecTexture, icon = [[Interface\ICONS\spell_frost_frostbolt02]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-monk-brewmaster]], label = "Brewmaster", onclick = onSelectSecTexture, icon = [[Interface\ICONS\monk_stance_drunkenox]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-monk-mistweaver]], label = "Mistweaver", onclick = onSelectSecTexture, icon = [[Interface\ICONS\monk_stance_wiseserpent]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-monk-battledancer]], label = "Windwalker", onclick = onSelectSecTexture, icon = [[Interface\ICONS\monk_stance_whitetiger]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-paladin-holy]], label = "Holy", onclick = onSelectSecTexture, icon = [[Interface\ICONS\spell_holy_holybolt]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-paladin-protection]], label = "Protection", onclick = onSelectSecTexture, icon = [[Interface\ICONS\ability_paladin_shieldofthetemplar]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-paladin-retribution]], label = "Retribution", onclick = onSelectSecTexture, icon = [[Interface\ICONS\spell_holy_auraoflight]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-priest-discipline]], label = "Discipline", onclick = onSelectSecTexture, icon = [[Interface\ICONS\spell_holy_powerwordshield]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-priest-holy]], label = "Holy", onclick = onSelectSecTexture, icon = [[Interface\ICONS\spell_holy_guardianspirit]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-priest-shadow]], label = "Shadow", onclick = onSelectSecTexture, icon = [[Interface\ICONS\spell_shadow_shadowwordpain]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-rogue-assassination]], label = "Assassination", onclick = onSelectSecTexture, icon = [[Interface\ICONS\ability_rogue_eviscerate]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-rogue-combat]], label = "Combat", onclick = onSelectSecTexture, icon = [[Interface\ICONS\ability_backstab]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-rogue-subtlety]], label = "Subtlety", onclick = onSelectSecTexture, icon = [[Interface\ICONS\ability_stealth]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-shaman-elemental]], label = "Elemental", onclick = onSelectSecTexture, icon = [[Interface\ICONS\spell_nature_lightning]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-shaman-enhancement]], label = "Enhancement", onclick = onSelectSecTexture, icon = [[Interface\ICONS\spell_nature_lightningshield]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-shaman-restoration]], label = "Restoration", onclick = onSelectSecTexture, icon = [[Interface\ICONS\spell_nature_magicimmunity]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-warlock-affliction]], label = "Affliction", onclick = onSelectSecTexture, icon = [[Interface\ICONS\spell_shadow_deathcoil]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-warlock-demonology]], label = "Demonology", onclick = onSelectSecTexture, icon = [[Interface\ICONS\spell_shadow_metamorphosis]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-warlock-destruction]], label = "Destruction", onclick = onSelectSecTexture, icon = [[Interface\ICONS\spell_shadow_rainoffire]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-warrior-arms]], label = "Arms", onclick = onSelectSecTexture, icon = [[Interface\ICONS\ability_warrior_savageblow]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-warrior-fury]], label = "Fury", onclick = onSelectSecTexture, icon = [[Interface\ICONS\ability_warrior_innerrage]], texcoord = nil},
+                {value = [[Interface\TALENTFRAME\bg-warrior-protection]], label = "Protection", onclick = onSelectSecTexture, icon = [[Interface\ICONS\ability_warrior_defensivestance]], texcoord = nil},
+            }
+
+        --create preview
+            local previewX, previewY = 460, -60
+
+            local preview = sectionFrame:CreateTexture (nil, "overlay")
+            preview:SetDrawLayer ("artwork", 3)
+            preview:SetSize (256, 128)
+            preview:SetPoint ("topleft", sectionFrame, "topleft", previewX, previewY)
+            
+            --background white
+            local whiteBackground = sectionFrame:CreateTexture(nil, "overlay")
+            whiteBackground:SetDrawLayer("background")
+            whiteBackground:SetSize (255, 128)
+            whiteBackground:SetPoint ("topleft", sectionFrame, "topleft", previewX, previewY)
+            whiteBackground:SetColorTexture(1, 1, 1, 1)
+
+            --background grid
+            local icon1 = DF:NewImage (sectionFrame, nil, 128, 64, "artwork", nil, nil, "$parentIcon1")
+            icon1:SetTexture ("Interface\\AddOns\\Details\\images\\icons")
+            icon1:SetPoint ("topleft", sectionFrame, "topleft", previewX, previewY)
+            icon1:SetDrawLayer ("artwork", 1)
+            icon1:SetTexCoord (0.337890625, 0.5859375, 0.59375, 0.716796875-0.0009765625) --173 304 300 367
+            
+            local icon2 = DF:NewImage (sectionFrame, nil, 128, 64, "artwork", nil, nil, "$parentIcon2")
+            icon2:SetTexture ("Interface\\AddOns\\Details\\images\\icons")
+            icon2:SetPoint ("left", icon1.widget, "right", -1, 0)
+            icon2:SetDrawLayer ("artwork", 1)
+            icon2:SetTexCoord (0.337890625, 0.5859375, 0.59375, 0.716796875-0.0009765625) --173 304 300 367
+            
+            local icon3 = DF:NewImage (sectionFrame, nil, 128, 64, "artwork", nil, nil, "$parentIcon3")
+            icon3:SetTexture ("Interface\\AddOns\\Details\\images\\icons")
+            icon3:SetPoint ("top", icon1.widget, "bottom")
+            icon3:SetDrawLayer ("artwork", 1)
+            icon3:SetTexCoord (0.337890625, 0.5859375, 0.59375+0.0009765625, 0.716796875) --173 304 300 367
+            
+            local icon4 = DF:NewImage (sectionFrame, nil, 128, 64, "artwork", nil, nil, "$parentIcon4")
+            icon4:SetTexture ("Interface\\AddOns\\Details\\images\\icons")
+            icon4:SetPoint ("left", icon3.widget, "right", -1, 0)
+            icon4:SetDrawLayer ("artwork", 1)
+            icon4:SetTexCoord (0.337890625, 0.5859375, 0.59375+0.0009765625, 0.716796875) --173 304 300 367
+            
+            icon1:SetVertexColor (.15, .15, .15, 1)
+            icon2:SetVertexColor (.15, .15, .15, 1)
+            icon3:SetVertexColor (.15, .15, .15, 1)
+            icon4:SetVertexColor (.15, .15, .15, 1)
+
+            --corners
+            local w, h = 20, 20
+            
+            local L1 = sectionFrame:CreateTexture (nil, "overlay")
+            L1:SetPoint ("topleft", preview, "topleft")
+            L1:SetTexture ("Interface\\AddOns\\Details\\images\\icons")
+            L1:SetTexCoord (0.13671875+0.0009765625, 0.234375, 0.29296875, 0.1953125+0.0009765625)
+            L1:SetSize (w, h)
+            L1:SetDrawLayer ("overlay", 2)
+            L1:SetVertexColor (1, 1, 1, .8)
+            
+            local L2 = sectionFrame:CreateTexture (nil, "overlay")
+            L2:SetPoint ("bottomleft", preview, "bottomleft")
+            L2:SetTexture ("Interface\\AddOns\\Details\\images\\icons")
+            L2:SetTexCoord (0.13671875+0.0009765625, 0.234375, 0.1953125+0.0009765625, 0.29296875)
+            L2:SetSize (w, h)
+            L2:SetDrawLayer ("overlay", 2)
+            L2:SetVertexColor (1, 1, 1, .8)
+            
+            local L3 = sectionFrame:CreateTexture (nil, "overlay")
+            L3:SetPoint ("bottomright", preview, "bottomright", 0, 0)
+            L3:SetTexture ("Interface\\AddOns\\Details\\images\\icons")
+            L3:SetTexCoord (0.234375, 0.13671875-0.0009765625, 0.1953125+0.0009765625, 0.29296875)
+            L3:SetSize (w, h)
+            L3:SetDrawLayer ("overlay", 5)
+            L3:SetVertexColor (1, 1, 1, .8)
+            
+            local L4 = sectionFrame:CreateTexture (nil, "overlay")
+            L4:SetPoint ("topright", preview, "topright", 0, 0)
+            L4:SetTexture ("Interface\\AddOns\\Details\\images\\icons")
+            L4:SetTexCoord (0.234375, 0.13671875-0.0009765625, 0.29296875, 0.1953125+0.0009765625)
+            L4:SetSize (w, h)
+            L4:SetDrawLayer ("overlay", 5)
+            L4:SetVertexColor (1, 1, 1, .8)
+
+        --update preview
+		function sectionFrame:UpdateWallpaperInfo()
+            local wallpaper = currentInstance.wallpaper
+            
+			preview:SetTexture (wallpaper.texture)
+			preview:SetTexCoord (unpack (wallpaper.texcoord))
+			preview:SetVertexColor (unpack (wallpaper.overlay))
+			preview:SetAlpha (wallpaper.alpha)
+        end
+        
+        --> wallpaper alignment
+            local onSelectAnchor = function (_, instance, anchor)
+                editInstanceSetting(currentInstance, "InstanceWallpaper", nil, anchor)
+                afterUpdate()
+                sectionFrame:UpdateWallpaperInfo()
+            end
+
+            local anchorMenu = {
+                {value = "all", label = "Fill", onclick = onSelectAnchor},
+                {value = "center", label = "Center", onclick = onSelectAnchor},
+                {value = "stretchLR", label = "Stretch Left-Right", onclick = onSelectAnchor},
+                {value = "stretchTB", label = "Stretch Top-Bottom", onclick = onSelectAnchor},
+                {value = "topleft", label = "Top Left", onclick = onSelectAnchor},
+                {value = "bottomleft", label = "Bottom Left", onclick = onSelectAnchor},
+                {value = "topright", label = "Top Right", onclick = onSelectAnchor},
+                {value = "bottomright", label = "Bottom Right", onclick = onSelectAnchor},
+            }
+            local buildWallpaperAnchorMenu = function()
+                return anchorMenu
+            end
+
+        --> open image editor
+            local startImageEdit = function()
+                if (not currentInstance.wallpaper.texture) then
+                    Details:Msg("no texture to edit.")
+                    return
+                end
+
+                local wallpaper = currentInstance.wallpaper
+
+                if (wallpaper.texture:find ("TALENTFRAME")) then
+                    if (wallpaper.anchor == "all") then
+                        DF:ImageEditor (callmeback, wallpaper.texture, wallpaper.texcoord, wallpaper.overlay, currentInstance.baseframe.wallpaper:GetWidth(), currentInstance.baseframe.wallpaper:GetHeight(), nil, wallpaper.alpha, true)
+                    else
+                        DF:ImageEditor (callmeback, wallpaper.texture, wallpaper.texcoord, wallpaper.overlay, currentInstance.baseframe.wallpaper:GetWidth(), currentInstance.baseframe.wallpaper:GetHeight(), nil, wallpaper.alpha)
+                    end
+                else
+                    if (wallpaper.anchor == "all") then
+                        DF:ImageEditor (callmeback, wallpaper.texture, wallpaper.texcoord, wallpaper.overlay, currentInstance.baseframe.wallpaper:GetWidth(), currentInstance.baseframe.wallpaper:GetHeight(), nil, wallpaper.alpha, true)
+                    else
+                        DF:ImageEditor (callmeback, wallpaper.texture, wallpaper.texcoord, wallpaper.overlay, currentInstance.baseframe.wallpaper:GetWidth(), currentInstance.baseframe.wallpaper:GetHeight(), nil, wallpaper.alpha)
+                    end
+                end
+            end
+
+        --> open image to use as wallpaper
+            local loadImage = function()
+                if (not DetailsLoadWallpaperImage) then
+                    
+                    local f = CreateFrame ("frame", "DetailsLoadWallpaperImage", UIParent, "BackdropTemplate")
+                    f:SetPoint ("center", UIParent, "center")
+                    f:SetFrameStrata ("FULLSCREEN")
+                    f:SetSize (550, 170)
+                    f:EnableMouse (true)
+                    f:SetMovable (true)
+                    f:SetScript ("OnMouseDown", function(self, button)
+                        if (self.isMoving) then
+                            return
+                        end
+                        if (button == "RightButton") then
+                            self:Hide()
+                        else
+                            self:StartMoving() 
+                            self.isMoving = true
+                        end
+                    end)
+                    f:SetScript ("OnMouseUp", function(self, button) 
+                        if (self.isMoving and button == "LeftButton") then
+                            self:StopMovingOrSizing()
+                            self.isMoving = nil
+                        end
+                    end)
+                    
+                    DF:ApplyStandardBackdrop(f)
+                    DF:CreateTitleBar(f, "Load Your Image") --localize-me
+                    
+                    tinsert (_G.UISpecialFrames, "DetailsLoadWallpaperImage")
+                    
+                    local t = f:CreateFontString (nil, "overlay", "GameFontNormal")
+                    t:SetText (Loc ["STRING_OPTIONS_WALLPAPER_LOAD_EXCLAMATION"])
+                    t:SetPoint ("topleft", f, "topleft", 15, -25)
+                    t:SetJustifyH ("left")
+                    f.t = t
+                    
+                    local filename = f:CreateFontString (nil, "overlay", "GameFontHighlightLeft")
+                    filename:SetPoint ("topleft", f, "topleft", 15, -128)
+                    filename:SetText (Loc ["STRING_OPTIONS_WALLPAPER_LOAD_FILENAME"])
+                    
+                    local editbox = DF:NewTextEntry (f, nil, "$parentFileName", "FileName", 160, 20, function() end, nil, nil, nil, nil, options_dropdown_template)
+                    editbox:SetPoint ("left", filename, "right", 2, 0)
+                    editbox.tooltip = Loc ["STRING_OPTIONS_WALLPAPER_LOAD_FILENAME_DESC"]
+                    
+                    local okey_func = function() 
+                        local text = editbox:GetText()
+                        if (text == "") then
+                            return
+                        end
+                        
+                        local instance = _G.DetailsOptionsWindow.instance
+                        local path = "Interface\\" .. text
+                        editbox:ClearFocus()
+                        instance:InstanceWallpaper (path, "all", 0.50, {0, 1, 0, 1}, 256, 256, {1, 1, 1, 1})
+                        _detalhes:OpenOptionsWindow (instance)
+                        sectionFrame:UpdateWallpaperInfo()
+                    end
+                    local okey = DF:NewButton (f, _, "$parentOkeyButton", nil, 105, 20, okey_func, nil, nil, nil, Loc ["STRING_OPTIONS_WALLPAPER_LOAD_OKEY"], 1, options_button_template)
+                    okey:SetPoint ("left", editbox.widget, "right", 2, 0)
+                    
+                    local throubleshoot_func = function() 
+                        if (t:GetText() == Loc ["STRING_OPTIONS_WALLPAPER_LOAD_EXCLAMATION"]) then
+                            t:SetText (Loc ["STRING_OPTIONS_WALLPAPER_LOAD_TROUBLESHOOT_TEXT"])
+                        else
+                            _G.DetailsLoadWallpaperImage.t:SetText (Loc ["STRING_OPTIONS_WALLPAPER_LOAD_EXCLAMATION"])
+                        end
+                    end
+                    local throubleshoot = DF:NewButton (f, _, "$parentThroubleshootButton", nil, 105, 20, throubleshoot_func, nil, nil, nil, Loc ["STRING_OPTIONS_WALLPAPER_LOAD_TROUBLESHOOT"], 1, options_button_template)
+                    throubleshoot:SetPoint ("left", okey, "right", 2, 0)
+                    --throubleshoot:InstallCustomTexture()
+                end
+                
+                _G.DetailsLoadWallpaperImage.t:SetText (Loc ["STRING_OPTIONS_WALLPAPER_LOAD_EXCLAMATION"])
+                _G.DetailsLoadWallpaperImage:Show()
+            end
+
+        local sectionOptions = {
+            {type = "label", get = function() return Loc["STRING_OPTIONS_WALLPAPER_ANCHOR"] end, text_template = subSectionTitleTextTemplate},
+
+            {--enable wallpaper
+                type = "toggle",
+                get = function() return _detalhes.ilevel:IsTrackerEnabled() end,
+                set = function (self, fixedparam, value)
+
+                    currentInstance.wallpaper.enabled = value
+
+                    if (value) then
+                        --first time using a wallpaper
+                        if (not currentInstance.wallpaper.texture) then
+                            currentInstance.wallpaper.texture = "Interface\\AddOns\\Details\\images\\background"
+                        end
+                        editInstanceSetting(currentInstance, "InstanceWallpaper", true)
+                    else
+                        editInstanceSetting(currentInstance, "InstanceWallpaper", false)
+                    end
+
+                    afterUpdate()
+
+                    sectionFrame:UpdateWallpaperInfo()
+                end,
+                name = Loc ["STRING_ENABLED"],
+                desc = Loc ["STRING_OPTIONS_ILVL_TRACKER_DESC"],
+            },
+
+            {--select wallpaper
+                type = "select",
+                get = function()
+                    return currentInstance.wallpaper.texture or ""
+                end,
+                values = function()
+                    return sectionFrame.wallpaperOptions
+                end,
+                name = Loc ["STRING_OPTIONS_WP_GROUP2"],
+                desc = Loc ["STRING_OPTIONS_WP_GROUP2_DESC"],
+            },
+
+            {--align wallpaper
+                type = "select",
+                get = function() return currentInstance.wallpaper.anchor or "" end,
+                values = function()
+                    return buildWallpaperAnchorMenu()
+                end,
+                name = Loc ["STRING_OPTIONS_WP_ALIGN"],
+                desc = Loc ["STRING_OPTIONS_WP_ALIGN"],
+            },
+
+            {--edit wallpaper
+                type = "execute",
+                func = function(self)
+                    startImageEdit()
+                end,
+                icontexture = [[Interface\AddOns\Details\images\icons]],
+                icontexcoords = {469/512, 505/512, 290/512, 322/512},
+                name = Loc ["STRING_OPTIONS_EDITIMAGE"],
+                desc = Loc ["STRING_OPTIONS_EDITIMAGE"],
+            },
+
+            {type = "blank"},
+            {type = "label", get = function() return Loc ["STRING_OPTIONS_WALLPAPER_LOAD_TITLE"] end, text_template = subSectionTitleTextTemplate},
+
+            {--load wallpaper
+                type = "execute",
+                func = function(self)
+                    loadImage()
+                end,
+                icontexture = [[Interface\AddOns\Details\images\icons]],
+                icontexcoords = {437/512, 467/512, 191/512, 239/512},
+                name = Loc ["STRING_OPTIONS_WALLPAPER_LOAD"],
+                desc = Loc ["STRING_OPTIONS_WALLPAPER_LOAD"],
+            },
+
+        }
+
+        DF:BuildMenu(sectionFrame, sectionOptions, startX, startY-20, heightSize, true, options_text_template, options_dropdown_template, options_switch_template, true, options_slider_template, options_button_template)
+
+        sectionFrame:SetScript("OnShow", function()
+            sectionFrame:UpdateWallpaperInfo()
+        end)
+    end
+
+    tinsert(Details.optionsSection, buildSection)
+end
+
+do
+    local buildSection = function(sectionFrame)
+
+    --> auto switch options
+        local Current_Switch_Func = function()end
+
+        local buildSwitchMenu = function()
+            sectionFrame.lastSwitchList = {}
+            local t = {
+                {value = 0, label = "do not switch", color = {.7, .7, .7, 1}, onclick = Current_Switch_Func, icon = [[Interface\Glues\LOGIN\Glues-CheckBox-Check]]}
+            }
+            
+            local attributes = _detalhes.sub_atributos
+            local i = 1
+            
+            for atributo, sub_atributo in ipairs (attributes) do
+                local icones = sub_atributo.icones
+                for index, att_name in ipairs (sub_atributo.lista) do
+                    local texture, texcoord = unpack (icones [index])
+                    tinsert (t, {value = i, label = att_name, onclick = Current_Switch_Func, icon = texture, texcoord = texcoord})
+                    sectionFrame.lastSwitchList [i] = {atributo, index, i}
+                    i = i + 1
+                end
+            end
+            
+            for index, ptable in ipairs (_detalhes.RaidTables.Menu) do
+                tinsert (t, {value = i, label = ptable [1], onclick = Current_Switch_Func, icon = ptable [2]})
+                sectionFrame.lastSwitchList [i] = {"raid", ptable [4], i}
+                i = i + 1
+            end
+        
+            return t
+        end
+
+        local autoSwitchFrame = CreateFrame("frame", "$parentSwitchMenu", sectionFrame)
+        autoSwitchFrame:SetSize(300, 700)
+        autoSwitchFrame:SetPoint("topleft", 0, 0)
+
+        --damager not in combat
+        local onSelectAutoSwitchDamagerNoCombat = function (_, _, switchTo)
+            if (switchTo == 0) then
+                currentInstance.switch_damager = false
+                afterUpdate()
+                return
+            end
+            local selected = sectionFrame.lastSwitchList [switchTo]
+            currentInstance.switch_damager = selected
+            afterUpdate()
+        end
+
+        --damager in combat
+        local onSelectAutoSwitchDamagerInCombat = function (_, _, switchTo)
+            if (switchTo == 0) then
+                currentInstance.switch_damager_in_combat = false
+                afterUpdate()
+                return
+            end
+            local selected = sectionFrame.lastSwitchList [switchTo]
+            currentInstance.switch_damager_in_combat = selected
+            afterUpdate()
+        end
+
+        --healer not in combat
+        local onSelectAutoSwitchHealerNoCombat = function (_, _, switchTo)
+            if (switchTo == 0) then
+                currentInstance.switch_healer = false
+                afterUpdate()
+                return
+            end
+            local selected = sectionFrame.lastSwitchList [switchTo]
+            currentInstance.switch_healer = selected
+            afterUpdate()
+        end
+
+        --healer in combat
+        local onSelectAutoSwitchHealerInCombat = function (_, _, switchTo)
+            if (switchTo == 0) then
+                currentInstance.switch_healer_in_combat = false
+                afterUpdate()
+                return
+            end
+            local selected = sectionFrame.lastSwitchList [switchTo]
+            currentInstance.switch_healer_in_combat = selected
+            afterUpdate()
+        end
+
+        --tank not in combat
+        local onSelectAutoSwitchTankNoCombat = function (_, _, switchTo)
+            if (switchTo == 0) then
+                currentInstance.switch_tank = false
+                afterUpdate()
+                return
+            end
+            local selected = sectionFrame.lastSwitchList [switchTo]
+            currentInstance.switch_tank = selected
+            afterUpdate()
+        end
+
+        --tank in combat
+        local onSelectAutoSwitchTankInCombat = function (_, _, switchTo)
+            if (switchTo == 0) then
+                currentInstance.switch_tank_in_combat = false
+                afterUpdate()
+                return
+            end
+            local selected = sectionFrame.lastSwitchList [switchTo]
+            currentInstance.switch_tank_in_combat = selected
+            afterUpdate()
+        end
+
+        --after wipe
+        local onSelectAutoSwitchAfterWipe = function (_, _, switchTo)
+            if (switchTo == 0) then
+                currentInstance.switch_all_roles_after_wipe = false
+                afterUpdate()
+                return
+            end
+            local selected = sectionFrame.lastSwitchList [switchTo]
+            currentInstance.switch_all_roles_after_wipe = selected
+            afterUpdate()
+        end
+
+        local getSelectedSwitch = function(switchName)
+            local switchTable = currentInstance[switchName]
+            if (switchTable) then
+                if (switchTable[1] == "raid") then
+                    local pluginObject = _detalhes:GetPlugin(switchTable[2])
+                    if (pluginObject) then
+                        return pluginObject.__name
+                    else
+                        return 0
+                    end
+                else
+                    return switchTable[3]-- + 1
+                end
+            else
+                return 0
+            end
+        end
+
+        local sectionOptions = {
+
+            {type = "label", get = function() return "Switch by Role Out of Combat" end, text_template = subSectionTitleTextTemplate},
+
+            {--DAMAGER role out of combat
+                type = "select",
+                get = function() 
+                    return getSelectedSwitch("switch_damager")
+                end,
+                values = function() 
+                    Current_Switch_Func = onSelectAutoSwitchDamagerNoCombat
+                    return buildSwitchMenu() 
+                end,
+                name = _detalhes:AddRoleIcon("", "DAMAGER", 18),
+            },
+
+            {--HEALER role out of combat
+                type = "select",
+                get = function() 
+                    return getSelectedSwitch("switch_healer")
+                end,
+                values = function() 
+                    Current_Switch_Func = onSelectAutoSwitchHealerNoCombat
+                    return buildSwitchMenu()
+                end,
+                name = _detalhes:AddRoleIcon("", "HEALER", 18),
+            },
+
+            {--TANK role out of combat
+                type = "select",
+                get = function() 
+                    return getSelectedSwitch("switch_tank")
+                end,
+                values = function() 
+                    Current_Switch_Func = onSelectAutoSwitchTankNoCombat
+                    return buildSwitchMenu()
+                end,
+                name = _detalhes:AddRoleIcon("", "TANK", 18),
+            },
+
+            {type = "blank"},
+            {type = "label", get = function() return "Switch by Role In Combat" end, text_template = subSectionTitleTextTemplate},
+
+            {--DAMAGER role in combat
+                type = "select",
+                get = function() 
+                    return getSelectedSwitch("switch_damager_in_combat")
+                end,
+                values = function() 
+                    Current_Switch_Func = onSelectAutoSwitchDamagerInCombat
+                    return buildSwitchMenu() 
+                end,
+                name = _detalhes:AddRoleIcon("", "DAMAGER", 18),
+            },
+
+            {--HEALER role in combat
+                type = "select",
+                get = function() 
+                    return getSelectedSwitch("switch_healer_in_combat")
+                end,
+                values = function() 
+                    Current_Switch_Func = onSelectAutoSwitchHealerInCombat
+                    return buildSwitchMenu()
+                end,
+                name = _detalhes:AddRoleIcon("", "HEALER", 18),
+            },
+
+            {--TANK role in combat
+                type = "select",
+                get = function() 
+                    return getSelectedSwitch("switch_tank_in_combat")
+                end,
+                values = function() 
+                    Current_Switch_Func = onSelectAutoSwitchTankInCombat
+                    return buildSwitchMenu()
+                end,
+                name = _detalhes:AddRoleIcon("", "TANK", 18),
+            },
+
+            {type = "blank"},
+
+            {--switch after a wipe
+                type = "select",
+                get = function() 
+                    return getSelectedSwitch("switch_all_roles_after_wipe")
+                end,
+                values = function() 
+                    Current_Switch_Func = onSelectAutoSwitchAfterWipe
+                    return buildSwitchMenu()
+                end,
+                name = Loc ["STRING_OPTIONS_AUTO_SWITCH_WIPE"],
+                desc = Loc ["STRING_OPTIONS_AUTO_SWITCH_WIPE_DESC"],
+            },
+
+            {type = "blank"},
+
+            {--auto current segment
+                type = "toggle",
+                get = function() return currentInstance.auto_current end,
+                set = function (self, fixedparam, value)
+                    currentInstance.auto_current = value
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_INSTANCE_CURRENT"],
+                desc = Loc ["STRING_OPTIONS_INSTANCE_CURRENT_DESC"],
+            },
+
+            {--trash suppression
+                type = "range",
+                get = function() return _detalhes.instances_suppress_trash end,
+                set = function (self, fixedparam, value)
+                    _detalhes:SetTrashSuppression(value)
+                    afterUpdate()
+                end,
+                min = 0,
+                max = 180,
+                step = 1,
+                name = Loc ["STRING_OPTIONS_TRASH_SUPPRESSION"],
+                desc = Loc ["STRING_OPTIONS_TRASH_SUPPRESSION_DESC"],
+            },
+
+            {type = "blank"},
+            {type = "label", get = function() return Loc ["STRING_OPTIONS_MENU_ALPHA"] end, text_template = subSectionTitleTextTemplate},
+            
+            {--enabled
+                type = "toggle",
+                get = function() return currentInstance.menu_alpha.enabled end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "SetMenuAlpha", value)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_ENABLED"],
+                desc = Loc ["STRING_OPTIONS_MENU_ALPHAENABLED_DESC"],
+            },
+
+            {--ignore bars
+                type = "toggle",
+                get = function() return currentInstance.menu_alpha.ignorebars end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "SetMenuAlpha", nil, nil, nil, value)
+                    afterUpdate()
+                end,
+                name = Loc ["STRING_OPTIONS_MENU_IGNOREBARS"],
+                desc = Loc ["STRING_OPTIONS_MENU_IGNOREBARS_DESC"],
+            },
+
+            {--on hover over alpha
+                type = "range",
+                get = function() return currentInstance.menu_alpha.onenter end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "SetMenuAlpha", nil, value)
+                    afterUpdate()
+                end,
+                min = 0,
+                max = 1,
+                step = 0.05,
+                usedecimals = true,
+                name = Loc ["STRING_OPTIONS_MENU_ALPHAENTER"],
+                desc = Loc ["STRING_OPTIONS_MENU_ALPHAENTER_DESC"],
+            },
+
+            {--no interaction
+                type = "range",
+                get = function() return currentInstance.menu_alpha.onleave end,
+                set = function (self, fixedparam, value)
+                    editInstanceSetting(currentInstance, "SetMenuAlpha", nil, nil, value)
+                    afterUpdate()
+                end,
+                min = 0,
+                max = 1,
+                step = 0.05,
+                usedecimals = true,
+                name = Loc ["STRING_OPTIONS_MENU_ALPHALEAVE"],
+                desc = Loc ["STRING_OPTIONS_MENU_ALPHALEAVE_DESC"],
+            },            
+
+        }
+
+        DF:BuildMenu(autoSwitchFrame, sectionOptions, startX, startY-20, heightSize, true, options_text_template, options_dropdown_template, options_switch_template, true, options_slider_template, options_button_template)
+
+
+	--> combat alpha modifier
+        local right_start_at = 450
+        local top_start_at = -90
+        local mouse_interaction_start_at = -350
+
+		--anchor
+		DF:NewLabel (sectionFrame, _, "$parentHideInCombatAnchor", "hideInCombatAnchor", Loc ["STRING_OPTIONS_ALPHAMOD_ANCHOR"], "GameFontNormal")
+		sectionFrame.hideInCombatAnchor:SetPoint("topleft", sectionFrame, "topleft", right_start_at, -90)
+		
+		--> hide in combat
+		DF:NewLabel (sectionFrame, _, "$parentCombatAlphaLabel", "combatAlphaLabel", Loc ["STRING_OPTIONS_COMBAT_ALPHA"], "GameFontHighlightLeft")
+		
+		local texCoords = {.9, 0.1, 0.1, .9}
+		local typeCombatAlpha = {
+			Loc["STRING_OPTIONS_COMBAT_ALPHA_2"],
+			Loc["STRING_OPTIONS_COMBAT_ALPHA_3"],
+			Loc["STRING_OPTIONS_COMBAT_ALPHA_4"],
+			Loc["STRING_OPTIONS_COMBAT_ALPHA_5"],
+			Loc["STRING_OPTIONS_COMBAT_ALPHA_6"],
+			Loc["STRING_OPTIONS_COMBAT_ALPHA_7"],
+			Loc["STRING_OPTIONS_COMBAT_ALPHA_8"],
+			Loc["STRING_OPTIONS_COMBAT_ALPHA_9"],
+		}
+
+		local optionsOrder = {3, 4, 5, 6, 7, 8, 1, 2}
+
+		local header1Label = _G.DetailsFramework:CreateLabel(sectionFrame, Loc["STRING_CONTEXT"])
+		local header2Label = _G.DetailsFramework:CreateLabel(sectionFrame, Loc["STRING_ENABLED"])
+		local header3Label = _G.DetailsFramework:CreateLabel(sectionFrame, Loc["STRING_INVERT_RULE"])
+		local header4Label = _G.DetailsFramework:CreateLabel(sectionFrame, Loc["STRING_ALPHA"])
+
+		local yyy = top_start_at - 20
+		header1Label:SetPoint("topleft", sectionFrame, "topleft", right_start_at, yyy)
+		header2Label:SetPoint("topleft", sectionFrame, "topleft", right_start_at + 96, yyy)
+		header3Label:SetPoint("topleft", sectionFrame, "topleft", right_start_at + 140, yyy)
+		header4Label:SetPoint("topleft", sectionFrame, "topleft", right_start_at + 270, yyy)
+
+		local onEnableHideContext = function(self, contextId, value)
+            editInstanceSetting(currentInstance, "hide_on_context", contextId, "enabled", value)
+            editInstanceSetting(currentInstance, "AdjustAlphaByContext")
+            afterUpdate()
+		end
+
+        local onInverseValue = function(self, contextId, value)
+            editInstanceSetting(currentInstance, "hide_on_context", contextId, "inverse", value)
+            editInstanceSetting(currentInstance, "AdjustAlphaByContext")
+            afterUpdate()
+		end
+
+        local onAlphaChanged = function(self, contextId, value)
+            value = floor(value)
+            editInstanceSetting(currentInstance, "hide_on_context", contextId, "value", value)
+            editInstanceSetting(currentInstance, "AdjustAlphaByContext")
+            afterUpdate()
+		end
+
+		sectionFrame.AutoHideOptions = {}
+
+		for id, i in ipairs(optionsOrder) do
+			local line = _G.CreateFrame("frame", nil, sectionFrame,"BackdropTemplate")
+			line:SetSize(300, 22)
+			line:SetPoint("topleft", sectionFrame, "topleft", right_start_at, yyy + ((id) * -23) + 4)
+			_G.DetailsFramework:ApplyStandardBackdrop(line)
+
+			local contextLabel = _G.DetailsFramework:CreateLabel(line, typeCombatAlpha[i])
+			contextLabel:SetPoint("left", line, "left", 2, 0)
+
+			local enabledCheckbox = _G.DetailsFramework:NewSwitch(line, nil, nil, nil, 20, 20, nil, nil, false, nil, nil, nil, nil, options_switch_template)
+			enabledCheckbox:SetPoint("left", line, "left", 118, 0)
+			enabledCheckbox:SetAsCheckBox()
+			enabledCheckbox.OnSwitch = onEnableHideContext
+			enabledCheckbox:SetFixedParameter(i)
+
+			local reverseCheckbox = _G.DetailsFramework:NewSwitch(line, nil, nil, nil, 20, 20, nil, nil, false, nil, nil, nil, nil, options_switch_template)
+			reverseCheckbox:SetPoint("left", line, "left", 140, 0)
+			reverseCheckbox:SetAsCheckBox()
+			reverseCheckbox.OnSwitch = onInverseValue
+			reverseCheckbox:SetFixedParameter(i)
+
+			local alphaSlider = _G.DetailsFramework:CreateSlider(line, 138, 20, 0, 100, 1, 100, false, nil, nil, nil, options_slider_template)
+			alphaSlider:SetPoint("left", line, "left", 162, 0)
+			alphaSlider:SetHook("OnValueChanged", onAlphaChanged)
+			alphaSlider:SetFixedParameter(i)
+
+			line.contextLabel = contextLabel
+			line.enabledCheckbox = enabledCheckbox
+			line.reverseCheckbox = reverseCheckbox
+			line.alphaSlider = alphaSlider
+
+			--disable the invert checkbox for some options
+			if (i == 1 or i == 2 or i == 4 or i == 5 or i == 6) then
+				reverseCheckbox:Disable()
+			end
+
+			sectionFrame.AutoHideOptions[i] = line
+        end
+
+    
+    end
+
+    tinsert(Details.optionsSection, buildSection)
+end
+
+
+--[[]
 do
     local buildSection = function(sectionFrame)
 

@@ -9,6 +9,8 @@ local GetTime = _G.GetTime
 local tremove = _G.tremove
 local GetInstanceInfo = _G.GetInstanceInfo
 
+local Loc = _G.LibStub("AceLocale-3.0"):GetLocale("Details")
+
 --data for the current mythic + dungeon
 Details.MythicPlus = {
     RunID = 0,

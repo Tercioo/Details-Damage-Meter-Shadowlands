@@ -127,10 +127,16 @@ function Details:InstanceGroupEditSetting(instance, keyName, value)
 	end
 end
 
-function Details:InstanceGroupEditSettingOnTable(instance, table1Key, table2Key, value)
+function Details:InstanceGroupEditSettingOnTable(instance, table1Key, table2Key, table3Key, value)
 	for _, thisInstance in ipairs (instance:GetInstanceGroup()) do
-		local table1 = thisInstance[table1Key]
-		table1[table2Key] = value
+		if (value == nil) then
+			value = table3Key
+			local table1 = thisInstance[table1Key]
+			table1[table2Key] = value
+		else
+			local table1 = thisInstance[table1Key]
+			table1[table2Key][table3Key] = value
+		end
 	end
 end
 
@@ -3158,7 +3164,7 @@ function _detalhes:monta_relatorio (este_relatorio, custom)
 					if (self.atributo == 2 and self.sub_atributo == 3) then --overheal
 						percent = _cstr ("%.1f", actor.totalover / (actor.totalover + actor.total) * 100)
 					elseif (not is_string) then
-						percent = _cstr ("%.1f", amount / total * 100)
+						percent = _cstr ("%.1f", amount / max(total, 0.00001) * 100)
 					end
 					
 					-- get the dps

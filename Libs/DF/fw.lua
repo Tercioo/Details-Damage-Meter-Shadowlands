@@ -1,5 +1,5 @@
 
-local dversion = 207
+local dversion = 209
 
 local major, minor = "DetailsFramework-1.0", dversion
 local DF, oldminor = LibStub:NewLibrary (major, minor)
@@ -2781,6 +2781,7 @@ local glow_overlay_play = function (self)
 		self.animOut:Stop()
 	end
 	if (not self.animIn:IsPlaying()) then
+		self.animIn:Stop()
 		self.animIn:Play()
 	end
 end
@@ -3380,7 +3381,7 @@ function DF:CoreDispatch (context, func, ...)
 	local okay, result1, result2, result3, result4 = pcall (func, ...)
 	
 	if (not okay) then
-		local stack = debugstack (2)
+		local stack = debugstack(2)
 		local errortext = "D!Framework (" .. context .. ") error: " .. result1 .. "\n====================\n" .. stack .. "\n====================\n"
 		error (errortext)
 	end
@@ -4039,7 +4040,7 @@ do
 
 	--return the amount of objects 
 		local getamount = function(self)
-			return #self.notUse + #self.inUse
+			return #self.notUse + #self.inUse, #self.notUse, #self.inUse
 		end
     
     local poolMixin = {
